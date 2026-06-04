@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RosetteCloset - Đăng Ký Thành Viên</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="../CSS/signUp.css" />
+</head>
+<body>
+  <main class="signup-page">
+    <div class="signup-layout">
+      <div class="decor decor-top"></div>
+      <div class="decor decor-bottom"></div>
+
+      <section class="signup-card" aria-labelledby="signup-title">
+        <div class="brand-block">
+          <h1 id="signup-title">RosetteCloset</h1>
+          <p>Gia nhập cộng đồng thượng lưu</p>
+        </div>
+
+        <form class="signup-form" action="#" method="post">
+          <div class="form-group">
+            <label for="full-name">Họ và Tên</label>
+            <div class="input-wrapper">
+              <input id="full-name" name="full-name" type="text" placeholder="Nguyễn Văn A" required />
+              <span class="material-symbols-outlined">person</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Địa chỉ Email</label>
+            <div class="input-wrapper">
+              <input id="email" name="email" type="email" placeholder="example@rosette.vn" required />
+              <span class="material-symbols-outlined">mail</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="phone">Số Điện Thoại</label>
+            <div class="input-wrapper">
+              <input id="phone" name="phone" type="tel" placeholder="+84 000 000 000" required />
+              <span class="material-symbols-outlined">call</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="password">Mật Khẩu</label>
+            <div class="input-wrapper">
+              <input id="password" name="password" type="password" placeholder="••••••••" required />
+              <span class="material-symbols-outlined">lock</span>
+            </div>
+          </div>
+
+          <div class="terms-row">
+            <input id="terms" name="terms" type="checkbox" required />
+            <label for="terms">
+              Tôi đồng ý với <a href="#">Điều khoản Dịch vụ</a> và
+              <a href="#">Chính sách Bảo mật</a> của RosetteCloset.
+            </label>
+          </div>
+
+          <button class="submit-button" type="submit">Tạo Tài Khoản</button>
+        </form>
+
+        <div class="signin-link">
+          <p>
+            Bạn đã có tài khoản?
+            <a href="login.html">Đăng nhập ngay</a>
+          </p>
+        </div>
+      </section>
+
+      <aside class="side-image-card" aria-label="Luxury Fashion Registration">
+        <div class="image-card">
+          <img
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDMvXnpprn_U0Kgjh0kow2Q24WlDDgWDfDw75_zfOWmqsX8hpiNKBmpSRlH7PnfpffOpLJtC9kgRfxPdT4m2R_RPH4KFTQYruD09-YngrR25B3u9VKo3XVWTxGByPhhcew-zj_BsIcjOqtqLipe2G2KuHTQERfwhQ6vmx-fjLi_Rry2DlM8etH-yNgTSxBumhrfzVkSSWE1EoJdDPF5UBVoidJVdOlXEGBTJsmpa1ReARApH31y4HNnKuo2v2cgTghaOh2bXHOlEQ"
+            alt="Luxury Fashion Registration"
+          />
+          <div class="image-overlay"></div>
+          <div class="image-caption">
+            <p class="caption-title">Đặc quyền dành riêng cho bạn.</p>
+            <p class="caption-text">Khám phá bộ sưu tập giới hạn từ những nhà mốt hàng đầu thế giới.</p>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <div class="bottom-text" aria-hidden="true">Collection 2024</div>
+  <div class="top-text" aria-hidden="true">Exclusively Curated</div>
+</body>
+</html>

@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>RosetteCloset | Luxury Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="/public/css/admin/dashboard.css"/>
+    <script defer src="/public/js/admin/dashboard.js"></script>
+</head>
+<body>
+
+    <!-- Sidebar Navigation -->
+    <aside id="main-sidebar">
+        <div class="logo-container">
+            <div class="logo-text-group">
+                <h1 class="logo-text">RosetteCloset</h1>
+                <p class="logo-sub">Luxury Admin</p>
+                <!-- Minimal mark for collapsed state -->
+                <span class="logo-mark">R</span>
+            </div>
+            <button id="sidebar-toggle" aria-label="Toggle Sidebar">
+                <span class="material-symbols-outlined" data-icon="menu">menu</span>
+            </button>
+        </div>
+        
+        <nav class="sidebar-nav-container">
+            <ul class="sidebar-nav-list">
+                <!-- Dashboard Active -->
+                <li>
+                    <a class="nav-item active" href="#">
+                        <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="nav-item" href="#">
+                        <span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+                        <span class="nav-text">Inventory</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="nav-item" href="#">
+                        <span class="material-symbols-outlined" data-icon="shopping_bag">shopping_bag</span>
+                        <span class="nav-text">Orders</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="nav-item" href="#">
+                        <span class="material-symbols-outlined" data-icon="group">group</span>
+                        <span class="nav-text">Customers</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="nav-item" href="#">
+                        <span class="material-symbols-outlined" data-icon="eco">eco</span>
+                        <span class="nav-text">Sustainability</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="nav-item" href="#">
+                        <span class="material-symbols-outlined" data-icon="settings">settings</span>
+                        <span class="nav-text">Settings</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        
+        <div class="footer-btn-container">
+            <button class="btn-generate-report">
+                <span class="material-symbols-outlined">add_chart</span>
+                <span class="btn-text">Generate Report</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main id="main-content">
+        <!-- Top App Bar -->
+        <header class="top-bar">
+            <div class="search-wrapper">
+                <span class="material-symbols-outlined search-icon" data-icon="search">search</span>
+                <input class="search-input" placeholder="Search inventory..." type="text"/>
+            </div>
+            
+            <div class="top-bar-right">
+                <span class="material-symbols-outlined top-bar-icon" data-icon="notifications">notifications</span>
+                <span class="material-symbols-outlined top-bar-icon" data-icon="settings">settings</span>
+                <div class="profile-container">
+                    <div class="profile-info">
+                        <p class="profile-role">Administrator</p>
+                        <p class="profile-name">Sophia Rosette</p>
+                    </div>
+                    <img alt="Administrator Profile" class="profile-avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBqYVpIGCwHzlVlF-bV24-pzB6IdjnL4JmyqvoLwRyXLw6HrenUsEAe-FBdk_gXR1AYhonwE1yRPu6GpAISpUEHJ3vkBMDZYuZzLxbxnJOkhz63ZElfWRSKcQovRnNdWUPIyWL3CC9P4I1SE6w02bJdeYfxqpwUgS5msT4FkWe1xmkB6N2YhU2mwVAcnPGvVuJBhCKUyumDWap7yhwIaOxhapxdSMhYjRfM-KYgTLsOUWwbZE78oea4g_bv1QNBuFEM2F4jy4HCDQ"/>
+                </div>
+            </div>
+        </header>
+
+        <!-- Canvas -->
+        <div class="canvas-container">
+            <!-- Welcome Header -->
+            <div class="welcome-section">
+                <div>
+                    <h2 class="welcome-title">Welcome back, Sophia</h2>
+                    <p class="welcome-subtitle">Monday, 24 May 2024 — Here's what's happening today.</p>
+                </div>
+                <div class="welcome-actions">
+                    <button class="btn-action-outline">
+                        <span class="material-symbols-outlined text-sm" data-icon="calendar_today">calendar_today</span>
+                        Last 30 Days
+                    </button>
+                    <button class="btn-action-solid">
+                        <span class="material-symbols-outlined text-sm" data-icon="file_download">file_download</span>
+                        Export PDF
+                    </button>
+                </div>
+            </div>
+
+            <!-- Analytics Row (Bento Grid Style) -->
+            <div class="bento-grid">
+                <!-- Total Revenue -->
+                <div class="luxury-card" style="padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between;">
+                    <div>
+                        <div class="card-header-row">
+                            <span class="card-title">Total Revenue</span>
+                            <span class="text-trend-up">+12.5%</span>
+                        </div>
+                        <p class="card-value">$142,850.00</p>
+                    </div>
+                    <div class="revenue-chart-container">
+                        <svg preserveAspectRatio="none" viewBox="0 0 100 40">
+                            <path d="M0 35 Q 20 10, 40 30 T 80 15 T 100 5" fill="none" stroke="#D4AF37" stroke-width="2"></path>
+                            <path d="M0 35 Q 20 10, 40 30 T 80 15 T 100 5 L 100 40 L 0 40 Z" fill="url(#goldGradient)" opacity="0.1"></path>
+                            <defs>
+                                <linearGradient id="goldGradient" x1="0%" x2="0%" y1="0%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#D4AF37;stop-opacity:1"></stop>
+                                    <stop offset="100%" style="stop-color:#D4AF37;stop-opacity:0"></stop>
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Active Rentals -->
+                <div class="luxury-card" style="padding: 1.5rem;">
+                    <div class="card-header-row">
+                        <span class="card-title">Active Rentals</span>
+                        <span class="material-symbols-outlined text-gold" data-icon="cyclone">cyclone</span>
+                    </div>
+                    <p class="card-value">154</p>
+                    <p class="card-subtitle">24 items due for return today</p>
+                    <div class="progress-bar-bg">
+                        <div class="bg-gold progress-bar-fill" style="width: 68%;"></div>
+                    </div>
+                </div>
+
+                <!-- New Memberships -->
+                <div class="luxury-card" style="padding: 1.5rem;">
+                    <div class="card-header-row">
+                        <span class="card-title">New Memberships</span>
+                        <span class="text-trend-up">+8</span>
+                    </div>
+                    <p class="card-value">1,208</p>
+                    <ul class="avatar-list">
+                        <li><img alt="Member" src="https://lh3.googleusercontent.com/aida-public/AB6AXuABEUwuSMKZEgiVaI9OLs-9LYFiYKIdXW-96QIBraqHyn_le23IwbaEWYwuIcTCtb8J76YWQDMjIaf5X1FRGpL-7yhnRjEQfuOhv1bPMlKvwRc232sBV_KpU8yRODzvJjboWhS1-v8MhKWRhn7WIBQs2IkPze97vo-8Hb6WOMhbKRj9F_tSPkPlowd5VR34W7CBNtn5YNg1-wIouyY3fMKDYkHzpBlUjvpnsQpc4L1VpPvDGWHAWbZBWEQL421cGUyeME6d5XdkVw"/></li>
+                        <li><img alt="Member" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDR4rXKgP__t7RMs2OhUR3qYtJ0IhyhIT5Uriv20yibfbvKBM5GnfguZMZSFfTXmwimvMeab7-PGBFZ9tj2U7taFa3OOoc7kNLomjcl_R9CocVQM9HyH00XUQuvbQhxva8ObKRj26fQDwxwf4T7JPBF1_6GsCCKx8UucX3Bw6MAqrZljojMudpW3A6iuw_iRl_yczSNrH3As9Oy4wxWMUKH3CM9ciB0rUloEV-cm_5iIi9X_A4tUYpCGqgKTDXHDXUEuRB6Yx6x-Q"/></li>
+                        <li><img alt="Member" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD1liiJjQUYER3Evig1qZsxog7W0w5NsjlliG-J2BLmn_oO-xJ-7A4Lgvs8LoT2vofo_IwARAzFIjh5tDVMq3w6y62eXyk0f-OEE5i06xoZpmeH3EIm9AFxydcPV0rTk6xoh8Yn31y8zq8mSW8T-8rIbssAOMUapRv5b0RIviuBzc2KulTNAuBBEubaaGUUpCPXUDhlqWQ8VECPlEUWL4QxfKXLwkx-fCg-OrjGp42ywV45-b66k4XKZrrzIIt_I5VzIax2j1MoiQ"/></li>
+                        <li><div class="avatar-more">+5</div></li>
+                    </ul>
+                </div>
+
+                <!-- Inventory Health -->
+                <div class="luxury-card" style="padding: 1.5rem;">
+                    <div class="card-header-row">
+                        <span class="card-title">Inventory Health</span>
+                        <span class="material-symbols-outlined" style="color: #10b981;" data-icon="check_circle">check_circle</span>
+                    </div>
+                    <p class="card-value">98.2%</p>
+                    <p class="card-subtitle">Excellent condition tracking</p>
+                    <div class="status-segments">
+                        <div class="status-segment active"></div>
+                        <div class="status-segment active"></div>
+                        <div class="status-segment active"></div>
+                        <div class="status-segment active"></div>
+                        <div class="status-segment inactive"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Section -->
+            <div class="main-sections-grid">
+                <!-- Recent Rentals Table -->
+                <div class="recent-rentals-card luxury-card">
+                    <div class="card-header-between">
+                        <h3 class="card-heading">Đơn thuê gần đây</h3>
+                        <a class="view-all-link" href="#">View All</a>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="luxury-table">
+                            <thead>
+                                <tr>
+                                    <th>Khách hàng</th>
+                                    <th>Sản phẩm</th>
+                                    <th>Thời hạn</th>
+                                    <th>Trạng thái</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div class="customer-cell">
+                                            <div class="customer-initials">AN</div>
+                                            <p class="customer-name">An Nguyễn</p>
+                                        </div>
+                                    </td>
+                                    <td><p class="product-cell">Midnight Glamour Gown</p></td>
+                                    <td><p class="date-cell">24/05 - 27/05</p></td>
+                                    <td><span class="status-badge status-renting">Đang thuê</span></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="customer-cell">
+                                            <div class="customer-initials">LH</div>
+                                            <p class="customer-name">Linh Hoàng</p>
+                                        </div>
+                                    </td>
+                                    <td><p class="product-cell">Chanel Vintage Suit</p></td>
+                                    <td><p class="date-cell">25/05 - 28/05</p></td>
+                                    <td><span class="status-badge status-pending">Đang xử lý</span></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="customer-cell">
+                                            <div class="customer-initials">PT</div>
+                                            <p class="customer-name">Phúc Trần</p>
+                                        </div>
+                                    </td>
+                                    <td><p class="product-cell">Dior Silk Scarf Accent</p></td>
+                                    <td><p class="date-cell">Available Now</p></td>
+                                    <td><span class="status-badge status-ready">Sẵn sàng</span></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="customer-cell">
+                                            <div class="customer-initials">MN</div>
+                                            <p class="customer-name">Mai Nguyễn</p>
+                                        </div>
+                                    </td>
+                                    <td><p class="product-cell">Velvet Evening Clutch</p></td>
+                                    <td><p class="date-cell">22/05 - 25/05</p></td>
+                                    <td><span class="status-badge status-renting">Đang thuê</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Quick Actions Panel -->
+                <div class="luxury-card quick-actions-panel" style="padding: 1.5rem;">
+                    <h3 class="card-heading">Quick Actions</h3>
+                    <div class="action-buttons-list">
+                        <button class="action-btn">
+                            <span class="material-symbols-outlined action-icon-bg" data-icon="add_circle">add_circle</span>
+                            <div class="action-text">
+                                <p class="action-title">Thêm bộ sưu tập</p>
+                                <p class="action-desc">Upload new luxury curations</p>
+                            </div>
+                        </button>
+                        <button class="action-btn">
+                            <span class="material-symbols-outlined action-icon-bg" data-icon="sync">sync</span>
+                            <div class="action-text">
+                                <p class="action-title">Cập nhật kho</p>
+                                <p class="action-desc">Audit and sync physical stock</p>
+                            </div>
+                        </button>
+                        <button class="action-btn">
+                            <span class="material-symbols-outlined action-icon-bg" data-icon="assessment">assessment</span>
+                            <div class="action-text">
+                                <p class="action-title">Xuất báo cáo</p>
+                                <p class="action-desc">Weekly performance summary</p>
+                            </div>
+                        </button>
+                    </div>
+                    <div class="insight-banner">
+                        <div class="insight-header">
+                            <span class="material-symbols-outlined insight-icon" data-icon="tips_and_updates">tips_and_updates</span>
+                            <p class="insight-title">Insight</p>
+                        </div>
+                        <p class="insight-content">
+                            Rentals for the "Midnight" collection are up by 20% this week. Consider prioritizing restock.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer-style Branding -->
+            <footer class="branding-footer">
+                <p class="footer-copyright">© 2026 ROSETTECLOSET LUXURY ADMINISTRATIVE SUITE</p>
+                <ul class="footer-links">
+                    <li><a href="#">Support</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                </ul>
+            </footer>
+        </div>
+    </main>
+
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Đăng nhập | RosetteCloset</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="../CSS/login.css" />
+</head>
+<body>
+  <div class="hero-background" aria-hidden="true">
+    <div class="hero-overlay"></div>
+    <img
+      src="https://lh3.googleusercontent.com/aida-public/AB6AXuC0FOcnlszYlJaealphFVvuyN-DeEMNr3y_JLhFgDPCUt9lBgQrrSPcGFYWshcRoHbLbroxVT0M7-jybvsZUA2Pi84R49jnAtZYkxrzzKuyJ04BZNnVj7KPruKFNuPRw_q832VYG3pSUhve_13EhKN-a16ooNQJu4F1YiNzh_ShDHIkHXycVMZIs26UWoxMsFvu5mlAYJ-MDjsGGfJVWcRshRDtgj5Wz2JayMJR4045BXdrW3u9-h4TvEuyCLPe8lWN4EZJkjS1Sw"
+      alt=""
+    />
+  </div>
+
+  <main class="login-page">
+    <section class="login-card" aria-labelledby="login-title">
+      <div class="brand-block">
+        <a href="/source/HTML/homepage.html"><h1 id="login-title">RosetteCloset</h1></a>
+        <p>Chào mừng bạn quay trở lại với sự sang trọng.</p>
+      </div>
+
+      <form class="login-form" action="#" method="post">
+        <div class="form-group">
+          <label for="email">ĐỊA CHỈ EMAIL</label>
+          <input id="email" name="email" type="email" placeholder="yourname@luxury.com" />
+        </div>
+
+        <div class="form-group">
+          <div class="field-header">
+            <label for="password">MẬT KHẨU</label>
+            <a href="#">Quên mật khẩu?</a>
+          </div>
+
+          <div class="password-field">
+            <input id="password" name="password" type="password" placeholder="••••••••" />
+            <button class="icon-button" type="button" aria-label="Hiện mật khẩu">
+              <span class="material-symbols-outlined">visibility</span>
+            </button>
+          </div>
+        </div>
+
+        <button class="submit-button" type="submit">
+          <span>ĐĂNG NHẬP</span>
+          <span class="material-symbols-outlined">arrow_forward</span>
+        </button>
+      </form>
+
+      <div class="divider">
+        <span>HOẶC TIẾP TỤC VỚI</span>
+      </div>
+
+      <div class="social-grid">
+        <button class="social-button" type="button">
+          <span class="material-symbols-outlined">public</span>
+          Google
+        </button>
+
+        <button class="social-button" type="button">
+          <span class="material-symbols-outlined">social_leaderboard</span>
+          Facebook
+        </button>
+      </div>
+
+      <p class="signup-text">
+        Chưa có tài khoản?
+        <a href="./signUp.html">Đăng ký ngay</a>
+      </p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>© 2024 RosetteCloset. Tất cả quyền được bảo lưu.</p>
+    <nav aria-label="Liên kết chân trang">
+      <a href="#">Tính bền vững</a>
+      <a href="#">Liên hệ</a>
+      <a href="#">Điều khoản dịch vụ</a>
+    </nav>
+  </footer>
+</body>
+</html>
