@@ -1,0 +1,67 @@
+.footer {
+  padding-top: 100px;
+  background: white;
+  border-top: 1px solid var(--border);
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 1fr;
+  gap: 50px;
+  padding-bottom: 80px;
+}
+
+.footer-logo {
+  font-size: 36px;
+  font-family: 'Outfit', sans-serif;
+  margin-bottom: 20px;
+  color: var(--gold-dark);
+}
+
+.footer-text {
+  color: var(--text-light);
+  line-height: 1.8;
+}
+
+.footer h4 {
+  margin-bottom: 24px;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.footer ul {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.footer a,
+.footer li {
+  color: var(--text-light);
+  transition: var(--transition);
+}
+
+.footer a:hover {
+  color: var(--gold-dark);
+}
+
+.copyright {
+  border-top: 1px solid var(--border);
+  padding: 24px;
+  text-align: center;
+  color: var(--text-light);
+}
+
+/* Responsive styles for Footer */
+@media (max-width: 1100px) {
+  .footer-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .footer-grid {
+    grid-template-columns: 1fr;
+  }
+}
