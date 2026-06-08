@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RosetteCloset</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+
+  <link rel="stylesheet" href="/public/css/user/homepage.css" />
+  <link rel="stylesheet" href="/public/css/layouts/navbar.css" />
+  <link rel="stylesheet" href="/public/css/layouts/footer.css" />
+</head>
+<body>
+  <div id="navbar-placeholder"></div>
+
+
+  <section class="hero-section">
+    <div class="container hero-grid">
+
+      <div class="hero-content fade-up">
+        <span class="hero-badge">Luxury Fashion Rental</span>
+
+        <h1>
+          Khoảnh khắc thanh lịch,<br>
+          <span>Trải nghiệm dễ dàng.</span>
+        </h1>
+
+        <p>
+          Thuê những thiết kế cao cấp cho mọi dịp đặc biệt.
+          Trải nghiệm sự sang trọng của những bộ váy dạ hội
+          hàng đầu mà không cần lo lắng về chi phí sở hữu.
+        </p>
+
+        <div class="hero-buttons">
+          <button class="btn btn-gold" onclick="document.getElementById('danh-muc').scrollIntoView({ behavior: 'smooth' })">
+            Thuê váy ngay
+          </button>
+          <a href="collections.html" class="btn btn-outline">
+            Xem bộ sưu tập
+          </a>
+        </div>
+      </div>
+
+      <div class="hero-image-wrapper fade-in">
+        <div class="hero-image">
+          <img
+          src="/public/images/img1.png"
+            alt="Luxury Dress"
+          >
+        </div>
+
+        <div class="floating-card floating-left glass-card">
+          <span class="material-symbols-outlined">star</span>
+          <div>
+            <h4>500+ mẫu váy</h4>
+            <p>Thiết kế độc quyền</p>
+          </div>
+        </div>
+
+        <div class="floating-card floating-right glass-card">
+          <span class="material-symbols-outlined">local_shipping</span>
+          <div>
+            <h4>Giao nhanh toàn quốc</h4>
+            <p>Nội thành 24h</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="section" id="danh-muc">
+    <div class="container">
+
+      <div class="section-heading">
+        <h2>Danh Mục Nổi Bật</h2>
+        <p>Khám phá những bộ sưu tập thời trang cao cấp cho mọi dịp.</p>
+      </div>
+
+      <div class="category-grid">
+
+        <a href="category-evening.html" class="category-card">
+          <img src="/public/images/img2.png" alt="Dạ tiệc">
+          <div class="category-overlay glass-card">
+            <h3>Dạ tiệc</h3>
+          </div>
+        </a>
+
+        <a href="category-travel.html" class="category-card">
+          <img src="/public/images/img3.png" alt="Du lịch">
+          <div class="category-overlay glass-card">
+            <h3>Du lịch</h3>
+          </div>
+        </a>
+
+        <a href="category-photoshoot.html" class="category-card">
+          <img src="/public/images/img4.png" alt="Chụp hình">
+          <div class="category-overlay glass-card">
+            <h3>Chụp hình</h3>
+          </div>
+        </a>
+
+        <a href="category-aodai.html" class="category-card">
+          <img src="/public/images/img5.png" alt="Áo dài">
+          <div class="category-overlay glass-card">
+            <h3>Áo dài</h3>
+          </div>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-light">
+    <div class="container">
+
+      <div class="section-header">
+        <div>
+          <h2>Thiết Kế Nổi Bật</h2>
+          <div class="title-line"></div>
+        </div>
+
+        <a href="#" class="section-link">
+          Xem tất cả
+          <span class="material-symbols-outlined">arrow_forward</span>
+        </a>
+      </div>
+
+      <div class="product-grid">
+
+        <article class="product-card">
+          <div class="product-image">
+            <img src="/public/images/img1.png" alt="Midnight Glamour">
+            <span class="product-badge">Mới</span>
+          </div>
+
+            <div class="product-content">
+                <div class="product-top">
+                    <h3>Váy nâu kem</h3>
+                    <span class="price">1.200.000đ</span>
+                </div>
+
+                <p>Size: S, M, L | Thuê 3 ngày</p>
+                <div class="product-actions">
+                    <button class="btn btn-gold full-width" onclick="location.href='rentNow.html'">Thuê ngay</button>
+                    <a href="./rentNow.html">
+                        <button class="preview-btn">
+                            <span class="material-symbols-outlined">visibility</span>
+                        </button>
+                    </a>
+                </div>
+            </div>
+        </article>
+
+        <article class="product-card">
+          <div class="product-image">
+            <img src="/public/images/img2.png" alt="Champagne Rose">
+          </div>
+
+          <div class="product-content">
+            <div class="product-top">
+              <h3>Set váy chấm bi</h3>
+              <span class="price">1.500.000đ</span>
+            </div>
+
+            <p>Size: S, M | Thuê 3 ngày</p>
+
+            <div class="product-actions">
+              <button class="btn btn-gold full-width" onclick="location.href='rentNow.html'">Thuê ngay</button>
+
+              <button class="preview-btn">
+                <span class="material-symbols-outlined">visibility</span>
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <article class="product-card">
+          <div class="product-image">
+            <img src="/public/images/img5.png" alt="Royal Crimson">
+          </div>
+
+          <div class="product-content">
+            <div class="product-top">
+              <h3>Áo dài ren hồng</h3>
+              <span class="price">1.800.000đ</span>
+            </div>
+
+            <p>Size: M, L | Thuê 3 ngày</p>
+
+            <div class="product-actions">
+              <button class="btn btn-gold full-width" onclick="location.href='rentNow.html'">Thuê ngay</button>
+
+              <button class="preview-btn">
+                <span class="material-symbols-outlined">visibility</span>
+              </button>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+
+  <div id="footer-placeholder"></div>
+  
+  
+  <script src="/public/js/user/homepage.js"></script>
+</body>
+</html>
