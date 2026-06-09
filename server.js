@@ -7,6 +7,7 @@ const categoryRoutes = require("./routes/categoryRoutes");
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const rentalOrderRoutes = require("./routes/rentalOrderRoutes");
+const cookieParser = require("./middleware/cookieParser");
 
 dotenv.config();
 
@@ -15,6 +16,7 @@ const PORT = process.env.PORT || 5000;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser);
 
 // Serve static assets from public and views directories
 app.use("/public", express.static(path.join(__dirname, "public")));
@@ -45,6 +47,15 @@ app.get("/views/admin/products.html", (req, res) => {
 app.get("/views/layouts/sidebar.html", (req, res) => {
   res.sendFile(path.join(__dirname, "views", "layouts", "sidebar.html"));
 });
+
+app.get("/views/login.html", (req, res) => {
+  res.sendFile(path.join(__dirname, "views", "login.html"));
+});
+
+app.get("/views/signUp.html", (req, res) => {
+  res.sendFile(path.join(__dirname, "views", "signUp.html"));
+});
+
 
 const startServer = async () => {
   await connectDB();

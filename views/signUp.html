@@ -50,6 +50,14 @@
           </div>
 
           <div class="form-group">
+            <label for="address">Địa chỉ</label>
+            <div class="input-wrapper">
+              <input id="address" name="address" type="text" placeholder="Địa chỉ nhận váy" required />
+              <span class="material-symbols-outlined">home</span>
+            </div>
+          </div>
+
+          <div class="form-group">
             <label for="password">Mật Khẩu</label>
             <div class="input-wrapper">
               <input id="password" name="password" type="password" placeholder="••••••••" required />
@@ -91,5 +99,44 @@
       </aside>
     </div>
   </main>
+  <script src="/public/js/apiClient.js"></script>
+  <script>
+    const signupForm = document.querySelector(".signup-form");
+
+    signupForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const submitButton = signupForm.querySelector(".submit-button");
+      submitButton.disabled = true;
+      submitButton.textContent = "Đang tạo tài khoản...";
+
+      const payload = {
+        fullName: document.getElementById("full-name").value.trim(),
+        email: document.getElementById("email").value.trim(),
+        phone: document.getElementById("phone").value.trim(),
+        address: document.getElementById("address").value.trim(),
+        password: document.getElementById("password").value
+      };
+
+      try {
+        const response = await apiFetch("/api/auth/register", {
+          method: "POST",
+          body: JSON.stringify(payload)
+        });
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+          throw new Error(result.message || "Đăng ký thất bại");
+        }
+
+        window.location.href = "/views/user/homepage.html";
+      } catch (error) {
+        alert(error.message);
+      } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = "Tạo Tài Khoản";
+      }
+    });
+  </script>
 </body>
 </html>

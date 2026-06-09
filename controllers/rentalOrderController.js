@@ -3,7 +3,12 @@ const { sendSuccess, sendError } = require("../middleware/response");
 
 const createOrder = async (req, res) => {
   try {
-    const order = await RentalOrder.create(req.body);
+    const orderData = {
+      ...req.body,
+      user: req.user._id
+    };
+
+    const order = await RentalOrder.create(orderData);
     return sendSuccess(res, "Tao don thue thanh cong", order, 201);
   } catch (error) {
     return sendError(res, error.message, 400);
@@ -30,6 +35,13 @@ const getOrderById = async (req, res) => {
 
     if (!order) {
       return sendError(res, "Khong tim thay don thue", 404);
+    }
+
+    const isOwner = order.user._id.toString() === req.user._id.toString();
+    const isAdmin = req.user.role === "admin";
+
+    if (!isAdmin && !isOwner) {
+      return sendError(res, "Ban khong co quyen xem don thue nay", 403);
     }
 
     return sendSuccess(res, "Lay chi tiet don thue thanh cong", order);
@@ -71,4 +83,3 @@ module.exports = {
   getOrderById,
   updateOrderStatus
 };
-
