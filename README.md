@@ -47,6 +47,7 @@ npm install
 ```text
 MONGO_URI=mongodb://127.0.0.1:27017/rosette_closet
 PORT=5000
+JWT_SECRET=thay_bang_chuoi_bi_mat_cua_ban
 ```
 
 3. Chay server:
@@ -73,9 +74,9 @@ Tat ca API tra ve JSON theo mau:
 
 - `GET /api/products`: lay danh sach san pham.
 - `GET /api/products/:id`: lay chi tiet san pham.
-- `POST /api/products`: tao san pham.
-- `PUT /api/products/:id`: cap nhat san pham.
-- `DELETE /api/products/:id`: xoa san pham.
+- `POST /api/products`: tao san pham, yeu cau admin.
+- `PUT /api/products/:id`: cap nhat san pham, yeu cau admin.
+- `DELETE /api/products/:id`: xoa san pham, yeu cau admin.
 
 Vi du body tao san pham:
 
@@ -96,7 +97,7 @@ Vi du body tao san pham:
 ### Category
 
 - `GET /api/categories`: lay danh sach danh muc.
-- `POST /api/categories`: tao danh muc.
+- `POST /api/categories`: tao danh muc, yeu cau admin.
 
 Vi du body tao danh muc:
 
@@ -109,9 +110,12 @@ Vi du body tao danh muc:
 
 ### Auth/User
 
-- `POST /api/auth/register`: dang ky tai khoan.
-- `POST /api/auth/login`: dang nhap.
-- `GET /api/users`: lay danh sach nguoi dung.
+- `POST /api/auth/register`: dang ky tai khoan, tao `accessToken` va `refreshToken` trong cookie.
+- `POST /api/auth/login`: dang nhap, tao `accessToken` va `refreshToken` trong cookie.
+- `POST /api/auth/refresh`: dung `refreshToken` cookie de tao lai `accessToken` cookie.
+- `GET /api/auth/me`: lay user dang dang nhap tu cookie token.
+- `POST /api/auth/logout`: xoa token cookies.
+- `GET /api/users`: lay danh sach nguoi dung, yeu cau admin.
 
 Vi du body dang ky:
 
@@ -121,8 +125,7 @@ Vi du body dang ky:
   "email": "a@example.com",
   "password": "123456",
   "phone": "0912345678",
-  "address": "Ha Noi",
-  "role": "customer"
+  "address": "Ha Noi"
 }
 ```
 
@@ -135,12 +138,25 @@ Vi du body dang nhap:
 }
 ```
 
+Khi goi API bang `fetch`, gui cookie token kem request:
+
+```js
+fetch("/api/orders", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  credentials: "include",
+  body: JSON.stringify(orderData)
+});
+```
+
 ### RentalOrder
 
 - `POST /api/orders`: tao don thue.
-- `GET /api/orders`: lay danh sach don thue.
-- `GET /api/orders/:id`: lay chi tiet don thue.
-- `PUT /api/orders/:id/status`: cap nhat trang thai don.
+- `GET /api/orders`: lay danh sach don thue, yeu cau admin.
+- `GET /api/orders/:id`: lay chi tiet don thue, admin hoac chu don.
+- `PUT /api/orders/:id/status`: cap nhat trang thai don, yeu cau admin.
 
 Vi du body tao don:
 
