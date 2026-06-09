@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Quản lý kho đồ | RosetteCloset Luxury Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    
+    <link rel="stylesheet" href="/public/css/admin/products.css"/>
+</head>
+<body>
+
+    <div id="sidebar-placeholder"></div>
+
+    <main id="main-content">
+        <header class="top-bar">
+            <div class="search-wrapper">
+                <span class="material-symbols-outlined search-icon">search</span>
+                <input class="search-input" placeholder="Tìm kiếm sản phẩm, mã vạch..." type="text"/>
+            </div>
+            
+            <div class="top-bar-right">
+                <div class="top-bar-icons">
+                    <button class="top-bar-btn notification-btn">
+                        <span class="material-symbols-outlined">notifications</span>
+                        <span class="notification-badge"></span>
+                    </button>
+                    <button class="top-bar-btn">
+                        <span class="material-symbols-outlined">settings</span>
+                    </button>
+                </div>
+                <div class="divider"></div>
+                <div class="profile-container">
+                    <div class="profile-info">
+                        <p class="profile-role">Admin</p>
+                        <p class="profile-name">Quản trị viên</p>
+                    </div>
+                    <img alt="Administrator Profile" class="profile-avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtAQ_EdDNlsFXeDRemV3rbB5ZwD4mYKq8FHOkxrFmYGGM1bYTjDYO463UncC5Pg4JIe7VvysCsd-LPTDBhr2zYKCQHLubflor8bd9kqleMJnO5n_Y6h1dhaDDVULlLBS1xjSnYzSXVIueXE9IrU3RA7RWuMAYhSSGNSkG-D8YGxWNt0dpoZh208kKr_VnDclhvJfwbTqUAmZBvqZqBZMFz7_uqIw8IllNwWk84CqUPKsjUO_Me3ZVpxEbt6X0rOlDgf7OnEI-6Sw"/>
+                </div>
+            </div>
+        </header>
+
+        <div class="canvas-container">
+            <div class="page-header">
+                <div>
+                    <h2 class="page-title">Quản lý kho đồ</h2>
+                    <p class="page-subtitle">Giám sát và quản lý trạng thái các bộ sưu tập cao cấp.</p>
+                </div>
+                <button class="btn btn-add">
+                    <span class="material-symbols-outlined">add</span>
+                    Thêm sản phẩm mới
+                </button>
+            </div>
+
+            <div class="stat-grid">
+                <div class="stat-card">
+                    <p class="stat-label">Tổng sản phẩm</p>
+                    <div class="stat-value-group">
+                        <span class="stat-value">1,248</span>
+                        <span class="stat-trend">+12%</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <p class="stat-label">Đang cho thuê</p>
+                    <div class="stat-value-group">
+                        <span class="stat-value">432</span>
+                        <span class="stat-percentage">34.6%</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <p class="stat-label">Đang vệ sinh</p>
+                    <div class="stat-value-group">
+                        <span class="stat-value">56</span>
+                        <span class="stat-warning">Cần xử lý</span>
+                    </div>
+                </div>
+                <div class="stat-card stat-card-ready">
+                    <div class="stat-card-content">
+                        <p class="stat-label">Sẵn sàng</p>
+                        <div class="stat-value-group">
+                            <span class="stat-value">760</span>
+                            <span class="stat-success">Hợp lệ</span>
+                        </div>
+                    </div>
+                    <span class="material-symbols-outlined stat-bg-icon">check_circle</span>
+                </div>
+            </div>
+
+            <div class="filter-bar">
+                <div class="search-filter-wrapper">
+                    <span class="material-symbols-outlined filter-icon">filter_list</span>
+                    <input class="filter-search-input" placeholder="Tìm theo tên sản phẩm..." type="text"/>
+                </div>
+                <select class="filter-select">
+                    <option>Tất cả danh mục</option>
+                    <option>Evening Gown</option>
+                    <option>Wedding</option>
+                    <option>Cocktail</option>
+                </select>
+                <select class="filter-select">
+                    <option>Trạng thái</option>
+                    <option>Available</option>
+                    <option>Rented</option>
+                    <option>Cleaning</option>
+                </select>
+                <select class="filter-select">
+                    <option>Giá thuê</option>
+                    <option>Dưới 2tr</option>
+                    <option>2tr - 5tr</option>
+                    <option>Trên 5tr</option>
+                </select>
+                <button class="btn-refresh">
+                    <span class="material-symbols-outlined">refresh</span>
+                </button>
+            </div>
+
+            <div class="table-card">
+                <div class="table-wrapper">
+                    <table class="products-table">
+                        <thead>
+                            <tr>
+                                <th>SẢN PHẨM</th>
+                                <th>DANH MỤC</th>
+                                <th class="text-center">KÍCH CỠ</th>
+                                <th>GIÁ THUÊ</th>
+                                <th>TRẠNG THÁI</th>
+                                <th class="text-right">THAO TÁC</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="product-cell">
+                                        <div class="product-img-wrapper">
+                                            <img class="product-img" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCtIxSzy4dLT4f1u2pSUGXCP4UjSM44a0rfpETpjBkMIQB1GZLnO8tzVkLlXCRJGX6CA1WzeLeSEi7_qo5bdOcTAkw9mDcpd6StSwSr-ntKfydyrjqq85GCVMtGjV_MUftlzIYL3YKaz1hiSJTbWBWdR8ouudx-RlP80zcHx_KYEBtJCuftn87O6OTzNuZc_boGGxzH1Sio_BM2o51edwUbjY3VFsy6a5VEItIZsY_ngDSp4CW6qZieIXZ4Mj5iNe5QytFVaUUNng" alt="Midnight Glamour"/>
+                                        </div>
+                                        <div class="product-info">
+                                            <p class="product-name">Midnight Glamour</p>
+                                            <p class="product-code">#RC-88021</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><span class="category-tag">Evening Gown</span></td>
+                                <td>
+                                    <div class="size-group">
+                                        <span class="size-tag size-active">S</span>
+                                        <span class="size-tag size-active">M</span>
+                                        <span class="size-tag">L</span>
+                                    </div>
+                                </td>
+                                <td><span class="price-text">3.500.000đ</span></td>
+                                <td>
+                                    <span class="status-badge badge-available">
+                                        <span class="badge-dot"></span>
+                                        Available
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="action-btn-icon" title="Xem chi tiết">
+                                            <span class="material-symbols-outlined">visibility</span>
+                                        </button>
+                                        <button class="action-btn-icon" title="Chỉnh sửa">
+                                            <span class="material-symbols-outlined">edit</span>
+                                        </button>
+                                        <button class="action-btn-icon btn-delete" title="Xóa">
+                                            <span class="material-symbols-outlined">delete</span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="product-cell">
+                                        <div class="product-img-wrapper">
+                                            <img class="product-img" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXfaWybtiqKwORexX_9eiTYzwUDa30bLG0PpSMhm5If-Hw2Td8VI2mMpL9WmWtpaBJrZsDKtwVQ2lkHS34ymDVeLg16qZYMsXl40D6qe8zkENEen3YiqEsf6uQidgSBswKrR-Q06GmY4vgEq_XqcPfAOsgZDBe0YkIIgfo6mc-lWNmqxcAL-lYcV3KfZZ8vVfTbJK1pPAJAbJcS_ehvwUApv4jT3rSsCIt15wMT5AkIWLVlgcCY4ilahtdFGYPS3CNO4YhoQDDZw" alt="Golden Ember"/>
+                                        </div>
+                                        <div class="product-info">
+                                            <p class="product-name">Golden Ember</p>
+                                            <p class="product-code">#RC-88045</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><span class="category-tag">Cocktail</span></td>
+                                <td>
+                                    <div class="size-group">
+                                        <span class="size-tag">S</span>
+                                        <span class="size-tag size-active">M</span>
+                                        <span class="size-tag">L</span>
+                                    </div>
+                                </td>
+                                <td><span class="price-text">2.200.000đ</span></td>
+                                <td>
+                                    <span class="status-badge badge-rented">
+                                        <span class="badge-dot"></span>
+                                        Rented
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="action-btn-icon" title="Xem chi tiết">
+                                            <span class="material-symbols-outlined">visibility</span>
+                                        </button>
+                                        <button class="action-btn-icon" title="Chỉnh sửa">
+                                            <span class="material-symbols-outlined">edit</span>
+                                        </button>
+                                        <button class="action-btn-icon btn-delete" title="Xóa">
+                                            <span class="material-symbols-outlined">delete</span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="product-cell">
+                                        <div class="product-img-wrapper">
+                                            <img class="product-img" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAuJryF6CUNLcV1HbwhOPnSK5Q8yYlUimPpPQbatjJd5yGysUtN77mIRKSLWUKcnxS9TPHD1X_uiDYbvBm0fBMpILqxlfE9Mc8syMsWMJ0TRCGdQraD8n9SL9LyJh-QhEDzKwnTIQWdFO3DLH-NEHTQ13y6NarcvnTdDEY3s0bmz9MtdbDfhr0nfl9vDlrsI_OnyAlQT8zwyoOPIVFzUbHV-tp34at1-iT-DDIO3CvQEjzZP4JR6dPEQrls8GDnFwlEkK6BTUMzpg" alt="Petal Whisper"/>
+                                        </div>
+                                        <div class="product-info">
+                                            <p class="product-name">Petal Whisper</p>
+                                            <p class="product-code">#RC-92011</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><span class="category-tag">Wedding</span></td>
+                                <td>
+                                    <div class="size-group">
+                                        <span class="size-tag size-active">S</span>
+                                        <span class="size-tag size-active">M</span>
+                                        <span class="size-tag size-active">L</span>
+                                    </div>
+                                </td>
+                                <td><span class="price-text">8.900.000đ</span></td>
+                                <td>
+                                    <span class="status-badge badge-cleaning">
+                                        <span class="badge-dot badge-pulse"></span>
+                                        Cleaning
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="action-btn-icon" title="Xem chi tiết">
+                                            <span class="material-symbols-outlined">visibility</span>
+                                        </button>
+                                        <button class="action-btn-icon" title="Chỉnh sửa">
+                                            <span class="material-symbols-outlined">edit</span>
+                                        </button>
+                                        <button class="action-btn-icon btn-delete" title="Xóa">
+                                            <span class="material-symbols-outlined">delete</span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="product-cell">
+                                        <div class="product-img-wrapper">
+                                            <img class="product-img" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8F6Rs9yhEzU0H5oL9L8RZd_2J6eFoT_ny77tHCaIp5iFwZ71_Kitaq5rmXZ-zepPBwrTdGoghCPbHKY7H2Ii2Jpzrve0eEg3mQgRLsruAfPlKo2GncT2VKvyZkSNpoeVuYTjazrQmFCqF2h5MCAO5nOIIGvvoKeC3vCMet-lHCaIWYOClh8NHZHmHKCdT-ZXnpy8rYzPgiezpWfZG3VPSaYoknjpk7VsPD6ec23e92UI0IWnKqlMp4o3g4qox2AW9NUZZnhXLuw" alt="Velvet Noir"/>
+                                        </div>
+                                        <div class="product-info">
+                                            <p class="product-name">Velvet Noir</p>
+                                            <p class="product-code">#RC-88102</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><span class="category-tag">Cocktail</span></td>
+                                <td>
+                                    <div class="size-group">
+                                        <span class="size-tag">S</span>
+                                        <span class="size-tag">M</span>
+                                        <span class="size-tag">L</span>
+                                    </div>
+                                </td>
+                                <td><span class="price-text">1.800.000đ</span></td>
+                                <td>
+                                    <span class="status-badge badge-outofstock">
+                                        <span class="badge-dot"></span>
+                                        Out of Stock
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="action-btn-icon" title="Xem chi tiết">
+                                            <span class="material-symbols-outlined">visibility</span>
+                                        </button>
+                                        <button class="action-btn-icon" title="Chỉnh sửa">
+                                            <span class="material-symbols-outlined">edit</span>
+                                        </button>
+                                        <button class="action-btn-icon btn-delete" title="Xóa">
+                                            <span class="material-symbols-outlined">delete</span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="pagination">
+                    <p class="pagination-text">Đang hiển thị 1 đến 4 trên 1,248 sản phẩm</p>
+                    <div class="pagination-buttons">
+                        <button class="pagination-btn-nav" disabled>
+                            <span class="material-symbols-outlined">chevron_left</span>
+                        </button>
+                        <button class="pagination-btn-num pagination-active">1</button>
+                        <button class="pagination-btn-num">2</button>
+                        <button class="pagination-btn-num">3</button>
+                        <span class="pagination-ellipsis">...</span>
+                        <button class="pagination-btn-num">312</button>
+                        <button class="pagination-btn-nav">
+                            <span class="material-symbols-outlined">chevron_right</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="branding-footer">
+            <p class="footer-copyright">© 2024 RosetteCloset Luxury Inventory System. Bảo mật cấp độ quản trị.</p>
+        </footer>
+    </main>
+
+    <script src="/public/js/admin/products.js"></script>
+</body>
+</html>

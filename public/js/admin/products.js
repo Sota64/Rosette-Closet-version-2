@@ -13,22 +13,25 @@ async function loadLayout(placeholderId, url) {
     }
 }
 
-function initDashboard() {
+function initProductsPage() {
     const sidebar = document.getElementById('main-sidebar');
     const content = document.getElementById('main-content');
     const toggleBtn = document.getElementById('sidebar-toggle');
     const navLinks = document.querySelectorAll('.nav-item');
 
-    // Sidebar Collapse Logic
     if (toggleBtn && sidebar && content) {
         toggleBtn.addEventListener('click', () => {
-            sidebar.classList.toggle('sidebar-collapsed');
-            content.classList.toggle('content-expanded');
+            if (window.innerWidth <= 768) {
+                sidebar.classList.toggle('sidebar-open');
+            } else {
+                sidebar.classList.toggle('sidebar-collapsed');
+                content.classList.toggle('content-expanded');
+            }
             
-            // Change icon based on state
             const icon = toggleBtn.querySelector('.material-symbols-outlined');
             if (icon) {
-                if (sidebar.classList.contains('sidebar-collapsed')) {
+                if (sidebar.classList.contains('sidebar-collapsed') || 
+                    (window.innerWidth <= 768 && !sidebar.classList.contains('sidebar-open'))) {
                     icon.textContent = 'chevron_right';
                 } else {
                     icon.textContent = 'menu';
@@ -37,17 +40,21 @@ function initDashboard() {
         });
     }
 
-    // Navigation Active State Logic
-    navLinks.forEach(link => {
-        link.addEventListener('click', (e) => {
-            navLinks.forEach(l => {
-                l.classList.remove('active');
-            });
-            link.classList.add('active');
+    if (navLinks.length > 1) {
+        navLinks.forEach(link => link.classList.remove('active'));
+        navLinks[1].classList.add('active');
+    }
+
+    const tableRows = document.querySelectorAll('.products-table tbody tr');
+    tableRows.forEach(row => {
+        row.addEventListener('click', (e) => {
+            if (!e.target.closest('button')) {
+                row.classList.toggle('row-selected');
+                console.log('Row clicked:', row.querySelector('.product-name')?.textContent);
+            }
         });
     });
 
-    // Atmospheric fade-in effect on load
     document.body.style.opacity = '0';
     document.body.style.transition = 'opacity 0.8s ease-in-out';
     requestAnimationFrame(() => {
@@ -56,13 +63,10 @@ function initDashboard() {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-    // Nạp sidebar trước
     const loaded = await loadLayout("sidebar-placeholder", "../layouts/sidebar.html");
     if (loaded) {
-        // Khởi tạo các sự kiện của dashboard sau khi sidebar đã được chèn vào DOM
-        initDashboard();
+        initProductsPage();
     } else {
-        // Hỗ trợ fade-in nếu việc load sidebar thất bại
         document.body.style.opacity = '0';
         document.body.style.transition = 'opacity 0.8s ease-in-out';
         requestAnimationFrame(() => {

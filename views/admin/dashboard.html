@@ -7,77 +7,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="/public/css/admin/dashboard.css"/>
-    <script defer src="/public/js/admin/dashboard.js"></script>
 </head>
 <body>
 
-    <!-- Sidebar Navigation -->
-    <aside id="main-sidebar">
-        <div class="logo-container">
-            <div class="logo-text-group">
-                <h1 class="logo-text">RosetteCloset</h1>
-                <p class="logo-sub">Luxury Admin</p>
-                <!-- Minimal mark for collapsed state -->
-                <span class="logo-mark">R</span>
-            </div>
-            <button id="sidebar-toggle" aria-label="Toggle Sidebar">
-                <span class="material-symbols-outlined" data-icon="menu">menu</span>
-            </button>
-        </div>
-        
-        <nav class="sidebar-nav-container">
-            <ul class="sidebar-nav-list">
-                <!-- Dashboard Active -->
-                <li>
-                    <a class="nav-item active" href="#">
-                        <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
-                        <span class="nav-text">Dashboard</span>
-                    </a>
-                </li>
-                <li>
-                    <a class="nav-item" href="#">
-                        <span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
-                        <span class="nav-text">Inventory</span>
-                    </a>
-                </li>
-                <li>
-                    <a class="nav-item" href="#">
-                        <span class="material-symbols-outlined" data-icon="shopping_bag">shopping_bag</span>
-                        <span class="nav-text">Orders</span>
-                    </a>
-                </li>
-                <li>
-                    <a class="nav-item" href="#">
-                        <span class="material-symbols-outlined" data-icon="group">group</span>
-                        <span class="nav-text">Customers</span>
-                    </a>
-                </li>
-                <li>
-                    <a class="nav-item" href="#">
-                        <span class="material-symbols-outlined" data-icon="eco">eco</span>
-                        <span class="nav-text">Sustainability</span>
-                    </a>
-                </li>
-                <li>
-                    <a class="nav-item" href="#">
-                        <span class="material-symbols-outlined" data-icon="settings">settings</span>
-                        <span class="nav-text">Settings</span>
-                    </a>
-                </li>
-            </ul>
-        </nav>
-        
-        <div class="footer-btn-container">
-            <button class="btn-generate-report">
-                <span class="material-symbols-outlined">add_chart</span>
-                <span class="btn-text">Generate Report</span>
-            </button>
-        </div>
-    </aside>
+    <div id="sidebar-placeholder"></div>
 
-    <!-- Main Content Area -->
     <main id="main-content">
-        <!-- Top App Bar -->
         <header class="top-bar">
             <div class="search-wrapper">
                 <span class="material-symbols-outlined search-icon" data-icon="search">search</span>
@@ -97,9 +32,7 @@
             </div>
         </header>
 
-        <!-- Canvas -->
         <div class="canvas-container">
-            <!-- Welcome Header -->
             <div class="welcome-section">
                 <div>
                     <h2 class="welcome-title">Welcome back, Sophia</h2>
@@ -117,9 +50,7 @@
                 </div>
             </div>
 
-            <!-- Analytics Row (Bento Grid Style) -->
             <div class="bento-grid">
-                <!-- Total Revenue -->
                 <div class="luxury-card" style="padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between;">
                     <div>
                         <div class="card-header-row">
@@ -142,7 +73,6 @@
                     </div>
                 </div>
 
-                <!-- Active Rentals -->
                 <div class="luxury-card" style="padding: 1.5rem;">
                     <div class="card-header-row">
                         <span class="card-title">Active Rentals</span>
@@ -155,7 +85,6 @@
                     </div>
                 </div>
 
-                <!-- New Memberships -->
                 <div class="luxury-card" style="padding: 1.5rem;">
                     <div class="card-header-row">
                         <span class="card-title">New Memberships</span>
@@ -170,7 +99,6 @@
                     </ul>
                 </div>
 
-                <!-- Inventory Health -->
                 <div class="luxury-card" style="padding: 1.5rem;">
                     <div class="card-header-row">
                         <span class="card-title">Inventory Health</span>
@@ -188,9 +116,7 @@
                 </div>
             </div>
 
-            <!-- Main Section -->
             <div class="main-sections-grid">
-                <!-- Recent Rentals Table -->
                 <div class="recent-rentals-card luxury-card">
                     <div class="card-header-between">
                         <h3 class="card-heading">Đơn thuê gần đây</h3>
@@ -256,7 +182,6 @@
                     </div>
                 </div>
 
-                <!-- Quick Actions Panel -->
                 <div class="luxury-card quick-actions-panel" style="padding: 1.5rem;">
                     <h3 class="card-heading">Quick Actions</h3>
                     <div class="action-buttons-list">
@@ -294,7 +219,6 @@
                 </div>
             </div>
 
-            <!-- Footer-style Branding -->
             <footer class="branding-footer">
                 <p class="footer-copyright">© 2026 ROSETTECLOSET LUXURY ADMINISTRATIVE SUITE</p>
                 <ul class="footer-links">
@@ -306,5 +230,6 @@
         </div>
     </main>
 
+<script defer src="/public/js/admin/dashboard.js"></script>
 </body>
 </html>
