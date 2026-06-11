@@ -44,6 +44,10 @@ app.get("/views/admin/products.html", (req, res) => {
   res.sendFile(path.join(__dirname, "views", "admin", "products.html"));
 });
 
+app.get("/views/admin/orders.html", (req, res) => {
+  res.sendFile(path.join(__dirname, "views", "admin", "orders.html"));
+});
+
 app.get("/views/layouts/sidebar.html", (req, res) => {
   res.sendFile(path.join(__dirname, "views", "layouts", "sidebar.html"));
 });

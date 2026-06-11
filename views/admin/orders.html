@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Quản lý đơn hàng | RosetteCloset Luxury Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    
+    <link rel="stylesheet" href="/public/css/admin/orders.css"/>
+</head>
+<body>
+
+    <div id="sidebar-placeholder"></div>
+
+    <main id="main-content">
+        <header class="top-bar">
+            <div class="search-wrapper">
+                <span class="material-symbols-outlined search-icon">search</span>
+                <input class="search-input" placeholder="Tìm kiếm đơn hàng, khách hàng..." type="text"/>
+            </div>
+            
+            <div class="top-bar-right">
+                <button class="top-bar-btn" title="Thông báo">
+                    <span class="material-symbols-outlined">notifications</span>
+                    <span class="notification-badge"></span>
+                </button>
+                <button class="top-bar-btn" title="Tin nhắn">
+                    <span class="material-symbols-outlined">mail</span>
+                </button>
+                <div class="divider"></div>
+                <div class="top-bar-user">
+                    <span>Atelier Dashboard</span>
+                    <span class="material-symbols-outlined text-[18px]">account_circle</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="canvas-container">
+            <div class="page-header">
+                <div>
+                    <h2 class="page-title">Quản lý đơn hàng</h2>
+                    <p class="page-subtitle">Theo dõi và vận hành các đơn thuê cao cấp từ khách hàng.</p>
+                </div>
+                <button class="btn btn-add">
+                    <span class="material-symbols-outlined text-sm">add</span>
+                    Tạo đơn hàng mới
+                </button>
+            </div>
+
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <span class="material-symbols-outlined text-primary">list_alt</span>
+                        <span class="kpi-trend trend-up">+12% vs tháng trước</span>
+                    </div>
+                    <h4 class="kpi-title">Tổng đơn hàng</h4>
+                    <p class="kpi-value">1,284</p>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <span class="material-symbols-outlined text-amber">pending</span>
+                        <span class="kpi-trend trend-neutral">8 đơn mới hôm nay</span>
+                    </div>
+                    <h4 class="kpi-title">Đang xử lý</h4>
+                    <p class="kpi-value">42</p>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <span class="material-symbols-outlined text-green">check_circle</span>
+                        <span class="kpi-trend trend-neutral">98.2% tỷ lệ hoàn thành</span>
+                    </div>
+                    <h4 class="kpi-title">Đã hoàn thành</h4>
+                    <p class="kpi-value">1,120</p>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <span class="material-symbols-outlined text-primary">payments</span>
+                        <span class="kpi-trend trend-gold">Mục tiêu đạt 85%</span>
+                    </div>
+                    <h4 class="kpi-title">Doanh thu đơn thuê</h4>
+                    <p class="kpi-value">4.2 tỷ ₫</p>
+                </div>
+            </div>
+
+            <div class="table-card">
+                <div class="table-header-row">
+                    <div class="table-tabs">
+                        <button class="table-tab tab-active">Tất cả</button>
+                        <button class="table-tab">Đang xử lý</button>
+                        <button class="table-tab">Đã giao</button>
+                        <button class="table-tab">Hoàn thành</button>
+                    </div>
+                    <div class="table-actions-group">
+                        <button class="btn-action-outline" title="Lọc">
+                            <span class="material-symbols-outlined">filter_list</span>
+                        </button>
+                        <button class="btn-action-outline" title="Tải xuống">
+                            <span class="material-symbols-outlined">download</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-wrapper">
+                    <table class="orders-table">
+                        <thead>
+                            <tr>
+                                <th>Mã đơn hàng</th>
+                                <th>Khách hàng</th>
+                                <th>Sản phẩm</th>
+                                <th>Số lượng</th>
+                                <th class="text-right">Giá thuê</th>
+                                <th class="text-right">Tiền cọc</th>
+                                <th>Trạng thái</th>
+                                <th class="text-right">Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="font-medium text-primary">#RC-8802</td>
+                                <td>
+                                    <div class="customer-cell">
+                                        <div class="customer-initials">NH</div>
+                                        <div class="customer-info">
+                                            <div class="customer-name">Nguyễn Hà</div>
+                                            <div class="customer-tag">Premium Member</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="product-detail-cell">
+                                        <span>Midnight Glamour</span>
+                                        <div class="product-spec">Size: M | Velvet Black</div>
+                                    </div>
+                                </td>
+                                <td>1</td>
+                                <td class="text-right font-medium">4,500,000 ₫</td>
+                                <td class="text-right">2,000,000 ₫</td>
+                                <td>
+                                    <span class="status-badge badge-processing">Processing</span>
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="action-btn-icon" title="Xem chi tiết">
+                                            <span class="material-symbols-outlined">visibility</span>
+                                        </button>
+                                        <button class="action-btn-icon" title="Cập nhật">
+                                            <span class="material-symbols-outlined">edit_square</span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="font-medium text-primary">#RC-8798</td>
+                                <td>
+                                    <div class="customer-cell">
+                                        <div class="customer-initials">TL</div>
+                                        <div class="customer-info">
+                                            <div class="customer-name">Trần Lan</div>
+                                            <div class="customer-tag">Guest</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="product-detail-cell">
+                                        <span>Golden Ember Gown</span>
+                                        <div class="product-spec">Size: S | Silk Gold</div>
+                                    </div>
+                                </td>
+                                <td>1</td>
+                                <td class="text-right font-medium">6,200,000 ₫</td>
+                                <td class="text-right">3,500,000 ₫</td>
+                                <td>
+                                    <span class="status-badge badge-shipped">Shipped</span>
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="action-btn-icon" title="Xem chi tiết">
+                                            <span class="material-symbols-outlined">visibility</span>
+                                        </button>
+                                        <button class="action-btn-icon" title="Cập nhật">
+                                            <span class="material-symbols-outlined">edit_square</span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="font-medium text-primary">#RC-8790</td>
+                                <td>
+                                    <div class="customer-cell">
+                                        <div class="customer-initials">PA</div>
+                                        <div class="customer-info">
+                                            <div class="customer-name">Phan Anh</div>
+                                            <div class="customer-tag">VIP Member</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="product-detail-cell">
+                                        <span>Crystal Rain Blazer</span>
+                                        <div class="product-spec">Size: L | Embellished Grey</div>
+                                    </div>
+                                </td>
+                                <td>2</td>
+                                <td class="text-right font-medium">8,800,000 ₫</td>
+                                <td class="text-right">5,000,000 ₫</td>
+                                <td>
+                                    <span class="status-badge badge-completed">Completed</span>
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="action-btn-icon" title="Xem chi tiết">
+                                            <span class="material-symbols-outlined">visibility</span>
+                                        </button>
+                                        <button class="action-btn-icon" title="Cập nhật">
+                                            <span class="material-symbols-outlined">edit_square</span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="font-medium text-primary">#RC-8785</td>
+                                <td>
+                                    <div class="customer-cell">
+                                        <div class="customer-initials">LT</div>
+                                        <div class="customer-info">
+                                            <div class="customer-name">Lê Thảo</div>
+                                            <div class="customer-tag">Standard Member</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="product-detail-cell">
+                                        <span>Velvet Rose Evening</span>
+                                        <div class="product-spec">Size: S | Burgundy</div>
+                                    </div>
+                                </td>
+                                <td>1</td>
+                                <td class="text-right font-medium">3,900,000 ₫</td>
+                                <td class="text-right">1,500,000 ₫</td>
+                                <td>
+                                    <span class="status-badge badge-cancelled">Cancelled</span>
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="action-btn-icon" title="Xem chi tiết">
+                                            <span class="material-symbols-outlined">visibility</span>
+                                        </button>
+                                        <button class="action-btn-icon" title="Cập nhật">
+                                            <span class="material-symbols-outlined">edit_square</span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="pagination">
+                    <p class="pagination-text">Hiển thị 4 trong số 1,284 đơn hàng</p>
+                    <div class="pagination-buttons">
+                        <button class="pagination-btn-nav" disabled>
+                            <span class="material-symbols-outlined">chevron_left</span>
+                        </button>
+                        <button class="pagination-btn-num pagination-active">1</button>
+                        <button class="pagination-btn-num">2</button>
+                        <button class="pagination-btn-num">3</button>
+                        <button class="pagination-btn-nav">
+                            <span class="material-symbols-outlined">chevron_right</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="trend-section">
+                <div class="trend-banner table-card">
+                    <img class="trend-img" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDt6swPDy-scfn1De_DNMRLK9TUfHYhBwsFsKs_xKTOEIV4JCgJL2kzbEXKOpiXWfw4JbsSwi1ZfsEeUSmDCPreE8ZcDUY-xap-5EhTRxq6Iy6fTiFnZryjAqaI4KbWgHzp46jKtarPnttSdy0STyeZj_geughgtHfV0FGLzDVHXDFmIjIVUoXAPcqPMymUJKcR-u_DOTzM9x_w4zfxGQ2CXREC9k3mzuTyiT2DWQxMBLFJepyKnaTTxr6nGX4ly0hNJwfXxteWcA" alt="Trend background"/>
+                    <div class="trend-gradient-overlay"></div>
+                    <div class="trend-banner-content">
+                        <h3>Xu hướng tháng này</h3>
+                        <p>Dòng sản phẩm Golden Ember đang dẫn đầu tỷ lệ đơn thuê trong tuần qua tại khu vực phía Nam.</p>
+                    </div>
+                </div>
+                <div class="ai-insights-card">
+                    <span class="material-symbols-outlined ai-icon">auto_awesome</span>
+                    <div class="ai-content">
+                        <h3 class="ai-title">AI Insights</h3>
+                        <p class="ai-desc">Dự kiến nhu cầu thuê sẽ tăng 25% vào tuần lễ Giáng sinh sắp tới.</p>
+                    </div>
+                    <a class="ai-link" href="#">Xem báo cáo chi tiết <span class="material-symbols-outlined">arrow_forward</span></a>
+                </div>
+            </div>
+        </div>
+
+        <footer class="branding-footer">
+            <p class="footer-copyright">© 2026 RosetteCloset Luxury Inventory System. Bảo mật cấp độ quản trị.</p>
+        </footer>
+    </main>
+
+    <script src="/public/js/admin/orders.js"></script>
+</body>
+</html>
