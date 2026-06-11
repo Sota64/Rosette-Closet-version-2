@@ -51,16 +51,20 @@
             </div>
 
             <div class="bento-grid">
-                <div class="luxury-card" style="padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between;">
-                    <div>
-                        <div class="card-header-row">
-                            <span class="card-title">Total Revenue</span>
-                            <span class="text-trend-up">+12.5%</span>
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <div class="kpi-icon-wrapper">
+                            <span class="material-symbols-outlined">payments</span>
                         </div>
-                        <p class="card-value">$142,850.00</p>
+                        <span class="kpi-trend trend-up">
+                            <span class="material-symbols-outlined">trending_up</span>
+                            +12.5%
+                        </span>
                     </div>
-                    <div class="revenue-chart-container">
-                        <svg preserveAspectRatio="none" viewBox="0 0 100 40">
+                    <h4 class="kpi-title">Total Revenue</h4>
+                    <p class="kpi-value">$142,850.00</p>
+                    <div class="revenue-chart-container" style="margin-top: 12px; flex: 1;">
+                        <svg preserveAspectRatio="none" viewBox="0 0 100 40" style="width: 100%; height: 100%;">
                             <path d="M0 35 Q 20 10, 40 30 T 80 15 T 100 5" fill="none" stroke="#D4AF37" stroke-width="2"></path>
                             <path d="M0 35 Q 20 10, 40 30 T 80 15 T 100 5 L 100 40 L 0 40 Z" fill="url(#goldGradient)" opacity="0.1"></path>
                             <defs>
@@ -73,25 +77,31 @@
                     </div>
                 </div>
 
-                <div class="luxury-card" style="padding: 1.5rem;">
-                    <div class="card-header-row">
-                        <span class="card-title">Active Rentals</span>
-                        <span class="material-symbols-outlined text-gold" data-icon="cyclone">cyclone</span>
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <div class="kpi-icon-wrapper secondary">
+                            <span class="material-symbols-outlined">cyclone</span>
+                        </div>
+                        <span class="kpi-trend trend-neutral">68%</span>
                     </div>
-                    <p class="card-value">154</p>
-                    <p class="card-subtitle">24 items due for return today</p>
+                    <h4 class="kpi-title">Active Rentals</h4>
+                    <p class="kpi-value">154</p>
+                    <p class="card-subtitle" style="margin-top: 8px; color: #5f5e5e; font-size: 12px; margin-bottom: 8px;">24 items due for return today</p>
                     <div class="progress-bar-bg">
                         <div class="bg-gold progress-bar-fill" style="width: 68%;"></div>
                     </div>
                 </div>
 
-                <div class="luxury-card" style="padding: 1.5rem;">
-                    <div class="card-header-row">
-                        <span class="card-title">New Memberships</span>
-                        <span class="text-trend-up">+8</span>
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <div class="kpi-icon-wrapper tertiary">
+                            <span class="material-symbols-outlined">group_add</span>
+                        </div>
+                        <span class="kpi-trend trend-up">+8</span>
                     </div>
-                    <p class="card-value">1,208</p>
-                    <ul class="avatar-list">
+                    <h4 class="kpi-title">New Memberships</h4>
+                    <p class="kpi-value">1,208</p>
+                    <ul class="avatar-list" style="margin-top: 12px;">
                         <li><img alt="Member" src="https://lh3.googleusercontent.com/aida-public/AB6AXuABEUwuSMKZEgiVaI9OLs-9LYFiYKIdXW-96QIBraqHyn_le23IwbaEWYwuIcTCtb8J76YWQDMjIaf5X1FRGpL-7yhnRjEQfuOhv1bPMlKvwRc232sBV_KpU8yRODzvJjboWhS1-v8MhKWRhn7WIBQs2IkPze97vo-8Hb6WOMhbKRj9F_tSPkPlowd5VR34W7CBNtn5YNg1-wIouyY3fMKDYkHzpBlUjvpnsQpc4L1VpPvDGWHAWbZBWEQL421cGUyeME6d5XdkVw"/></li>
                         <li><img alt="Member" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDR4rXKgP__t7RMs2OhUR3qYtJ0IhyhIT5Uriv20yibfbvKBM5GnfguZMZSFfTXmwimvMeab7-PGBFZ9tj2U7taFa3OOoc7kNLomjcl_R9CocVQM9HyH00XUQuvbQhxva8ObKRj26fQDwxwf4T7JPBF1_6GsCCKx8UucX3Bw6MAqrZljojMudpW3A6iuw_iRl_yczSNrH3As9Oy4wxWMUKH3CM9ciB0rUloEV-cm_5iIi9X_A4tUYpCGqgKTDXHDXUEuRB6Yx6x-Q"/></li>
                         <li><img alt="Member" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD1liiJjQUYER3Evig1qZsxog7W0w5NsjlliG-J2BLmn_oO-xJ-7A4Lgvs8LoT2vofo_IwARAzFIjh5tDVMq3w6y62eXyk0f-OEE5i06xoZpmeH3EIm9AFxydcPV0rTk6xoh8Yn31y8zq8mSW8T-8rIbssAOMUapRv5b0RIviuBzc2KulTNAuBBEubaaGUUpCPXUDhlqWQ8VECPlEUWL4QxfKXLwkx-fCg-OrjGp42ywV45-b66k4XKZrrzIIt_I5VzIax2j1MoiQ"/></li>
@@ -99,13 +109,16 @@
                     </ul>
                 </div>
 
-                <div class="luxury-card" style="padding: 1.5rem;">
-                    <div class="card-header-row">
-                        <span class="card-title">Inventory Health</span>
-                        <span class="material-symbols-outlined" style="color: #10b981;" data-icon="check_circle">check_circle</span>
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <div class="kpi-icon-wrapper primary-container">
+                            <span class="material-symbols-outlined">check_circle</span>
+                        </div>
+                        <span class="kpi-trend trend-up">98.2%</span>
                     </div>
-                    <p class="card-value">98.2%</p>
-                    <p class="card-subtitle">Excellent condition tracking</p>
+                    <h4 class="kpi-title">Inventory Health</h4>
+                    <p class="kpi-value">98.2%</p>
+                    <p class="card-subtitle" style="margin-top: 8px; color: #5f5e5e; font-size: 12px; margin-bottom: 8px;">Excellent condition tracking</p>
                     <div class="status-segments">
                         <div class="status-segment active"></div>
                         <div class="status-segment active"></div>

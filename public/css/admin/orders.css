@@ -398,70 +398,107 @@ a {
 }
 
 .kpi-card {
-    background-color: #ffffff; 
-    border: 1px solid #d0c5af; 
+    background-color: #ffffff;
+    border: 1px solid #d0c5af;
+    border-radius: 12px;
     padding: 24px;
-    transition: border-color 0.3s ease, transform 0.3s ease;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
 }
 
 .kpi-card:hover {
-    border-color: rgba(115, 92, 0, 0.3);
+    transform: translateY(-4px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+    border-color: rgba(115, 92, 0, 0.5);
 }
 
 .kpi-header {
     display: flex;
     align-items: center;
+    gap: 12px;
     margin-bottom: 16px;
-    gap: 16px;
 }
 
-.kpi-header .material-symbols-outlined {
-    font-size: 24px !important;
-}
-
-.kpi-header .text-primary {
+.kpi-icon-wrapper {
+    width: 40px;
+    height: 40px;
+    background-color: rgba(115, 92, 0, 0.1);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     color: #735c00;
+    flex-shrink: 0;
 }
 
-.kpi-header .text-amber {
-    color: #d97706;
+.kpi-icon-wrapper.secondary {
+    background-color: rgba(226, 223, 222, 0.5);
+    color: #5f5e5e;
 }
 
-.kpi-header .text-green {
-    color: #15803d;
+.kpi-icon-wrapper.tertiary {
+    background-color: rgba(181, 179, 174, 0.2);
+    color: #7f7663;
+}
+
+.kpi-icon-wrapper.primary-container {
+    background-color: rgba(212, 175, 55, 0.2);
+    color: #d4af37;
+}
+
+.kpi-icon-wrapper span {
+    font-size: 20px !important;
 }
 
 .kpi-trend {
-    font-size: 12px;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
     font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
 }
 
 .kpi-trend.trend-up {
-    color: #16a34a;
+    color: #10b981;
 }
 
 .kpi-trend.trend-neutral {
-    color: #4d4635;
+    color: #5f5e5a;
+}
+
+.kpi-trend.trend-global {
+    color: #7f7663;
 }
 
 .kpi-trend.trend-gold {
     color: #735c00;
 }
 
+.kpi-trend.trend-error {
+    color: #ba1a1a;
+}
+
+.kpi-trend span {
+    font-size: 16px !important;
+}
+
 .kpi-title {
     font-family: 'Outfit', sans-serif;
-    font-size: 10px;
-    font-weight: 600;
-    color: #474743; 
+    font-size: 11px;
+    color: #5f5e5e;
     text-transform: uppercase;
     letter-spacing: 0.1em;
+    margin-bottom: 4px;
+    font-weight: 600;
 }
 
 .kpi-value {
     font-family: 'Outfit', sans-serif;
-    font-size: 32px;
+    font-size: 28px;
     color: #1b1c1c;
-    margin-top: 4px;
     font-weight: 600;
 }
 
