@@ -151,7 +151,7 @@
                                         </div>
                                         <div class="product-info">
                                             <p class="product-name">Midnight Glamour</p>
-                                            <p class="product-code">#RC-88021 — Đầm dạ hội lụa satin cao cấp đính pha lê cổ điển</p>
+                                            <p class="product-code">#RC-88021</p>
                                         </div>
                                     </div>
                                 </td>
@@ -194,7 +194,7 @@
                                         </div>
                                         <div class="product-info">
                                             <p class="product-name">Golden Ember</p>
-                                            <p class="product-code">#RC-88045 — Đầm cocktail lấp lánh ôm dáng quyến rũ</p>
+                                            <p class="product-code">#RC-88045</p>
                                         </div>
                                     </div>
                                 </td>
@@ -237,7 +237,7 @@
                                         </div>
                                         <div class="product-info">
                                             <p class="product-name">Petal Whisper</p>
-                                            <p class="product-code">#RC-92011 — Váy cưới xòe ren hoa tay dài thanh lịch</p>
+                                            <p class="product-code">#RC-92011</p>
                                         </div>
                                     </div>
                                 </td>
@@ -280,7 +280,7 @@
                                         </div>
                                         <div class="product-info">
                                             <p class="product-name">Velvet Noir</p>
-                                            <p class="product-code">#RC-88102 — Đầm nhung đen dáng dài quý phái</p>
+                                            <p class="product-code">#RC-88102</p>
                                         </div>
                                     </div>
                                 </td>
@@ -342,6 +342,240 @@
             <p class="footer-copyright">© 2024 RosetteCloset Luxury Inventory System. Bảo mật cấp độ quản trị.</p>
         </footer>
     </main>
+
+    <!-- Modal Thêm Sản phẩm Mới -->
+    <div id="modal-product-add" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Thêm sản phẩm mới</h3>
+                <button class="modal-close" onclick="closeModal('modal-product-add')">&times;</button>
+            </div>
+            <form id="form-product-add" onsubmit="handleProductAdd(event)">
+                <div class="form-group">
+                    <label class="form-label">Tên sản phẩm</label>
+                    <input type="text" class="form-input" required placeholder="Nhập tên sản phẩm..." name="name"/>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Mô tả chi tiết</label>
+                    <textarea class="form-textarea" required placeholder="Nhập mô tả sản phẩm..." name="description"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Danh mục</label>
+                        <select class="form-select" required name="category">
+                            <option value="">Chọn danh mục</option>
+                            <option value="Evening Gown">Evening Gown</option>
+                            <option value="Wedding">Wedding</option>
+                            <option value="Cocktail">Cocktail</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Màu sắc</label>
+                        <input type="text" class="form-input" required placeholder="Ví dụ: Đỏ ruby, Trắng ngọc trai..." name="color"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Kích cỡ (Sizes)</label>
+                    <div class="form-sizes-group">
+                        <input type="checkbox" id="add-size-xs" class="size-checkbox-input" name="sizes" value="XS">
+                        <label for="add-size-xs" class="size-checkbox-label">XS</label>
+                        
+                        <input type="checkbox" id="add-size-s" class="size-checkbox-input" name="sizes" value="S">
+                        <label for="add-size-s" class="size-checkbox-label">S</label>
+                        
+                        <input type="checkbox" id="add-size-m" class="size-checkbox-input" name="sizes" value="M">
+                        <label for="add-size-m" class="size-checkbox-label">M</label>
+                        
+                        <input type="checkbox" id="add-size-l" class="size-checkbox-input" name="sizes" value="L">
+                        <label for="add-size-l" class="size-checkbox-label">L</label>
+                        
+                        <input type="checkbox" id="add-size-xl" class="size-checkbox-input" name="sizes" value="XL">
+                        <label for="add-size-xl" class="size-checkbox-label">XL</label>
+                        
+                        <input type="checkbox" id="add-size-xxl" class="size-checkbox-input" name="sizes" value="XXL">
+                        <label for="add-size-xxl" class="size-checkbox-label">XXL</label>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Giá thuê (VNĐ)</label>
+                        <input type="number" class="form-input" required min="0" placeholder="Ví dụ: 3500000" name="rentalPrice"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tiền đặt cọc (VNĐ)</label>
+                        <input type="number" class="form-input" required min="0" placeholder="Ví dụ: 2000000" name="deposit"/>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Trạng thái</label>
+                        <select class="form-select" name="status">
+                            <option value="available">Available</option>
+                            <option value="rented">Rented</option>
+                            <option value="maintenance">Cleaning</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Ảnh sản phẩm (URL)</label>
+                        <input type="text" class="form-input" placeholder="Nhập link ảnh sản phẩm..." name="image"/>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-modal-cancel" onclick="closeModal('modal-product-add')">Hủy bỏ</button>
+                    <button type="submit" class="btn-modal-confirm">Lưu lại</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Xem Chi tiết Sản phẩm -->
+    <div id="modal-product-detail" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Chi tiết sản phẩm</h3>
+                <button class="modal-close" onclick="closeModal('modal-product-detail')">&times;</button>
+            </div>
+            <div class="detail-grid">
+                <div class="detail-img-preview">
+                    <img id="detail-product-img" class="detail-img" src="" alt="Ảnh sản phẩm"/>
+                </div>
+                
+                <span class="detail-label">Tên sản phẩm:</span>
+                <span id="detail-product-name" class="detail-value" style="font-weight: bold; font-size: 16px;">Midnight Glamour</span>
+                
+                <span class="detail-label">Mã sản phẩm:</span>
+                <span id="detail-product-code" class="detail-value" style="font-family: monospace;">#RC-88021</span>
+                
+                <span class="detail-label">Danh mục:</span>
+                <span id="detail-product-category" class="detail-value">Evening Gown</span>
+                
+                <span class="detail-label">Màu sắc:</span>
+                <span id="detail-product-color" class="detail-value">Đen huyền bí</span>
+                
+                <span class="detail-label">Kích cỡ sẵn có:</span>
+                <span id="detail-product-sizes" class="detail-value">S, M</span>
+                
+                <span class="detail-label">Giá thuê:</span>
+                <span id="detail-product-price" class="detail-value" style="color: #735c00; font-weight: 600;">3.500.000đ</span>
+                
+                <span class="detail-label">Tiền đặt cọc:</span>
+                <span id="detail-product-deposit" class="detail-value">2.000.000đ</span>
+                
+                <span class="detail-label">Trạng thái:</span>
+                <span id="detail-product-status" class="detail-value">Available</span>
+                
+                <span class="detail-label">Mô tả sản phẩm:</span>
+                <span id="detail-product-description" class="detail-value description">Đầm dạ hội lụa satin cao cấp thiết kế sang trọng pha chút cổ điển, đính pha lê lấp lánh phần ngực giúp tôn dáng và toát lên vẻ quý phái.</span>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-modal-cancel" onclick="closeModal('modal-product-detail')" style="width: 100%;">Đóng cửa sổ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Chỉnh sửa Sản phẩm -->
+    <div id="modal-product-edit" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Chỉnh sửa sản phẩm</h3>
+                <button class="modal-close" onclick="closeModal('modal-product-edit')">&times;</button>
+            </div>
+            <form id="form-product-edit" onsubmit="handleProductEdit(event)">
+                <input type="hidden" id="edit-product-id" name="id"/>
+                <div class="form-group">
+                    <label class="form-label">Tên sản phẩm</label>
+                    <input type="text" id="edit-product-name" class="form-input" required placeholder="Nhập tên sản phẩm..." name="name"/>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Mô tả chi tiết</label>
+                    <textarea id="edit-product-description" class="form-textarea" required placeholder="Nhập mô tả sản phẩm..." name="description"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Danh mục</label>
+                        <select id="edit-product-category" class="form-select" required name="category">
+                            <option value="">Chọn danh mục</option>
+                            <option value="Evening Gown">Evening Gown</option>
+                            <option value="Wedding">Wedding</option>
+                            <option value="Cocktail">Cocktail</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Màu sắc</label>
+                        <input type="text" id="edit-product-color" class="form-input" required placeholder="Ví dụ: Đỏ ruby, Trắng ngọc trai..." name="color"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Kích cỡ (Sizes)</label>
+                    <div class="form-sizes-group">
+                        <input type="checkbox" id="edit-size-xs" class="size-checkbox-input" name="sizes" value="XS">
+                        <label for="edit-size-xs" class="size-checkbox-label">XS</label>
+                        
+                        <input type="checkbox" id="edit-size-s" class="size-checkbox-input" name="sizes" value="S">
+                        <label for="edit-size-s" class="size-checkbox-label">S</label>
+                        
+                        <input type="checkbox" id="edit-size-m" class="size-checkbox-input" name="sizes" value="M">
+                        <label for="edit-size-m" class="size-checkbox-label">M</label>
+                        
+                        <input type="checkbox" id="edit-size-l" class="size-checkbox-input" name="sizes" value="L">
+                        <label for="edit-size-l" class="size-checkbox-label">L</label>
+                        
+                        <input type="checkbox" id="edit-size-xl" class="size-checkbox-input" name="sizes" value="XL">
+                        <label for="edit-size-xl" class="size-checkbox-label">XL</label>
+                        
+                        <input type="checkbox" id="edit-size-xxl" class="size-checkbox-input" name="sizes" value="XXL">
+                        <label for="edit-size-xxl" class="size-checkbox-label">XXL</label>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Giá thuê (VNĐ)</label>
+                        <input type="number" id="edit-product-price" class="form-input" required min="0" placeholder="Ví dụ: 3500000" name="rentalPrice"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tiền đặt cọc (VNĐ)</label>
+                        <input type="number" id="edit-product-deposit" class="form-input" required min="0" placeholder="Ví dụ: 2000000" name="deposit"/>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Trạng thái</label>
+                        <select id="edit-product-status" class="form-select" name="status">
+                            <option value="available">Available</option>
+                            <option value="rented">Rented</option>
+                            <option value="maintenance">Cleaning</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Ảnh sản phẩm (URL)</label>
+                        <input type="text" id="edit-product-image" class="form-input" placeholder="Nhập link ảnh sản phẩm..." name="image"/>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-modal-cancel" onclick="closeModal('modal-product-edit')">Hủy bỏ</button>
+                    <button type="submit" class="btn-modal-confirm">Cập nhật</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Xác nhận Xóa Sản phẩm -->
+    <div id="modal-product-delete" class="modal">
+        <div class="modal-content modal-sm">
+            <div class="modal-header">
+                <h3 class="modal-title" style="color: #ba1a1a;">Xác nhận xóa</h3>
+                <button class="modal-close" onclick="closeModal('modal-product-delete')">&times;</button>
+            </div>
+            <div style="font-family: 'Inter', sans-serif; font-size: 14px; color: #1c1b1b; line-height: 1.6; margin-bottom: 20px;">
+                Bạn có chắc chắn muốn xóa sản phẩm <span id="delete-product-name" style="font-weight: bold;"></span>? Hành động này sẽ không thể khôi phục lại.
+            </div>
+            <input type="hidden" id="delete-product-id"/>
+            <div class="modal-actions">
+                <button type="button" class="btn-modal-cancel" onclick="closeModal('modal-product-delete')">Hủy</button>
+                <button type="button" class="btn-modal-delete" onclick="confirmProductDelete()">Xác nhận xóa</button>
+            </div>
+        </div>
+    </div>
 
     <script src="/public/js/admin/products.js"></script>
 </body>
