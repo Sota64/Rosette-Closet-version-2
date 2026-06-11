@@ -53,37 +53,49 @@
                 </button>
             </div>
 
-            <div class="stat-grid">
-                <div class="stat-card">
-                    <p class="stat-label">Tổng sản phẩm</p>
-                    <div class="stat-value-group">
-                        <span class="stat-value">1,248</span>
-                        <span class="stat-trend">+12%</span>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <p class="stat-label">Đang cho thuê</p>
-                    <div class="stat-value-group">
-                        <span class="stat-value">432</span>
-                        <span class="stat-percentage">34.6%</span>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <p class="stat-label">Đang vệ sinh</p>
-                    <div class="stat-value-group">
-                        <span class="stat-value">56</span>
-                        <span class="stat-warning">Cần xử lý</span>
-                    </div>
-                </div>
-                <div class="stat-card stat-card-ready">
-                    <div class="stat-card-content">
-                        <p class="stat-label">Sẵn sàng</p>
-                        <div class="stat-value-group">
-                            <span class="stat-value">760</span>
-                            <span class="stat-success">Hợp lệ</span>
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <div class="kpi-icon-wrapper">
+                            <span class="material-symbols-outlined">inventory_2</span>
                         </div>
+                        <span class="kpi-trend trend-up">
+                            <span class="material-symbols-outlined">trending_up</span>
+                            +12%
+                        </span>
                     </div>
-                    <span class="material-symbols-outlined stat-bg-icon">check_circle</span>
+                    <h4 class="kpi-title">Tổng sản phẩm</h4>
+                    <p class="kpi-value">1,248</p>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <div class="kpi-icon-wrapper secondary">
+                            <span class="material-symbols-outlined">shopping_bag</span>
+                        </div>
+                        <span class="kpi-trend trend-neutral">34.6%</span>
+                    </div>
+                    <h4 class="kpi-title">Đang cho thuê</h4>
+                    <p class="kpi-value">432</p>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <div class="kpi-icon-wrapper tertiary">
+                            <span class="material-symbols-outlined">dry_cleaning</span>
+                        </div>
+                        <span class="kpi-trend trend-error">Cần xử lý</span>
+                    </div>
+                    <h4 class="kpi-title">Đang vệ sinh</h4>
+                    <p class="kpi-value">56</p>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <div class="kpi-icon-wrapper primary-container">
+                            <span class="material-symbols-outlined">check_circle</span>
+                        </div>
+                        <span class="kpi-trend trend-up">Hợp lệ</span>
+                    </div>
+                    <h4 class="kpi-title">Sẵn sàng</h4>
+                    <p class="kpi-value">760</p>
                 </div>
             </div>
 
@@ -122,8 +134,10 @@
                             <tr>
                                 <th>SẢN PHẨM</th>
                                 <th>DANH MỤC</th>
+                                <th>MÀU SẮC</th>
                                 <th class="text-center">KÍCH CỠ</th>
                                 <th>GIÁ THUÊ</th>
+                                <th>TIỀN CỌC</th>
                                 <th>TRẠNG THÁI</th>
                                 <th class="text-right">THAO TÁC</th>
                             </tr>
@@ -137,11 +151,12 @@
                                         </div>
                                         <div class="product-info">
                                             <p class="product-name">Midnight Glamour</p>
-                                            <p class="product-code">#RC-88021</p>
+                                            <p class="product-code">#RC-88021 — Đầm dạ hội lụa satin cao cấp đính pha lê cổ điển</p>
                                         </div>
                                     </div>
                                 </td>
                                 <td><span class="category-tag">Evening Gown</span></td>
+                                <td><span class="color-text" style="color: #4d4635;">Đen huyền bí</span></td>
                                 <td>
                                     <div class="size-group">
                                         <span class="size-tag size-active">S</span>
@@ -150,6 +165,7 @@
                                     </div>
                                 </td>
                                 <td><span class="price-text">3.500.000đ</span></td>
+                                <td><span class="price-text" style="font-weight: normal; color: #5f5e5e;">2.000.000đ</span></td>
                                 <td>
                                     <span class="status-badge badge-available">
                                         <span class="badge-dot"></span>
@@ -178,11 +194,12 @@
                                         </div>
                                         <div class="product-info">
                                             <p class="product-name">Golden Ember</p>
-                                            <p class="product-code">#RC-88045</p>
+                                            <p class="product-code">#RC-88045 — Đầm cocktail lấp lánh ôm dáng quyến rũ</p>
                                         </div>
                                     </div>
                                 </td>
                                 <td><span class="category-tag">Cocktail</span></td>
+                                <td><span class="color-text" style="color: #4d4635;">Vàng ánh kim</span></td>
                                 <td>
                                     <div class="size-group">
                                         <span class="size-tag">S</span>
@@ -191,6 +208,7 @@
                                     </div>
                                 </td>
                                 <td><span class="price-text">2.200.000đ</span></td>
+                                <td><span class="price-text" style="font-weight: normal; color: #5f5e5e;">1.000.000đ</span></td>
                                 <td>
                                     <span class="status-badge badge-rented">
                                         <span class="badge-dot"></span>
@@ -219,11 +237,12 @@
                                         </div>
                                         <div class="product-info">
                                             <p class="product-name">Petal Whisper</p>
-                                            <p class="product-code">#RC-92011</p>
+                                            <p class="product-code">#RC-92011 — Váy cưới xòe ren hoa tay dài thanh lịch</p>
                                         </div>
                                     </div>
                                 </td>
                                 <td><span class="category-tag">Wedding</span></td>
+                                <td><span class="color-text" style="color: #4d4635;">Trắng tinh khôi</span></td>
                                 <td>
                                     <div class="size-group">
                                         <span class="size-tag size-active">S</span>
@@ -232,6 +251,7 @@
                                     </div>
                                 </td>
                                 <td><span class="price-text">8.900.000đ</span></td>
+                                <td><span class="price-text" style="font-weight: normal; color: #5f5e5e;">5.000.000đ</span></td>
                                 <td>
                                     <span class="status-badge badge-cleaning">
                                         <span class="badge-dot badge-pulse"></span>
@@ -260,11 +280,12 @@
                                         </div>
                                         <div class="product-info">
                                             <p class="product-name">Velvet Noir</p>
-                                            <p class="product-code">#RC-88102</p>
+                                            <p class="product-code">#RC-88102 — Đầm nhung đen dáng dài quý phái</p>
                                         </div>
                                     </div>
                                 </td>
                                 <td><span class="category-tag">Cocktail</span></td>
+                                <td><span class="color-text" style="color: #4d4635;">Đen nhung</span></td>
                                 <td>
                                     <div class="size-group">
                                         <span class="size-tag">S</span>
@@ -273,6 +294,7 @@
                                     </div>
                                 </td>
                                 <td><span class="price-text">1.800.000đ</span></td>
+                                <td><span class="price-text" style="font-weight: normal; color: #5f5e5e;">800.000đ</span></td>
                                 <td>
                                     <span class="status-badge badge-outofstock">
                                         <span class="badge-dot"></span>

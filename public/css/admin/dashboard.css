@@ -875,3 +875,110 @@ html.dark .top-bar {
         grid-column: span 2 / span 2;
     }
 }
+
+/* --- Unified KPI/Summary Cards --- */
+.kpi-card {
+    background-color: #ffffff;
+    border: 1px solid #d0c5af;
+    border-radius: 12px;
+    padding: 24px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+}
+
+.kpi-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+    border-color: rgba(115, 92, 0, 0.5);
+}
+
+.kpi-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.kpi-icon-wrapper {
+    width: 40px;
+    height: 40px;
+    background-color: rgba(115, 92, 0, 0.1);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #735c00;
+    flex-shrink: 0;
+}
+
+.kpi-icon-wrapper.secondary {
+    background-color: rgba(226, 223, 222, 0.5);
+    color: #5f5e5e;
+}
+
+.kpi-icon-wrapper.tertiary {
+    background-color: rgba(181, 179, 174, 0.2);
+    color: #7f7663;
+}
+
+.kpi-icon-wrapper.primary-container {
+    background-color: rgba(212, 175, 55, 0.2);
+    color: #d4af37;
+}
+
+.kpi-icon-wrapper span {
+    font-size: 20px !important;
+}
+
+.kpi-trend {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.kpi-trend.trend-up {
+    color: #10b981;
+}
+
+.kpi-trend.trend-neutral {
+    color: #5f5e5a;
+}
+
+.kpi-trend.trend-global {
+    color: #7f7663;
+}
+
+.kpi-trend.trend-gold {
+    color: #735c00;
+}
+
+.kpi-trend.trend-error {
+    color: #ba1a1a;
+}
+
+.kpi-trend span {
+    font-size: 16px !important;
+}
+
+.kpi-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 11px;
+    color: #5f5e5e;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 4px;
+    font-weight: 600;
+}
+
+.kpi-value {
+    font-family: 'Outfit', sans-serif;
+    font-size: 28px;
+    color: #1b1c1c;
+    font-weight: 600;
+}
+
