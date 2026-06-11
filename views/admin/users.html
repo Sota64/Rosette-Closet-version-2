@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Quản lý người dùng | RosetteCloset Luxury Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    
+    <link rel="stylesheet" href="/public/css/admin/users.css"/>
+</head>
+<body>
+
+    <div id="sidebar-placeholder"></div>
+
+    <main id="main-content">
+        <header class="top-bar">
+            <div class="search-wrapper">
+                <span class="material-symbols-outlined search-icon">search</span>
+                <input class="search-input" placeholder="Tìm kiếm người dùng, email hoặc mã số..." type="text"/>
+            </div>
+            
+            <div class="top-bar-right">
+                <button class="top-bar-btn" title="Thông báo">
+                    <span class="material-symbols-outlined">notifications</span>
+                    <span class="notification-badge"></span>
+                </button>
+                <button class="top-bar-btn" title="Hướng dẫn">
+                    <span class="material-symbols-outlined">help_outline</span>
+                </button>
+                <div class="divider"></div>
+                <div class="top-bar-title">Quản lý người dùng</div>
+            </div>
+        </header>
+
+        <div class="canvas-container">
+            <div class="page-header">
+                <div>
+                    <h2 class="page-title">Danh Sách Người Dùng</h2>
+                    <p class="page-subtitle">Quản lý tài khoản khách hàng và nhân viên hệ thống.</p>
+                </div>
+                <button class="btn btn-add">
+                    <span class="material-symbols-outlined">person_add</span>
+                    Thêm Người Dùng Mới
+                </button>
+            </div>
+
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-trend trend-up">
+                            <span class="material-symbols-outlined">trending_up</span>
+                            +5.2%
+                        </span>
+                        <div class="kpi-icon-wrapper">
+                            <span class="material-symbols-outlined">group</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="kpi-title">Tổng Người Dùng</h4>
+                        <p class="kpi-value">12,842</p>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-trend trend-neutral">68% Hoạt động</span>
+                        <div class="kpi-icon-wrapper secondary">
+                            <span class="material-symbols-outlined">how_to_reg</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="kpi-title">Khách Hàng Hoạt Động</h4>
+                        <p class="kpi-value">8,910</p>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-trend trend-global">Global</span>
+                        <div class="kpi-icon-wrapper tertiary">
+                            <span class="material-symbols-outlined">shield_person</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="kpi-title">Quản Trị Viên</h4>
+                        <p class="kpi-value">24</p>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-trend trend-up">
+                            <span class="material-symbols-outlined">bolt</span>
+                            86%
+                        </span>
+                        <div class="kpi-icon-wrapper primary-container">
+                            <span class="material-symbols-outlined">person_celebrate</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="kpi-title">Đăng Ký Mới</h4>
+                        <p class="kpi-value">432</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="filter-bar">
+                <div class="filter-left">
+                    <div class="filter-group">
+                        <label class="filter-label">Vai Trò:</label>
+                        <select class="filter-select">
+                            <option>Tất cả</option>
+                            <option>Admin</option>
+                            <option>Khách hàng</option>
+                        </select>
+                    </div>
+                    <div class="filter-divider"></div>
+                    <div class="filter-group">
+                        <label class="filter-label">Trạng Thái:</label>
+                        <select class="filter-select">
+                            <option>Tất cả</option>
+                            <option>Đang hoạt động</option>
+                            <option>Ngừng hoạt động</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-right">
+                    <button class="filter-btn">
+                        <span class="material-symbols-outlined">filter_list</span>
+                        Lọc Nâng Cao
+                    </button>
+                    <button class="filter-btn">
+                        <span class="material-symbols-outlined">download</span>
+                        Xuất Dữ Liệu
+                    </button>
+                </div>
+            </div>
+
+            <div class="table-card">
+                <div class="table-wrapper custom-scrollbar">
+                    <table class="users-table">
+                        <thead>
+                            <tr>
+                                <th>Họ và Tên</th>
+                                <th>Email</th>
+                                <th>Điện thoại</th>
+                                <th>Vai trò</th>
+                                <th>Trạng thái</th>
+                                <th style="text-align: right;">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="user-cell">
+                                        <div class="user-avatar-wrapper">
+                                            <img alt="User Profile" class="user-avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxwQyGdZtHJ8q5XtE6MxnlhEMvuynmmK0OBun7JufVFVbA5KmoAL-BV9lPZg72P0z6tfKM9lnfiDhmXDEP36GQz7jYV7vXReMpboEgvc2RSPqZJlL5XXzk4jAVyHTrkwKTUCdfY-2NAewNKc_hmgModI5H8ABMalaUsRutxpfcKOYJYRJkRKuYVxKZupt_crVCAJbPRpbC2fQ1EtGAUUnkrij1DklJjak-tN2gcCtED6-0l9mkHXS3SjYvxiAeYHNov4cWoYnZzg"/>
+                                        </div>
+                                        <span class="user-name">Nguyễn Phương Anh</span>
+                                    </div>
+                                </td>
+                                <td class="user-email">phuonganh.n@gmail.com</td>
+                                <td class="user-phone">090 123 4567</td>
+                                <td>
+                                    <span class="role-badge admin">Admin</span>
+                                </td>
+                                <td>
+                                    <div class="status-wrapper">
+                                        <div class="status-dot active"></div>
+                                        <span class="status-text active">Đang hoạt động</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="action-btn-icon" title="Chi tiết">
+                                            <span class="material-symbols-outlined">visibility</span>
+                                        </button>
+                                        <button class="action-btn-icon" title="Sửa">
+                                            <span class="material-symbols-outlined">edit</span>
+                                        </button>
+                                        <button class="action-btn-icon delete" title="Xóa">
+                                            <span class="material-symbols-outlined">delete</span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="user-cell">
+                                        <div class="user-avatar-wrapper">
+                                            <img alt="User Profile" class="user-avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZJnJRiBUHa_9zWdGxha27cSdvy4VIaaEg6POis-DzkJ4eBQIyqS8uaQB7BEOM0EDnBrR8EH3GweHQVNYTkUrzXLJkDHmLsyQjTkUfZMeJKp3Hqk2DbrKU1-AVJnphePmeq9m8YLdApxd9-nc5Az4iCHCBLuf1e5uvLrLD5QphnLrW1gGGaaZ2m4Cxaa3M4OJmaQIT2HRP38ARyV2JOFqIR7Nl6hH_mmRDXZgbG1YMJX7rWjCokGV8ApzqM6bD30GiKrMuhmOHHQ"/>
+                                        </div>
+                                        <span class="user-name">Trần Minh Hoàng</span>
+                                    </div>
+                                </td>
+                                <td class="user-email">hoang.tm@rosettecloset.vn</td>
+                                <td class="user-phone">091 987 6543</td>
+                                <td>
+                                    <span class="role-badge customer">Customer</span>
+                                </td>
+                                <td>
+                                    <div class="status-wrapper">
+                                        <div class="status-dot active"></div>
+                                        <span class="status-text active">Đang hoạt động</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="action-btn-icon" title="Chi tiết">
+                                            <span class="material-symbols-outlined">visibility</span>
+                                        </button>
+                                        <button class="action-btn-icon" title="Sửa">
+                                            <span class="material-symbols-outlined">edit</span>
+                                        </button>
+                                        <button class="action-btn-icon delete" title="Xóa">
+                                            <span class="material-symbols-outlined">delete</span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="user-cell">
+                                        <div class="user-avatar-wrapper">
+                                            <img alt="User Profile" class="user-avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDUkziZ8uqN43jPVCYCXcFmAvU895_71chUuTF7WA3aabY5P-bYZ706UFFNnDax5a257pTmJXyWXPDkyNuzziRc6YAYIbnt9qvp0JyWhRG_Yx8p5bYqbnNs7iBiVz1Thotef_NLW0XKISlMiFEyDLobNc3v02dQsSP3_eHsL-nIzCcght_EKR3ag-6kwxOcg47QBWosR8YGAVnpD7miePMTNE_2h61QmIbGiJwzkg455iJ6cySzQnPXftAa95rM7ltYtHC-hdoQPQ"/>
+                                        </div>
+                                        <span class="user-name">Lê Thu Trang</span>
+                                    </div>
+                                </td>
+                                <td class="user-email">trang.le@outlook.com</td>
+                                <td class="user-phone">098 555 0123</td>
+                                <td>
+                                    <span class="role-badge customer">Customer</span>
+                                </td>
+                                <td>
+                                    <div class="status-wrapper">
+                                        <div class="status-dot inactive"></div>
+                                        <span class="status-text inactive">Vô hiệu hóa</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="action-btn-icon" title="Chi tiết">
+                                            <span class="material-symbols-outlined">visibility</span>
+                                        </button>
+                                        <button class="action-btn-icon" title="Sửa">
+                                            <span class="material-symbols-outlined">edit</span>
+                                        </button>
+                                        <button class="action-btn-icon delete" title="Xóa">
+                                            <span class="material-symbols-outlined">delete</span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="user-cell">
+                                        <div class="user-avatar-wrapper">
+                                            <img alt="User Profile" class="user-avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC0qdITJ_3cJHGkxbMZ13kDJYSHiq_rWmuAPhZLZPjwI01CWJT54u4hklH_xr8tuuYQvM5fY9CxSbEk7r9xLfoHkvc8khk0K8mYbzwpWIp1iOZkCgLezVP3aSNB4rMtIfEJ690n4OObY_UF1ha4KRNOq7o8y-JccUkaQardKlpcHt3JwCl3t4hkI5oaKsEY_EKYfj3gBx7bPNTe_lL6_yl_1XmDLdL1havmt4CtCf2Kuds1wPwy_HHJaUuCxSrLGwwIS2sD_kupiw"/>
+                                        </div>
+                                        <span class="user-name">Vũ Đức Duy</span>
+                                    </div>
+                                </td>
+                                <td class="user-email">duy.vu@rosettecloset.vn</td>
+                                <td class="user-phone">097 444 8899</td>
+                                <td>
+                                    <span class="role-badge admin">Admin</span>
+                                </td>
+                                <td>
+                                    <div class="status-wrapper">
+                                        <div class="status-dot active"></div>
+                                        <span class="status-text active">Đang hoạt động</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="action-btn-icon" title="Chi tiết">
+                                            <span class="material-symbols-outlined">visibility</span>
+                                        </button>
+                                        <button class="action-btn-icon" title="Sửa">
+                                            <span class="material-symbols-outlined">edit</span>
+                                        </button>
+                                        <button class="action-btn-icon delete" title="Xóa">
+                                            <span class="material-symbols-outlined">delete</span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="pagination">
+                    <p class="pagination-text">Đang hiển thị 1 đến 4 trong số 12,842 người dùng</p>
+                    <div class="pagination-buttons">
+                        <button class="pagination-btn-nav">
+                            <span class="material-symbols-outlined">chevron_left</span>
+                        </button>
+                        <button class="pagination-btn-num pagination-active">1</button>
+                        <button class="pagination-btn-num">2</button>
+                        <button class="pagination-btn-num">3</button>
+                        <span class="pagination-ellipsis">...</span>
+                        <button class="pagination-btn-num">320</button>
+                        <button class="pagination-btn-nav">
+                            <span class="material-symbols-outlined">chevron_right</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="branding-footer">
+            <p class="footer-copyright">© 2026 RosetteCloset Luxury Inventory System. Bảo mật cấp độ quản trị.</p>
+        </footer>
+    </main>
+
+    <button class="fab-support" title="Hỗ trợ">
+        <span class="material-symbols-outlined">support_agent</span>
+    </button>
+
+    <script src="/public/js/admin/users.js"></script>
+</body>
+</html>

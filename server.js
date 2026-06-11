@@ -18,7 +18,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser);
 
-// Serve static assets from public and views directories
 app.use("/public", express.static(path.join(__dirname, "public")));
 app.use("/views", express.static(path.join(__dirname, "views")));
 
@@ -46,6 +45,10 @@ app.get("/views/admin/products.html", (req, res) => {
 
 app.get("/views/admin/orders.html", (req, res) => {
   res.sendFile(path.join(__dirname, "views", "admin", "orders.html"));
+});
+
+app.get("/views/admin/users.html", (req, res) => {
+  res.sendFile(path.join(__dirname, "views", "admin", "users.html"));
 });
 
 app.get("/views/layouts/sidebar.html", (req, res) => {
