@@ -194,12 +194,31 @@ async function loadProducts() {
 
 function renderStats(stats = {}) {
     const values = document.querySelectorAll(".kpi-value");
+    const growthTrend = document.querySelector('[data-stat="product-growth"]');
+    const rentedPercent = document.querySelector('[data-stat="rented-percent"]');
     if (values.length < 4) return;
 
     values[0].textContent = stats.total ?? 0;
     values[1].textContent = stats.rented ?? 0;
     values[2].textContent = stats.maintenance ?? 0;
     values[3].textContent = stats.available ?? 0;
+
+    if (growthTrend) {
+        const growth = Number(stats.growthPercent || 0);
+        const icon = growth > 0 ? "trending_up" : growth < 0 ? "trending_down" : "remove";
+        const sign = growth > 0 ? "+" : "";
+
+        growthTrend.classList.remove("trend-up", "trend-down", "trend-neutral");
+        growthTrend.classList.add(growth > 0 ? "trend-up" : growth < 0 ? "trend-down" : "trend-neutral");
+        growthTrend.innerHTML = `
+            <span class="material-symbols-outlined">${icon}</span>
+            ${sign}${growth.toFixed(1)}%
+        `;
+    }
+
+    if (rentedPercent) {
+        rentedPercent.textContent = `${Number(stats.rentedPercent || 0).toFixed(1)}%`;
+    }
 }
 
 function renderProductsTable() {

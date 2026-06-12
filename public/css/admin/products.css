@@ -489,6 +489,10 @@ a {
     color: #5f5e5a;
 }
 
+.kpi-trend.trend-down {
+    color: #ba1a1a;
+}
+
 .kpi-trend.trend-global {
     color: #7f7663;
 }

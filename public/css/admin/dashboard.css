@@ -621,36 +621,31 @@ html.dark .top-bar {
 }
 
 .luxury-table thead tr {
-    background-color: #f5f3f3; /* surface-container-low */
-    border-top: 1px solid #d0c5af; /* outline-variant */
-    border-bottom: 1px solid #d0c5af;
+    background-color: rgba(245, 243, 243, 0.5); /* surface-container-low/50 */
 }
 
 .luxury-table th {
-    padding: 1rem 1.5rem;
+    padding: 16px 24px;
     font-family: 'Outfit', sans-serif;
     font-size: 12px;
     font-weight: 600;
     color: #5f5e5e;
     text-transform: uppercase;
     letter-spacing: 0.1em;
+    border-bottom: 1px solid #d0c5af;
 }
 
 .luxury-table tbody tr {
-    border-bottom: 1px solid #d0c5af;
+    border-bottom: 1px solid rgba(208, 197, 175, 0.3);
     transition: background-color 0.2s;
 }
 
-.luxury-table tbody tr:last-child {
-    border-bottom: none;
-}
-
 .luxury-table tbody tr:hover {
-    background-color: rgba(245, 243, 243, 0.5); /* surface-container-low/50 */
+    background-color: #F9F6F0;
 }
 
 .luxury-table td {
-    padding: 1.25rem 1.5rem;
+    padding: 16px 24px;
 }
 
 .customer-cell {

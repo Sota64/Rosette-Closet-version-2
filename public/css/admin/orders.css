@@ -505,7 +505,9 @@ a {
 .table-card {
     background: #ffffff;
     border: 1px solid #d0c5af;
+    border-radius: 0.5rem; /* 8px */
     overflow: hidden;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 }
 
 .table-header-row {
@@ -575,11 +577,10 @@ a {
     width: 100%;
     border-collapse: collapse;
     text-align: left;
-    font-size: 13px; /* data-table */
 }
 
 .orders-table thead tr {
-    background-color: rgba(245, 243, 243, 0.2);
+    background-color: rgba(245, 243, 243, 0.5); /* surface-container-low/50 */
 }
 
 .orders-table th {
@@ -587,27 +588,23 @@ a {
     font-family: 'Outfit', sans-serif;
     font-size: 12px;
     font-weight: 600;
-    color: #4d4635;
+    color: #5f5e5e;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     border-bottom: 1px solid #d0c5af;
 }
 
 .orders-table tbody tr {
-    border-bottom: 1px solid #d0c5af;
+    border-bottom: 1px solid rgba(208, 197, 175, 0.3);
     transition: background-color 0.2s;
 }
 
-.orders-table tbody tr:last-child {
-    border-bottom: none;
-}
-
 .orders-table tbody tr:hover {
-    background-color: #f5f3f3;
+    background-color: #F9F6F0;
 }
 
 .orders-table td {
-    padding: 20px 24px;
+    padding: 16px 24px;
     vertical-align: middle;
 }
 
@@ -716,17 +713,27 @@ a {
 }
 
 .action-btn-icon {
-    padding: 4px;
+    background: none;
+    border: none;
+    padding: 8px;
+    border-radius: 0.125rem;
     cursor: pointer;
-    transition: color 0.2s;
-    color: #1b1c1c;
+    transition: all 0.2s;
+    color: #7f7663;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .action-btn-icon:hover {
+    background-color: #ffffff;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
     color: #735c00; /* primary */
+}
+
+.action-btn-icon.delete:hover,
+.action-btn-icon.btn-delete:hover {
+    color: #ba1a1a; /* error */
 }
 
 .action-btn-icon span {
