@@ -78,20 +78,27 @@ Tat ca API tra ve JSON theo mau:
 - `PUT /api/products/:id`: cap nhat san pham, yeu cau admin.
 - `DELETE /api/products/:id`: xoa san pham, yeu cau admin.
 
-Vi du body tao san pham:
+Query ho tro cho danh sach san pham:
 
-```json
-{
-  "name": "Vay da hoi hong",
-  "description": "Vay da hoi phong cach thanh lich",
-  "rentalPrice": 300000,
-  "deposit": 500000,
-  "sizes": ["S", "M"],
-  "color": "Hong",
-  "images": ["https://example.com/dress.jpg"],
-  "status": "available",
-  "category": "CATEGORY_ID"
-}
+```text
+GET /api/products?search=vay&category=CATEGORY_ID&status=available&minPrice=1000000&maxPrice=5000000&page=1&limit=10
+```
+
+Them/sua san pham gui dang `multipart/form-data`. Anh upload tu may dung field `image`, server luu vao `public/uploads/products` va DB luu duong dan trong `images`.
+
+Vi du fields tao san pham:
+
+```text
+name=Vay da hoi hong
+description=Vay da hoi phong cach thanh lich
+rentalPrice=300000
+deposit=500000
+sizes=S
+sizes=M
+color=Hong
+status=available
+category=CATEGORY_ID hoac ten danh muc
+image=<file anh tu may>
 ```
 
 ### Category

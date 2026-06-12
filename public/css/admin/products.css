@@ -1275,3 +1275,209 @@ a {
 .btn-modal-delete:hover {
     background-color: #93000a;
 }
+
+/* Image Upload Wrapper & Custom Dropzone */
+.image-upload-wrapper {
+    width: 100%;
+}
+
+.upload-dropzone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 1.5px dashed #d0c5af;
+    background-color: #faf9f6;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    min-height: 180px;
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+.upload-dropzone:hover {
+    border-color: #735c00;
+    background-color: #f5f1e8;
+}
+
+.upload-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    pointer-events: none;
+}
+
+.upload-icon {
+    color: #a3957a;
+    margin-bottom: 2px;
+}
+
+.upload-dropzone:hover .upload-icon {
+    color: #735c00;
+}
+
+.upload-text {
+    font-family: 'Outfit', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: #1b1c1c;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.upload-subtext {
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    color: #7a7979;
+}
+
+/* Preview Image Container */
+.upload-preview-container {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #efeded;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.upload-preview-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+/* Hover overlay for changing the image */
+.upload-preview-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(27, 28, 28, 0.7);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    color: #ffffff;
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+    font-family: 'Outfit', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.upload-preview-container:hover .upload-preview-overlay {
+    opacity: 1;
+}
+
+/* Toast Notifications Container */
+#toast-container {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    pointer-events: none;
+}
+
+/* Toast Base Styling */
+.toast {
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 300px;
+    max-width: 420px;
+    padding: 14px 18px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(27, 28, 28, 0.08), 0 2px 4px rgba(27, 28, 28, 0.04);
+    border-left: 4px solid #d0c5af;
+    font-family: 'Inter', sans-serif;
+    font-size: 13.5px;
+    color: #1b1c1c;
+    transform: translateX(120%);
+    opacity: 0;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s, margin 0.3s, padding 0.3s, height 0.3s;
+    animation: toast-slide-in 0.3s forwards cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes toast-slide-in {
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.toast-fade-out {
+    transform: translateX(120%);
+    opacity: 0;
+    margin-top: -60px; /* Collapse gap */
+    transition: transform 0.3s ease-in, opacity 0.3s ease-in, margin 0.3s ease-in;
+}
+
+/* Toast Types */
+.toast-success {
+    border-left-color: #735c00; /* Luxury Gold Success */
+}
+
+.toast-success .toast-icon {
+    color: #735c00;
+}
+
+.toast-error {
+    border-left-color: #ba1a1a; /* Error Red */
+}
+
+.toast-error .toast-icon {
+    color: #ba1a1a;
+}
+
+/* Toast Elements */
+.toast-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.toast-content {
+    flex-grow: 1;
+}
+
+.toast-message {
+    margin: 0;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+.toast-close {
+    background: none;
+    border: none;
+    font-size: 18px;
+    line-height: 1;
+    color: #a3957a;
+    cursor: pointer;
+    padding: 0;
+    margin-left: 8px;
+    flex-shrink: 0;
+    transition: color 0.2s;
+}
+
+.toast-close:hover {
+    color: #1b1c1c;
+}
