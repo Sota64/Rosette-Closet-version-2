@@ -123,6 +123,37 @@ Vi du body tao danh muc:
 - `GET /api/auth/me`: lay user dang dang nhap tu cookie token.
 - `POST /api/auth/logout`: xoa token cookies.
 - `GET /api/users`: lay danh sach nguoi dung, yeu cau admin.
+- `POST /api/users`: tao nguoi dung, yeu cau admin.
+- `GET /api/users/:id`: lay chi tiet nguoi dung, yeu cau admin.
+- `PUT /api/users/:id`: cap nhat nguoi dung, yeu cau admin.
+- `DELETE /api/users/:id`: xoa nguoi dung, yeu cau admin.
+
+Query ho tro cho danh sach nguoi dung:
+
+```text
+GET /api/users?search=nguyen&role=customer&isActive=true&page=1&limit=10
+```
+
+Response danh sach nguoi dung co dang:
+
+```json
+{
+  "users": [],
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 0,
+    "totalPages": 0
+  },
+  "stats": {
+    "total": 0,
+    "customer": 0,
+    "admin": 0,
+    "active": 0,
+    "inactive": 0
+  }
+}
+```
 
 Vi du body dang ky:
 
@@ -162,8 +193,43 @@ fetch("/api/orders", {
 
 - `POST /api/orders`: tao don thue.
 - `GET /api/orders`: lay danh sach don thue, yeu cau admin.
+- `GET /api/orders/my`: lay danh sach don thue cua user dang dang nhap.
 - `GET /api/orders/:id`: lay chi tiet don thue, admin hoac chu don.
+- `PUT /api/orders/:id`: cap nhat don thue, yeu cau admin.
 - `PUT /api/orders/:id/status`: cap nhat trang thai don, yeu cau admin.
+- `DELETE /api/orders/:id`: xoa don thue, yeu cau admin.
+
+Query ho tro cho danh sach don thue:
+
+```text
+GET /api/orders?status=pending&user=USER_ID&fromDate=2026-06-01&toDate=2026-06-30&page=1&limit=10
+```
+
+Response danh sach don thue co dang:
+
+```json
+{
+  "orders": [],
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 0,
+    "totalPages": 0
+  },
+  "stats": {
+    "total": 0,
+    "pending": 0,
+    "approved": 0,
+    "delivering": 0,
+    "renting": 0,
+    "returned": 0,
+    "completed": 0,
+    "cancelled": 0,
+    "revenue": 0,
+    "todayNew": 0
+  }
+}
+```
 
 Vi du body tao don:
 
@@ -173,14 +239,11 @@ Vi du body tao don:
   "items": [
     {
       "product": "PRODUCT_ID",
-      "quantity": 1,
-      "rentalPrice": 300000,
-      "deposit": 500000
+      "quantity": 1
     }
   ],
   "startDate": "2026-06-10",
   "returnDate": "2026-06-13",
-  "totalAmount": 1400000,
   "status": "pending"
 }
 ```
