@@ -119,148 +119,18 @@
                                 <th>Mã đơn hàng</th>
                                 <th>Khách hàng</th>
                                 <th>Sản phẩm</th>
-                                <th>Số lượng</th>
-                                <th class="text-right">Giá thuê</th>
-                                <th class="text-right">Tiền cọc</th>
+                                <th>Thời hạn thuê</th>
+                                <th class="text-right">Tiền đặt cọc</th>
+                                <th class="text-right">Tổng thanh toán</th>
                                 <th>Trạng thái</th>
                                 <th class="text-right">Hành động</th>
                             </tr>
                         </thead>
                         <tbody>
+                            <!-- Dữ liệu đơn hàng sẽ được tải động từ JavaScript -->
                             <tr>
-                                <td class="font-medium text-primary">#RC-8802</td>
-                                <td>
-                                    <div class="customer-cell">
-                                        <div class="customer-initials">NH</div>
-                                        <div class="customer-info">
-                                            <div class="customer-name">Nguyễn Hà</div>
-                                            <div class="customer-tag">Premium Member</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="product-detail-cell">
-                                        <span>Midnight Glamour</span>
-                                        <div class="product-spec">Size: M | Velvet Black</div>
-                                    </div>
-                                </td>
-                                <td>1</td>
-                                <td class="text-right font-medium">4,500,000 ₫</td>
-                                <td class="text-right">2,000,000 ₫</td>
-                                <td>
-                                    <span class="status-badge badge-processing">Processing</span>
-                                </td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <button class="action-btn-icon" title="Xem chi tiết">
-                                            <span class="material-symbols-outlined">visibility</span>
-                                        </button>
-                                        <button class="action-btn-icon" title="Cập nhật">
-                                            <span class="material-symbols-outlined">edit</span>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="font-medium text-primary">#RC-8798</td>
-                                <td>
-                                    <div class="customer-cell">
-                                        <div class="customer-initials">TL</div>
-                                        <div class="customer-info">
-                                            <div class="customer-name">Trần Lan</div>
-                                            <div class="customer-tag">Guest</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="product-detail-cell">
-                                        <span>Golden Ember Gown</span>
-                                        <div class="product-spec">Size: S | Silk Gold</div>
-                                    </div>
-                                </td>
-                                <td>1</td>
-                                <td class="text-right font-medium">6,200,000 ₫</td>
-                                <td class="text-right">3,500,000 ₫</td>
-                                <td>
-                                    <span class="status-badge badge-shipped">Shipped</span>
-                                </td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <button class="action-btn-icon" title="Xem chi tiết">
-                                            <span class="material-symbols-outlined">visibility</span>
-                                        </button>
-                                        <button class="action-btn-icon" title="Cập nhật">
-                                            <span class="material-symbols-outlined">edit</span>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="font-medium text-primary">#RC-8790</td>
-                                <td>
-                                    <div class="customer-cell">
-                                        <div class="customer-initials">PA</div>
-                                        <div class="customer-info">
-                                            <div class="customer-name">Phan Anh</div>
-                                            <div class="customer-tag">VIP Member</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="product-detail-cell">
-                                        <span>Crystal Rain Blazer</span>
-                                        <div class="product-spec">Size: L | Embellished Grey</div>
-                                    </div>
-                                </td>
-                                <td>2</td>
-                                <td class="text-right font-medium">8,800,000 ₫</td>
-                                <td class="text-right">5,000,000 ₫</td>
-                                <td>
-                                    <span class="status-badge badge-completed">Completed</span>
-                                </td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <button class="action-btn-icon" title="Xem chi tiết">
-                                            <span class="material-symbols-outlined">visibility</span>
-                                        </button>
-                                        <button class="action-btn-icon" title="Cập nhật">
-                                            <span class="material-symbols-outlined">edit</span>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="font-medium text-primary">#RC-8785</td>
-                                <td>
-                                    <div class="customer-cell">
-                                        <div class="customer-initials">LT</div>
-                                        <div class="customer-info">
-                                            <div class="customer-name">Lê Thảo</div>
-                                            <div class="customer-tag">Standard Member</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="product-detail-cell">
-                                        <span>Velvet Rose Evening</span>
-                                        <div class="product-spec">Size: S | Burgundy</div>
-                                    </div>
-                                </td>
-                                <td>1</td>
-                                <td class="text-right font-medium">3,900,000 ₫</td>
-                                <td class="text-right">1,500,000 ₫</td>
-                                <td>
-                                    <span class="status-badge badge-cancelled">Cancelled</span>
-                                </td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <button class="action-btn-icon" title="Xem chi tiết">
-                                            <span class="material-symbols-outlined">visibility</span>
-                                        </button>
-                                        <button class="action-btn-icon" title="Cập nhật">
-                                            <span class="material-symbols-outlined">edit</span>
-                                        </button>
-                                    </div>
+                                <td colspan="8" style="text-align: center; padding: 28px; color: #7a7979;">
+                                    Đang tải danh sách đơn thuê...
                                 </td>
                             </tr>
                         </tbody>
@@ -308,6 +178,7 @@
         </footer>
     </main>
 
+    <script src="/public/js/apiClient.js"></script>
     <script src="/public/js/admin/orders.js"></script>
 </body>
 </html>
