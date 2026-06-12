@@ -1,8 +1,9 @@
 async function apiFetch(url, options = {}) {
+  const isFormData = options.body instanceof FormData;
   const requestOptions = {
     ...options,
     headers: {
-      ...(options.body ? { "Content-Type": "application/json" } : {}),
+      ...(options.body && !isFormData ? { "Content-Type": "application/json" } : {}),
       ...options.headers
     },
     credentials: "include"

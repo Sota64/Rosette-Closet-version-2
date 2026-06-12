@@ -1,3 +1,17 @@
+const fallbackCategories = ["Evening Gown", "Wedding", "Cocktail"];
+const pageState = {
+    products: [],
+    categories: [],
+    page: 1,
+    limit: 10,
+    total: 0,
+    totalPages: 1,
+    search: "",
+    category: "all",
+    status: "all",
+    priceRange: "all"
+};
+
 async function loadLayout(placeholderId, url) {
     try {
         const response = await fetch(url);
@@ -13,128 +27,236 @@ async function loadLayout(placeholderId, url) {
     }
 }
 
-// In-memory products store for prototyping
-let products = [];
-
-function loadProductsFromTable() {
-    products = [];
-    const rows = document.querySelectorAll('.products-table tbody tr');
-    rows.forEach((row, idx) => {
-        const id = idx + 1;
-        const name = row.querySelector('.product-name').textContent.trim();
-        const code = row.querySelector('.product-code').textContent.trim();
-        const category = row.querySelector('.category-tag').textContent.trim();
-        const color = row.querySelector('.color-text').textContent.trim();
-        const sizes = Array.from(row.querySelectorAll('.size-group .size-tag.size-active')).map(el => el.textContent.trim());
-        const priceText = row.querySelector('.price-text').textContent.trim();
-        
-        // Deposit text is the second price-text in the row
-        const priceElements = row.querySelectorAll('.price-text');
-        const depositText = priceElements[1] ? priceElements[1].textContent.trim() : "0đ";
-        
-        const statusText = row.querySelector('.status-badge').textContent.trim();
-        const img = row.querySelector('.product-img').src;
-
-        // Custom descriptions based on the product
-        let description = '';
-        if (name.includes('Midnight Glamour')) {
-            description = 'Đầm dạ hội lụa satin cao cấp thiết kế sang trọng pha chút cổ điển, đính pha lê lấp lánh phần ngực giúp tôn dáng và toát lên vẻ quý phái.';
-        } else if (name.includes('Golden Ember')) {
-            description = 'Đầm cocktail màu vàng lấp lánh cao cấp, thiết kế ôm dáng quyến rũ thích hợp cho các buổi tiệc tối sang trọng.';
-        } else if (name.includes('Petal Whisper')) {
-            description = 'Váy cưới xòe bồng bềnh ren hoa tay dài thanh lịch, phong cách công chúa lãng mạn tinh tế.';
-        } else {
-            description = 'Đầm nhung đen dáng dài cổ điển quý phái, chất liệu nhung mịn màng tôn lên nét quý phái tinh tế.';
-        }
-
-        products.push({
-            id,
-            name,
-            code,
-            category,
-            color,
-            sizes,
-            rentalPrice: parseInt(priceText.replace(/\D/g, '')) || 0,
-            deposit: parseInt(depositText.replace(/\D/g, '')) || 0,
-            status: statusText.toLowerCase().includes('available') ? 'available' : 
-                    statusText.toLowerCase().includes('rented') ? 'rented' : 
-                    statusText.toLowerCase().includes('cleaning') ? 'maintenance' : 'outofstock',
-            image: img,
-            description
-        });
-    });
+function escapeHtml(value = "") {
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
 
-function formatCurrency(val) {
-    return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "đ";
+function formatCurrency(value = 0) {
+    return Number(value || 0).toLocaleString("vi-VN") + "đ";
+}
+
+function getProductImage(product) {
+    return product.images?.[0] || "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=150";
+}
+
+function getCategoryName(product) {
+    return product.category?.name || product.category || "Chưa phân loại";
+}
+
+function getStatusMeta(status) {
+    const map = {
+        available: { className: "badge-available", label: "Available" },
+        rented: { className: "badge-rented", label: "Rented" },
+        maintenance: { className: "badge-cleaning", label: "Cleaning" },
+        outofstock: { className: "badge-outofstock", label: "Out of Stock" }
+    };
+
+    return map[status] || map.available;
+}
+
+function buildProductFormData(form) {
+    const formData = new FormData(form);
+    const productFormData = new FormData();
+    const imageFile = form.querySelector('input[name="image"]')?.files[0];
+
+    productFormData.append("name", formData.get("name")?.trim() || "");
+    productFormData.append("description", formData.get("description")?.trim() || "");
+    productFormData.append("category", formData.get("category") || "");
+    productFormData.append("color", formData.get("color")?.trim() || "");
+    productFormData.append("rentalPrice", formData.get("rentalPrice") || 0);
+    productFormData.append("deposit", formData.get("deposit") || 0);
+    productFormData.append("status", formData.get("status") || "available");
+
+    form.querySelectorAll('input[name="sizes"]:checked').forEach((checkbox) => {
+        productFormData.append("sizes", checkbox.value);
+    });
+
+    if (imageFile) {
+        productFormData.append("image", imageFile);
+    }
+
+    return productFormData;
+}
+
+async function parseApiResponse(response) {
+    const result = await response.json();
+
+    if (!response.ok || !result.success) {
+        throw new Error(result.message || "Yêu cầu API thất bại");
+    }
+
+    return result.data;
+}
+
+function buildProductListUrl() {
+    const params = new URLSearchParams({
+        page: pageState.page,
+        limit: pageState.limit
+    });
+
+    if (pageState.search) {
+        params.set("search", pageState.search);
+    }
+
+    if (pageState.category !== "all") {
+        params.set("category", pageState.category);
+    }
+
+    if (pageState.status !== "all") {
+        params.set("status", pageState.status);
+    }
+
+    if (pageState.priceRange === "under-2m") {
+        params.set("maxPrice", 1999999);
+    } else if (pageState.priceRange === "2m-5m") {
+        params.set("minPrice", 2000000);
+        params.set("maxPrice", 5000000);
+    } else if (pageState.priceRange === "over-5m") {
+        params.set("minPrice", 5000001);
+    }
+
+    return `/api/products?${params.toString()}`;
+}
+
+async function loadCategories() {
+    try {
+        const response = await apiFetch("/api/categories");
+        const categories = await parseApiResponse(response);
+        pageState.categories = categories.length ? categories : fallbackCategories.map((name) => ({ _id: name, name }));
+    } catch (error) {
+        pageState.categories = fallbackCategories.map((name) => ({ _id: name, name }));
+    }
+
+    renderCategoryOptions();
+}
+
+function renderCategoryOptions() {
+    const categorySelects = [
+        document.querySelector('select[name="category"]'),
+        document.getElementById("edit-product-category")
+    ].filter(Boolean);
+    const filterSelect = document.querySelectorAll(".filter-select")[0];
+
+    categorySelects.forEach((select) => {
+        const currentValue = select.value;
+        select.innerHTML = '<option value="">Chọn danh mục</option>';
+        pageState.categories.forEach((category) => {
+            const option = document.createElement("option");
+            option.value = category._id || category.name;
+            option.textContent = category.name;
+            select.appendChild(option);
+        });
+        select.value = currentValue;
+    });
+
+    if (filterSelect) {
+        const currentValue = filterSelect.value;
+        filterSelect.innerHTML = '<option value="all">Tất cả danh mục</option>';
+        pageState.categories.forEach((category) => {
+            const option = document.createElement("option");
+            option.value = category._id || category.name;
+            option.textContent = category.name;
+            filterSelect.appendChild(option);
+        });
+        filterSelect.value = currentValue || "all";
+    }
+}
+
+async function loadProducts() {
+    const tbody = document.querySelector(".products-table tbody");
+    if (tbody) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding: 28px;">Đang tải sản phẩm...</td></tr>';
+    }
+
+    try {
+        const response = await apiFetch(buildProductListUrl());
+        const data = await parseApiResponse(response);
+
+        pageState.products = data.products || [];
+        pageState.total = data.pagination?.total || 0;
+        pageState.totalPages = data.pagination?.totalPages || 1;
+        pageState.page = data.pagination?.page || 1;
+
+        renderProductsTable();
+        renderPagination();
+        renderStats(data.stats);
+    } catch (error) {
+        if (tbody) {
+            tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding: 28px;">${escapeHtml(error.message)}</td></tr>`;
+        }
+    }
+}
+
+function renderStats(stats = {}) {
+    const values = document.querySelectorAll(".kpi-value");
+    if (values.length < 4) return;
+
+    values[0].textContent = stats.total ?? 0;
+    values[1].textContent = stats.rented ?? 0;
+    values[2].textContent = stats.maintenance ?? 0;
+    values[3].textContent = stats.available ?? 0;
 }
 
 function renderProductsTable() {
-    const tbody = document.querySelector('.products-table tbody');
+    const tbody = document.querySelector(".products-table tbody");
     if (!tbody) return;
-    tbody.innerHTML = '';
 
-    products.forEach(p => {
-        const sizeTags = ['XS', 'S', 'M', 'L', 'XL', 'XXL'].map(sz => {
-            const isActive = p.sizes.includes(sz);
-            return `<span class="size-tag ${isActive ? 'size-active' : ''}">${sz}</span>`;
-        }).join('');
+    if (!pageState.products.length) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding: 28px;">Chưa có sản phẩm phù hợp.</td></tr>';
+        return;
+    }
 
-        let statusClass = '';
-        let statusLabel = '';
-        if (p.status === 'available') {
-            statusClass = 'badge-available';
-            statusLabel = 'Available';
-        } else if (p.status === 'rented') {
-            statusClass = 'badge-rented';
-            statusLabel = 'Rented';
-        } else if (p.status === 'maintenance') {
-            statusClass = 'badge-cleaning';
-            statusLabel = 'Cleaning';
-        } else {
-            statusClass = 'badge-outofstock';
-            statusLabel = 'Out of Stock';
-        }
+    tbody.innerHTML = "";
 
-        const isPulse = p.status === 'maintenance' ? 'badge-pulse' : '';
+    pageState.products.forEach((product) => {
+        const status = getStatusMeta(product.status);
+        const sizeTags = ["XS", "S", "M", "L", "XL", "XXL"].map((size) => {
+            const isActive = product.sizes?.includes(size);
+            return `<span class="size-tag ${isActive ? "size-active" : ""}">${size}</span>`;
+        }).join("");
+        const tr = document.createElement("tr");
 
-        const tr = document.createElement('tr');
         tr.innerHTML = `
             <td>
                 <div class="product-cell">
                     <div class="product-img-wrapper">
-                        <img class="product-img" src="${p.image || 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=150'}" alt="${p.name}"/>
+                        <img class="product-img" src="${escapeHtml(getProductImage(product))}" alt="${escapeHtml(product.name)}"/>
                     </div>
                     <div class="product-info">
-                        <p class="product-name">${p.name}</p>
-                        <p class="product-code">${p.code}</p>
+                        <p class="product-name">${escapeHtml(product.name)}</p>
+                        <p class="product-code">#${escapeHtml(product.code || product._id)}</p>
                     </div>
                 </div>
             </td>
-            <td><span class="category-tag">${p.category}</span></td>
-            <td><span class="color-text" style="color: #4d4635;">${p.color}</span></td>
+            <td><span class="category-tag">${escapeHtml(getCategoryName(product))}</span></td>
+            <td><span class="color-text" style="color: #4d4635;">${escapeHtml(product.color)}</span></td>
             <td>
                 <div class="size-group">
                     ${sizeTags}
                 </div>
             </td>
-            <td><span class="price-text">${formatCurrency(p.rentalPrice)}</span></td>
-            <td><span class="price-text" style="font-weight: normal; color: #5f5e5e;">${formatCurrency(p.deposit)}</span></td>
+            <td><span class="price-text">${formatCurrency(product.rentalPrice)}</span></td>
+            <td><span class="price-text" style="font-weight: normal; color: #5f5e5e;">${formatCurrency(product.deposit)}</span></td>
             <td>
-                <span class="status-badge ${statusClass}">
-                    <span class="badge-dot ${isPulse}"></span>
-                    ${statusLabel}
+                <span class="status-badge ${status.className}">
+                    <span class="badge-dot ${product.status === "maintenance" ? "badge-pulse" : ""}"></span>
+                    ${status.label}
                 </span>
             </td>
             <td>
                 <div class="action-buttons">
-                    <button class="action-btn-icon" title="Xem chi tiết" onclick="openDetailModal(${p.id})">
+                    <button class="action-btn-icon" title="Xem chi tiết" onclick="openDetailModal('${product._id}')">
                         <span class="material-symbols-outlined">visibility</span>
                     </button>
-                    <button class="action-btn-icon" title="Chỉnh sửa" onclick="openEditModal(${p.id})">
+                    <button class="action-btn-icon" title="Chỉnh sửa" onclick="openEditModal('${product._id}')">
                         <span class="material-symbols-outlined">edit</span>
                     </button>
-                    <button class="action-btn-icon btn-delete" title="Xóa" onclick="openDeleteModal(${p.id})">
+                    <button class="action-btn-icon btn-delete" title="Xóa" onclick="openDeleteModal('${product._id}')">
                         <span class="material-symbols-outlined">delete</span>
                     </button>
                 </div>
@@ -144,217 +266,395 @@ function renderProductsTable() {
     });
 }
 
-// Modal open/close helpers
+function renderPagination() {
+    const paginationText = document.querySelector(".pagination-text");
+    const paginationButtons = document.querySelector(".pagination-buttons");
+    const start = pageState.total === 0 ? 0 : (pageState.page - 1) * pageState.limit + 1;
+    const end = Math.min(pageState.page * pageState.limit, pageState.total);
+
+    if (paginationText) {
+        paginationText.textContent = `Đang hiển thị ${start} đến ${end} trên ${pageState.total} sản phẩm`;
+    }
+
+    if (!paginationButtons) return;
+
+    const pages = [];
+    const maxPage = Math.max(pageState.totalPages, 1);
+    const from = Math.max(1, pageState.page - 1);
+    const to = Math.min(maxPage, pageState.page + 1);
+
+    for (let page = from; page <= to; page += 1) {
+        pages.push(page);
+    }
+
+    paginationButtons.innerHTML = `
+        <button class="pagination-btn-nav" ${pageState.page <= 1 ? "disabled" : ""} onclick="goToProductPage(${pageState.page - 1})">
+            <span class="material-symbols-outlined">chevron_left</span>
+        </button>
+        ${pages.map((page) => `<button class="pagination-btn-num ${page === pageState.page ? "pagination-active" : ""}" onclick="goToProductPage(${page})">${page}</button>`).join("")}
+        <button class="pagination-btn-nav" ${pageState.page >= maxPage ? "disabled" : ""} onclick="goToProductPage(${pageState.page + 1})">
+            <span class="material-symbols-outlined">chevron_right</span>
+        </button>
+    `;
+}
+
+function goToProductPage(page) {
+    if (page < 1 || page > pageState.totalPages) return;
+    pageState.page = page;
+    loadProducts();
+}
+
 function openModal(id) {
     const modal = document.getElementById(id);
     if (modal) {
-        modal.style.display = 'block';
+        modal.style.display = "block";
     }
+}
+
+function setImagePreview(previewId, src) {
+    const preview = document.getElementById(previewId);
+    if (!preview) return;
+
+    const dropzone = preview.closest('.upload-dropzone');
+    const placeholder = dropzone ? dropzone.querySelector('.upload-placeholder') : null;
+    const container = dropzone ? dropzone.querySelector('.upload-preview-container') : null;
+
+    if (src) {
+        preview.src = src;
+        preview.style.display = "block";
+        if (placeholder) placeholder.style.display = "none";
+        if (container) container.style.display = "block";
+    } else {
+        preview.removeAttribute("src");
+        preview.style.display = "none";
+        if (placeholder) placeholder.style.display = "flex";
+        if (container) container.style.display = "none";
+    }
+}
+
+function showToast(message, type = 'success') {
+    let container = document.getElementById('toast-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toast-container';
+        document.body.appendChild(container);
+    }
+
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    
+    let icon = '';
+    if (type === 'success') {
+        icon = `
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                <polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+        `;
+    } else {
+        icon = `
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="8" x2="12" y2="12"/>
+                <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+        `;
+    }
+
+    toast.innerHTML = `
+        <div class="toast-icon">${icon}</div>
+        <div class="toast-content">
+            <p class="toast-message">${message}</p>
+        </div>
+        <button class="toast-close">&times;</button>
+    `;
+
+    toast.querySelector('.toast-close').addEventListener('click', () => {
+        toast.classList.add('toast-fade-out');
+        toast.addEventListener('transitionend', () => {
+            toast.remove();
+        });
+    });
+
+    container.appendChild(toast);
+
+    setTimeout(() => {
+        if (toast.parentNode) {
+            toast.classList.add('toast-fade-out');
+            toast.addEventListener('transitionend', () => {
+                toast.remove();
+            });
+        }
+    }, 4000);
 }
 
 function closeModal(id) {
     const modal = document.getElementById(id);
     if (modal) {
-        modal.style.display = 'none';
+        modal.style.display = "none";
     }
 }
 
-// Detail View Modal Populate
-function openDetailModal(id) {
-    const p = products.find(prod => prod.id === id);
-    if (!p) return;
-    
-    document.getElementById('detail-product-img').src = p.image;
-    document.getElementById('detail-product-name').textContent = p.name;
-    document.getElementById('detail-product-code').textContent = p.code;
-    document.getElementById('detail-product-category').textContent = p.category;
-    document.getElementById('detail-product-color').textContent = p.color;
-    document.getElementById('detail-product-sizes').textContent = p.sizes.join(', ') || 'Trống';
-    document.getElementById('detail-product-price').textContent = formatCurrency(p.rentalPrice);
-    document.getElementById('detail-product-deposit').textContent = formatCurrency(p.deposit);
-    
-    let statusText = 'Available';
-    if (p.status === 'rented') statusText = 'Rented';
-    else if (p.status === 'maintenance') statusText = 'Cleaning';
-    else if (p.status === 'outofstock') statusText = 'Out of Stock';
-    document.getElementById('detail-product-status').textContent = statusText;
-    
-    document.getElementById('detail-product-description').textContent = p.description;
-    
-    openModal('modal-product-detail');
+async function getProduct(id) {
+    const cached = pageState.products.find((product) => product._id === id);
+    if (cached) return cached;
+
+    const response = await apiFetch(`/api/products/${id}`);
+    return parseApiResponse(response);
 }
 
-// Edit Modal Populate
-function openEditModal(id) {
-    const p = products.find(prod => prod.id === id);
-    if (!p) return;
-    
-    document.getElementById('edit-product-id').value = p.id;
-    document.getElementById('edit-product-name').value = p.name;
-    document.getElementById('edit-product-description').value = p.description;
-    document.getElementById('edit-product-category').value = p.category;
-    document.getElementById('edit-product-color').value = p.color;
-    
-    // Set size checkboxes
-    const form = document.getElementById('form-product-edit');
-    form.querySelectorAll('input[name="sizes"]').forEach(cb => {
-        cb.checked = p.sizes.includes(cb.value);
-    });
-    
-    document.getElementById('edit-product-price').value = p.rentalPrice;
-    document.getElementById('edit-product-deposit').value = p.deposit;
-    document.getElementById('edit-product-status').value = p.status;
-    document.getElementById('edit-product-image').value = p.image;
-    
-    openModal('modal-product-edit');
+async function openDetailModal(id) {
+    try {
+        const product = await getProduct(id);
+        const status = getStatusMeta(product.status);
+
+        document.getElementById("detail-product-img").src = getProductImage(product);
+        document.getElementById("detail-product-name").textContent = product.name;
+        document.getElementById("detail-product-code").textContent = `#${product.code || product._id}`;
+        document.getElementById("detail-product-category").textContent = getCategoryName(product);
+        document.getElementById("detail-product-color").textContent = product.color;
+        document.getElementById("detail-product-sizes").textContent = product.sizes?.join(", ") || "Trống";
+        document.getElementById("detail-product-price").textContent = formatCurrency(product.rentalPrice);
+        document.getElementById("detail-product-deposit").textContent = formatCurrency(product.deposit);
+        document.getElementById("detail-product-status").textContent = status.label;
+        document.getElementById("detail-product-description").textContent = product.description;
+
+        openModal("modal-product-detail");
+    } catch (error) {
+        showToast(error.message, "error");
+    }
 }
 
-// Delete Modal Populate
+async function openEditModal(id) {
+    try {
+        const product = await getProduct(id);
+        const form = document.getElementById("form-product-edit");
+
+        document.getElementById("edit-product-id").value = product._id;
+        document.getElementById("edit-product-name").value = product.name;
+        document.getElementById("edit-product-description").value = product.description;
+        document.getElementById("edit-product-category").value = product.category?._id || product.category || "";
+        document.getElementById("edit-product-color").value = product.color;
+        document.getElementById("edit-product-price").value = product.rentalPrice;
+        document.getElementById("edit-product-deposit").value = product.deposit;
+        document.getElementById("edit-product-status").value = product.status;
+        document.getElementById("edit-product-image").value = "";
+        setImagePreview("edit-product-image-preview", getProductImage(product));
+
+        form.querySelectorAll('input[name="sizes"]').forEach((checkbox) => {
+            checkbox.checked = product.sizes?.includes(checkbox.value);
+        });
+
+        openModal("modal-product-edit");
+    } catch (error) {
+        showToast(error.message, "error");
+    }
+}
+
 function openDeleteModal(id) {
-    const p = products.find(prod => prod.id === id);
-    if (!p) return;
-    
-    document.getElementById('delete-product-id').value = p.id;
-    document.getElementById('delete-product-name').textContent = p.name;
-    
-    openModal('modal-product-delete');
+    const product = pageState.products.find((item) => item._id === id);
+
+    document.getElementById("delete-product-id").value = id;
+    document.getElementById("delete-product-name").textContent = product?.name || "này";
+
+    openModal("modal-product-delete");
 }
 
-// Confirm Delete function
-function confirmProductDelete() {
-    const id = parseInt(document.getElementById('delete-product-id').value);
-    products = products.filter(p => p.id !== id);
-    
-    renderProductsTable();
-    closeModal('modal-product-delete');
+async function confirmProductDelete() {
+    const id = document.getElementById("delete-product-id").value;
+
+    try {
+        const response = await apiFetch(`/api/products/${id}`, {
+            method: "DELETE"
+        });
+        await parseApiResponse(response);
+
+        closeModal("modal-product-delete");
+        await loadProducts();
+        showToast("Xóa sản phẩm thành công!", "success");
+    } catch (error) {
+        showToast(error.message, "error");
+    }
 }
 
-// Handle Add Product Submit
-function handleProductAdd(event) {
+async function handleProductAdd(event) {
     event.preventDefault();
     const form = event.target;
-    const formData = new FormData(form);
-    
-    const name = formData.get('name');
-    const description = formData.get('description');
-    const category = formData.get('category');
-    const color = formData.get('color');
-    const rentalPrice = parseInt(formData.get('rentalPrice')) || 0;
-    const deposit = parseInt(formData.get('deposit')) || 0;
-    const status = formData.get('status');
-    const image = formData.get('image') || 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=150';
-    
-    const sizes = [];
-    form.querySelectorAll('input[name="sizes"]:checked').forEach(cb => {
-        sizes.push(cb.value);
-    });
-    
-    const newId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
-    const code = `#RC-${88000 + newId}`;
-    
-    products.push({
-        id: newId,
-        name,
-        code,
-        category,
-        color,
-        sizes,
-        rentalPrice,
-        deposit,
-        status,
-        image,
-        description
-    });
-    
-    renderProductsTable();
-    closeModal('modal-product-add');
-    form.reset();
+
+    try {
+        const response = await apiFetch("/api/products", {
+            method: "POST",
+            body: buildProductFormData(form)
+        });
+        await parseApiResponse(response);
+
+        closeModal("modal-product-add");
+        form.reset();
+        setImagePreview("add-product-image-preview", "");
+        pageState.page = 1;
+        await loadProducts();
+        await loadCategories();
+        showToast("Thêm sản phẩm mới thành công!", "success");
+    } catch (error) {
+        showToast(error.message, "error");
+    }
 }
 
-// Handle Edit Product Submit
-function handleProductEdit(event) {
+async function handleProductEdit(event) {
     event.preventDefault();
     const form = event.target;
-    const formData = new FormData(form);
-    
-    const id = parseInt(formData.get('id'));
-    const p = products.find(prod => prod.id === id);
-    if (!p) return;
-    
-    p.name = formData.get('name');
-    p.description = formData.get('description');
-    p.category = formData.get('category');
-    p.color = formData.get('color');
-    p.rentalPrice = parseInt(formData.get('rentalPrice')) || 0;
-    p.deposit = parseInt(formData.get('deposit')) || 0;
-    p.status = formData.get('status');
-    p.image = formData.get('image') || 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=150';
-    
-    const sizes = [];
-    form.querySelectorAll('input[name="sizes"]:checked').forEach(cb => {
-        sizes.push(cb.value);
+    const id = document.getElementById("edit-product-id").value;
+
+    try {
+        const response = await apiFetch(`/api/products/${id}`, {
+            method: "PUT",
+            body: buildProductFormData(form)
+        });
+        await parseApiResponse(response);
+
+        closeModal("modal-product-edit");
+        await loadProducts();
+        await loadCategories();
+        showToast("Cập nhật thông tin sản phẩm thành công!", "success");
+    } catch (error) {
+        showToast(error.message, "error");
+    }
+}
+
+function bindImagePreviews() {
+    document.querySelectorAll(".product-image-input").forEach((input) => {
+        input.addEventListener("change", () => {
+            const file = input.files?.[0];
+            const previewId = input.dataset.preview;
+
+            if (!file) {
+                setImagePreview(previewId, "");
+                return;
+            }
+
+            setImagePreview(previewId, URL.createObjectURL(file));
+        });
     });
-    p.sizes = sizes;
-    
-    renderProductsTable();
-    closeModal('modal-product-edit');
+}
+
+function bindFilters() {
+    const searchInputs = [
+        document.querySelector(".filter-search-input"),
+        document.querySelector(".search-input")
+    ].filter(Boolean);
+    const selects = document.querySelectorAll(".filter-select");
+    const refreshButton = document.querySelector(".btn-refresh");
+    let searchTimer;
+
+    searchInputs.forEach((input) => {
+        input.addEventListener("input", () => {
+            clearTimeout(searchTimer);
+            searchTimer = setTimeout(() => {
+                pageState.search = input.value.trim();
+                pageState.page = 1;
+                loadProducts();
+            }, 300);
+        });
+    });
+
+    if (selects[0]) {
+        selects[0].addEventListener("change", () => {
+            pageState.category = selects[0].value || "all";
+            pageState.page = 1;
+            loadProducts();
+        });
+    }
+
+    if (selects[1]) {
+        selects[1].innerHTML = `
+            <option value="all">Trạng thái</option>
+            <option value="available">Available</option>
+            <option value="rented">Rented</option>
+            <option value="maintenance">Cleaning</option>
+            <option value="outofstock">Out of Stock</option>
+        `;
+        selects[1].addEventListener("change", () => {
+            pageState.status = selects[1].value || "all";
+            pageState.page = 1;
+            loadProducts();
+        });
+    }
+
+    if (selects[2]) {
+        selects[2].innerHTML = `
+            <option value="all">Giá thuê</option>
+            <option value="under-2m">Dưới 2tr</option>
+            <option value="2m-5m">2tr - 5tr</option>
+            <option value="over-5m">Trên 5tr</option>
+        `;
+        selects[2].addEventListener("change", () => {
+            pageState.priceRange = selects[2].value || "all";
+            pageState.page = 1;
+            loadProducts();
+        });
+    }
+
+    if (refreshButton) {
+        refreshButton.addEventListener("click", () => {
+            loadProducts();
+        });
+    }
 }
 
 function initProductsPage() {
-    const sidebar = document.getElementById('main-sidebar');
-    const content = document.getElementById('main-content');
-    const toggleBtn = document.getElementById('sidebar-toggle');
-    const navLinks = document.querySelectorAll('.nav-item');
+    const sidebar = document.getElementById("main-sidebar");
+    const content = document.getElementById("main-content");
+    const toggleBtn = document.getElementById("sidebar-toggle");
+    const navLinks = document.querySelectorAll(".nav-item");
 
     if (toggleBtn && sidebar && content) {
-        toggleBtn.addEventListener('click', () => {
+        toggleBtn.addEventListener("click", () => {
             if (window.innerWidth <= 768) {
-                sidebar.classList.toggle('sidebar-open');
+                sidebar.classList.toggle("sidebar-open");
             } else {
-                sidebar.classList.toggle('sidebar-collapsed');
-                content.classList.toggle('content-expanded');
+                sidebar.classList.toggle("sidebar-collapsed");
+                content.classList.toggle("content-expanded");
             }
-            
-            const icon = toggleBtn.querySelector('.material-symbols-outlined');
+
+            const icon = toggleBtn.querySelector(".material-symbols-outlined");
             if (icon) {
-                if (sidebar.classList.contains('sidebar-collapsed') || 
-                    (window.innerWidth <= 768 && !sidebar.classList.contains('sidebar-open'))) {
-                    icon.textContent = 'chevron_right';
+                if (sidebar.classList.contains("sidebar-collapsed") ||
+                    (window.innerWidth <= 768 && !sidebar.classList.contains("sidebar-open"))) {
+                    icon.textContent = "chevron_right";
                 } else {
-                    icon.textContent = 'menu';
+                    icon.textContent = "menu";
                 }
             }
         });
     }
 
     if (navLinks.length > 1) {
-        navLinks.forEach(link => link.classList.remove('active'));
-        navLinks[1].classList.add('active');
+        navLinks.forEach((link) => link.classList.remove("active"));
+        navLinks[1].classList.add("active");
     }
 
-    // Load static content into data store and render dynamically
-    loadProductsFromTable();
-    renderProductsTable();
-
-    // Bind Add Product Button click to open Add Modal
-    const addBtn = document.querySelector('.btn-add');
+    const addBtn = document.querySelector(".btn-add");
     if (addBtn) {
-        addBtn.addEventListener('click', () => {
-            openModal('modal-product-add');
+        addBtn.addEventListener("click", () => {
+            openModal("modal-product-add");
         });
     }
 
-    // Close Modals when clicking on overlay background
-    window.addEventListener('click', (e) => {
-        if (e.target.classList.contains('modal')) {
-            e.target.style.display = 'none';
+    window.addEventListener("click", (event) => {
+        if (event.target.classList.contains("modal")) {
+            event.target.style.display = "none";
         }
     });
 
-    document.body.style.opacity = '0';
-    document.body.style.transition = 'opacity 0.8s ease-in-out';
+    bindFilters();
+    bindImagePreviews();
+    loadCategories();
+    loadProducts();
+
+    document.body.style.opacity = "0";
+    document.body.style.transition = "opacity 0.8s ease-in-out";
     requestAnimationFrame(() => {
-        document.body.style.opacity = '1';
+        document.body.style.opacity = "1";
     });
 }
 
@@ -363,10 +663,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (loaded) {
         initProductsPage();
     } else {
-        document.body.style.opacity = '0';
-        document.body.style.transition = 'opacity 0.8s ease-in-out';
+        document.body.style.opacity = "0";
+        document.body.style.transition = "opacity 0.8s ease-in-out";
         requestAnimationFrame(() => {
-            document.body.style.opacity = '1';
+            document.body.style.opacity = "1";
         });
     }
 });

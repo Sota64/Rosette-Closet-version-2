@@ -2,6 +2,12 @@ const mongoose = require("mongoose");
 
 const productSchema = new mongoose.Schema(
   {
+    code: {
+      type: String,
+      unique: true,
+      sparse: true,
+      trim: true
+    },
     name: {
       type: String,
       required: true,
@@ -48,7 +54,7 @@ const productSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["available", "rented", "maintenance"],
+      enum: ["available", "rented", "maintenance", "outofstock"],
       default: "available"
     },
     category: {
@@ -61,5 +67,13 @@ const productSchema = new mongoose.Schema(
     timestamps: true
   }
 );
+
+productSchema.pre("save", function generateCode(next) {
+  if (!this.code) {
+    this.code = `RC-${this._id.toString().slice(-6).toUpperCase()}`;
+  }
+
+  next();
+});
 
 module.exports = mongoose.model("Product", productSchema);
