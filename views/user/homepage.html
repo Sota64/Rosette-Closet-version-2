@@ -45,7 +45,8 @@
       <div class="hero-image-wrapper fade-in">
         <div class="hero-image">
           <img
-          src="/public/images/img1.png"
+            id="homepage-hero-image"
+            src="/public/images/img1.png"
             alt="Luxury Dress"
           >
         </div>
@@ -62,36 +63,8 @@
         <p>Khám phá những bộ sưu tập thời trang cao cấp cho mọi dịp.</p>
       </div>
 
-      <div class="category-grid">
-
-        <a href="category-evening.html" class="category-card">
-          <img src="/public/images/img2.png" alt="Dạ tiệc">
-          <div class="category-overlay glass-card">
-            <h3>Dạ tiệc</h3>
-          </div>
-        </a>
-
-        <a href="category-travel.html" class="category-card">
-          <img src="/public/images/img3.png" alt="Du lịch">
-          <div class="category-overlay glass-card">
-            <h3>Du lịch</h3>
-          </div>
-        </a>
-
-        <a href="category-photoshoot.html" class="category-card">
-          <img src="/public/images/img4.png" alt="Chụp hình">
-          <div class="category-overlay glass-card">
-            <h3>Chụp hình</h3>
-          </div>
-        </a>
-
-        <a href="category-aodai.html" class="category-card">
-          <img src="/public/images/img5.png" alt="Áo dài">
-          <div class="category-overlay glass-card">
-            <h3>Áo dài</h3>
-          </div>
-        </a>
-
+      <div class="category-grid" id="homepage-category-grid">
+        <p class="homepage-empty">Đang tải danh mục...</p>
       </div>
     </div>
   </section>
@@ -105,84 +78,14 @@
           <div class="title-line"></div>
         </div>
 
-        <a href="#" class="section-link">
+        <a href="/views/user/collections.html" class="section-link">
           Xem tất cả
           <span class="material-symbols-outlined">arrow_forward</span>
         </a>
       </div>
 
-      <div class="product-grid">
-
-        <article class="product-card">
-          <div class="product-image">
-            <img src="/public/images/img1.png" alt="Midnight Glamour">
-            <span class="product-badge">Mới</span>
-          </div>
-
-            <div class="product-content">
-                <div class="product-top">
-                    <h3>Váy nâu kem</h3>
-                    <span class="price">1.200.000đ</span>
-                </div>
-
-                <p>Size: S, M, L | Thuê 3 ngày</p>
-                <div class="product-actions">
-                    <button class="btn btn-gold full-width" onclick="location.href='rentNow.html'">Thuê ngay</button>
-                    <a href="./rentNow.html">
-                        <button class="preview-btn">
-                            <span class="material-symbols-outlined">visibility</span>
-                        </button>
-                    </a>
-                </div>
-            </div>
-        </article>
-
-        <article class="product-card">
-          <div class="product-image">
-            <img src="/public/images/img2.png" alt="Champagne Rose">
-          </div>
-
-          <div class="product-content">
-            <div class="product-top">
-              <h3>Set váy chấm bi</h3>
-              <span class="price">1.500.000đ</span>
-            </div>
-
-            <p>Size: S, M | Thuê 3 ngày</p>
-
-            <div class="product-actions">
-              <button class="btn btn-gold full-width" onclick="location.href='rentNow.html'">Thuê ngay</button>
-
-              <button class="preview-btn">
-                <span class="material-symbols-outlined">visibility</span>
-              </button>
-            </div>
-          </div>
-        </article>
-
-        <article class="product-card">
-          <div class="product-image">
-            <img src="/public/images/img5.png" alt="Royal Crimson">
-          </div>
-
-          <div class="product-content">
-            <div class="product-top">
-              <h3>Áo dài ren hồng</h3>
-              <span class="price">1.800.000đ</span>
-            </div>
-
-            <p>Size: M, L | Thuê 3 ngày</p>
-
-            <div class="product-actions">
-              <button class="btn btn-gold full-width" onclick="location.href='rentNow.html'">Thuê ngay</button>
-
-              <button class="preview-btn">
-                <span class="material-symbols-outlined">visibility</span>
-              </button>
-            </div>
-          </div>
-        </article>
-
+      <div class="product-grid" id="homepage-product-grid">
+        <p class="homepage-empty">Đang tải sản phẩm...</p>
       </div>
     </div>
   </section>

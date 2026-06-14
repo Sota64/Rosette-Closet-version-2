@@ -3,7 +3,8 @@ const collectionsState = {
   limit: 8,
   totalPages: 1,
   status: "all",
-  sort: "-createdAt"
+  sort: "-createdAt",
+  category: new URLSearchParams(window.location.search).get("category") || "all"
 };
 
 async function loadLayout(placeholderId, url) {
@@ -49,6 +50,10 @@ function buildProductsUrl() {
 
   if (collectionsState.status !== "all") {
     params.set("status", collectionsState.status);
+  }
+
+  if (collectionsState.category !== "all") {
+    params.set("category", collectionsState.category);
   }
 
   return `/api/products?${params.toString()}`;
