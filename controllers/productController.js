@@ -171,6 +171,9 @@ const getProducts = async (req, res) => {
     const skip = (page - 1) * limit;
     const filter = buildProductQuery(req.query);
     const sort = req.query.sort || "-createdAt";
+    const now = new Date();
+    const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const previousMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
 
     if (req.query.category && req.query.category !== "all" && !filter.category) {
       const category = await Category.findOne({
@@ -180,7 +183,7 @@ const getProducts = async (req, res) => {
       filter.category = category ? category._id : new mongoose.Types.ObjectId();
     }
 
-    const [products, total, statusStats] = await Promise.all([
+    const [products, total, statusStats, currentMonthProducts, previousMonthProducts] = await Promise.all([
       Product.find(filter)
         .populate("category", "name description")
         .sort(sort)
@@ -194,7 +197,18 @@ const getProducts = async (req, res) => {
             count: { $sum: 1 }
           }
         }
-      ])
+      ]),
+      Product.countDocuments({
+        createdAt: {
+          $gte: currentMonthStart
+        }
+      }),
+      Product.countDocuments({
+        createdAt: {
+          $gte: previousMonthStart,
+          $lt: currentMonthStart
+        }
+      })
     ]);
 
     const stats = statusStats.reduce(
@@ -211,6 +225,14 @@ const getProducts = async (req, res) => {
         outofstock: 0
       }
     );
+    const growthPercent = previousMonthProducts > 0
+      ? ((currentMonthProducts - previousMonthProducts) / previousMonthProducts) * 100
+      : currentMonthProducts > 0 ? 100 : 0;
+
+    stats.growthPercent = Number(growthPercent.toFixed(1));
+    stats.rentedPercent = stats.total > 0
+      ? Number(((stats.rented / stats.total) * 100).toFixed(1))
+      : 0;
 
     return sendSuccess(res, "Lay danh sach san pham thanh cong", {
       products,
