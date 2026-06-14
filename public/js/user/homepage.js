@@ -12,6 +12,6 @@ async function loadLayout(placeholderId, url) {
     }
 
     document.addEventListener("DOMContentLoaded", () => {
-      loadLayout("navbar-placeholder", "../layouts/navbar.html");
-      loadLayout("footer-placeholder", "../layouts/footer.html");
+      loadLayout("navbar-placeholder", "/views/layouts/navbar.html");
+      loadLayout("footer-placeholder", "/views/layouts/footer.html");
     });

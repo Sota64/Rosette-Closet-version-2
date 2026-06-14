@@ -22,9 +22,9 @@ app.use(cookieParser);
 app.use("/public", express.static(path.join(__dirname, "public")));
 app.use("/views", express.static(path.join(__dirname, "views")));
 
-app.get("/", (req, res) => {
-  res.send("Rosette Closet API is running");
-});
+// app.get("/", (req, res) => {
+//   res.send("Rosette Closet API is running");
+// });
 
 app.use("/api/products", productRoutes);
 app.use("/api/categories", categoryRoutes);
@@ -34,7 +34,7 @@ app.use("/api/orders", rentalOrderRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
+  res.sendFile(path.join(__dirname, "views", "user", "homepage.html"));
 });
 
 app.get("/views/admin/dashboard.html", (req, res) => {
