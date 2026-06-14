@@ -151,6 +151,15 @@ function renderCategoryOptions() {
             option.textContent = category.name;
             select.appendChild(option);
         });
+
+        // Thêm tuỳ chọn "Thêm danh mục mới"
+        const newCatOption = document.createElement("option");
+        newCatOption.value = "__new__";
+        newCatOption.textContent = "+ Thêm danh mục mới";
+        newCatOption.style.fontWeight = "bold";
+        newCatOption.style.color = "#1a73e8";
+        select.appendChild(newCatOption);
+
         select.value = currentValue;
     });
 
@@ -501,9 +510,44 @@ async function handleProductAdd(event) {
     const form = event.target;
 
     try {
+        let categoryId = form.category.value;
+        const newCategoryWrapper = document.getElementById("new-category-wrapper");
+        const newCategoryInput = document.getElementById("new-category-input");
+        const addCategorySelect = document.getElementById("add-product-category");
+        
+        // Nếu người dùng đang nhập danh mục mới
+        if (newCategoryWrapper && newCategoryWrapper.style.display === "flex") {
+            const newCatName = newCategoryInput.value.trim();
+            if (!newCatName) {
+                showToast("Vui lòng nhập tên danh mục", "error");
+                return;
+            }
+            
+            // Gọi API tạo danh mục mới
+            const catResponse = await apiFetch("/api/categories", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name: newCatName })
+            });
+            const createdCat = await parseApiResponse(catResponse);
+            categoryId = createdCat._id || createdCat.name;
+            
+            // Trả lại giao diện select
+            newCategoryWrapper.style.display = "none";
+            newCategoryInput.required = false;
+            newCategoryInput.value = "";
+            addCategorySelect.style.display = "block";
+            addCategorySelect.required = true;
+        }
+
+        const productFormData = buildProductFormData(form);
+        if (categoryId && categoryId !== "__new__") {
+            productFormData.set("category", categoryId);
+        }
+
         const response = await apiFetch("/api/products", {
             method: "POST",
-            body: buildProductFormData(form)
+            body: productFormData
         });
         await parseApiResponse(response);
 
@@ -554,6 +598,34 @@ function bindImagePreviews() {
             setImagePreview(previewId, URL.createObjectURL(file));
         });
     });
+}
+
+function bindCategoryCreation() {
+    const addCategorySelect = document.getElementById("add-product-category");
+    const newCategoryWrapper = document.getElementById("new-category-wrapper");
+    const newCategoryInput = document.getElementById("new-category-input");
+    const cancelNewCategoryBtn = document.getElementById("cancel-new-category");
+
+    if (addCategorySelect && newCategoryWrapper) {
+        addCategorySelect.addEventListener("change", (e) => {
+            if (e.target.value === "__new__") {
+                addCategorySelect.style.display = "none";
+                addCategorySelect.required = false;
+                newCategoryWrapper.style.display = "flex";
+                newCategoryInput.required = true;
+                newCategoryInput.focus();
+            }
+        });
+
+        cancelNewCategoryBtn.addEventListener("click", () => {
+            newCategoryWrapper.style.display = "none";
+            newCategoryInput.required = false;
+            newCategoryInput.value = "";
+            addCategorySelect.style.display = "block";
+            addCategorySelect.required = true;
+            addCategorySelect.value = "";
+        });
+    }
 }
 
 function bindFilters() {
@@ -667,6 +739,7 @@ function initProductsPage() {
 
     bindFilters();
     bindImagePreviews();
+    bindCategoryCreation();
     loadCategories();
     loadProducts();
 

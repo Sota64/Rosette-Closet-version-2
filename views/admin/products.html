@@ -359,14 +359,22 @@
                     <textarea class="form-textarea" required placeholder="Nhập mô tả sản phẩm..." name="description"></textarea>
                 </div>
                 <div class="form-row">
-                    <div class="form-group">
+                    <div class="form-group" id="add-category-group">
                         <label class="form-label">Danh mục</label>
-                        <select class="form-select" required name="category">
-                            <option value="">Chọn danh mục</option>
-                            <option value="Evening Gown">Evening Gown</option>
-                            <option value="Wedding">Wedding</option>
-                            <option value="Cocktail">Cocktail</option>
-                        </select>
+                        <div class="category-input-wrapper" style="position: relative; display: flex; align-items: center; width: 100%;">
+                            <select class="form-select" required name="category" id="add-product-category" style="width: 100%;">
+                                <option value="">Chọn danh mục</option>
+                                <option value="Evening Gown">Evening Gown</option>
+                                <option value="Wedding">Wedding</option>
+                                <option value="Cocktail">Cocktail</option>
+                            </select>
+                            <div id="new-category-wrapper" style="display: none; align-items: center; gap: 8px; width: 100%;">
+                                <input type="text" id="new-category-input" class="form-input" placeholder="Nhập tên danh mục mới..." style="flex: 1;" />
+                                <button type="button" id="cancel-new-category" class="btn-modal-cancel" style="padding: 8px; min-width: auto; margin: 0; display: flex; align-items: center; justify-content: center;" title="Hủy thêm danh mục mới">
+                                    <span class="material-symbols-outlined" style="font-size: 18px;">close</span>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Màu sắc</label>
