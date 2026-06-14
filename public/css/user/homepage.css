@@ -268,6 +268,24 @@ a {
   font-family: 'Outfit', sans-serif;
 }
 
+.category-overlay span {
+  display: block;
+  margin-top: 8px;
+  color: var(--text-light);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.homepage-empty {
+  grid-column: 1 / -1;
+  padding: 48px 24px;
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.55);
+  color: var(--text-light);
+  text-align: center;
+}
+
 .section-header {
   display: flex;
   align-items: flex-end;
@@ -373,9 +391,13 @@ a {
 
 .preview-btn {
   width: 58px;
+  min-height: 58px;
   border-radius: 18px;
   border: 1px solid var(--border);
   transition: var(--transition);
+  display: grid;
+  place-items: center;
+  color: var(--text);
 }
 
 .preview-btn:hover {

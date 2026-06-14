@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sản phẩm mới | RosetteCloset</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="/public/css/user/collections.css" />
+  <link rel="stylesheet" href="/public/css/layouts/navbar.css" />
+  <link rel="stylesheet" href="/public/css/layouts/footer.css" />
+</head>
+<body>
+  <div id="navbar-placeholder"></div>
+
+  <main class="page-container">
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <ol>
+        <li><a href="/">Trang chủ</a></li>
+        <li>
+          <span class="material-symbols-outlined">chevron_right</span>
+          <span>Sản phẩm mới</span>
+        </li>
+      </ol>
+    </nav>
+
+    <section class="page-heading">
+      <h1>Sản Phẩm Mới</h1>
+      <p>Những thiết kế mới nhất vừa được cập nhật trong kho đồ Rosette Closet, sẵn sàng cho các dịp đặc biệt của bạn.</p>
+    </section>
+
+    <section class="filter-bar" aria-label="Bộ lọc và sắp xếp">
+      <div class="filter-group">
+        <button class="current" type="button" data-filter-status="all">Tất cả</button>
+        <button type="button" data-filter-status="available">Sẵn sàng</button>
+        <button type="button" data-filter-status="rented">Đang thuê</button>
+        <button type="button" data-filter-status="maintenance">Đang xử lý</button>
+      </div>
+
+      <div class="sort-group">
+        <span>Sắp xếp:</span>
+        <select id="new-arrivals-sort" aria-label="Sắp xếp sản phẩm mới">
+          <option value="-createdAt">Mới nhất</option>
+          <option value="rentalPrice">Giá thấp - cao</option>
+          <option value="-rentalPrice">Giá cao - thấp</option>
+        </select>
+      </div>
+    </section>
+
+    <section class="product-grid" id="new-arrivals-grid" aria-label="Danh sách sản phẩm mới">
+      <p class="collections-empty">Đang tải sản phẩm mới...</p>
+    </section>
+
+    <nav class="pagination" aria-label="Phân trang">
+      <button id="new-arrivals-prev" type="button" aria-label="Trang trước"><span class="material-symbols-outlined">chevron_left</span></button>
+      <div id="new-arrivals-pages">
+        <button class="current" type="button">1</button>
+      </div>
+      <button id="new-arrivals-next" type="button" aria-label="Trang sau"><span class="material-symbols-outlined">chevron_right</span></button>
+    </nav>
+  </main>
+
+  <div id="footer-placeholder"></div>
+  <script src="/public/js/layouts/navbar.js"></script>
+  <script src="/public/js/user/new-arrivals.js"></script>
+</body>
+</html>

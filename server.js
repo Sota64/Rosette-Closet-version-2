@@ -8,6 +8,7 @@ const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const rentalOrderRoutes = require("./routes/rentalOrderRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
+const homepageRoutes = require("./routes/homepageRoutes");
 const cookieParser = require("./middleware/cookieParser");
 
 dotenv.config();
@@ -22,9 +23,9 @@ app.use(cookieParser);
 app.use("/public", express.static(path.join(__dirname, "public")));
 app.use("/views", express.static(path.join(__dirname, "views")));
 
-app.get("/", (req, res) => {
-  res.send("Rosette Closet API is running");
-});
+// app.get("/", (req, res) => {
+//   res.send("Rosette Closet API is running");
+// });
 
 app.use("/api/products", productRoutes);
 app.use("/api/categories", categoryRoutes);
@@ -32,9 +33,10 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/orders", rentalOrderRoutes);
 app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/homepage", homepageRoutes);
 
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
+  res.sendFile(path.join(__dirname, "views", "user", "homepage.html"));
 });
 
 app.get("/views/admin/dashboard.html", (req, res) => {

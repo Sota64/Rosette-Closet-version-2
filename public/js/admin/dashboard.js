@@ -77,7 +77,7 @@ async function parseApiResponse(response) {
     const result = await response.json();
 
     if (!response.ok || !result.success) {
-        throw new Error(result.message || "Không thể tải dữ liệu dashboard");
+        throw new Error(result.message || "Không thể tải dữ liệu bảng điều khiển");
     }
 
     return result.data;
@@ -182,7 +182,7 @@ function renderRecentOrders(orders = []) {
 }
 
 function renderDashboard(data) {
-    const adminName = data.admin?.fullName || "Admin";
+    const adminName = data.admin?.fullName || "Quản trị viên";
     const firstName = adminName.split(" ").pop();
     const todayText = new Date().toLocaleDateString("vi-VN", {
         weekday: "long",
@@ -193,9 +193,9 @@ function renderDashboard(data) {
     const kpis = data.kpis || {};
 
     document.querySelector('[data-dashboard="admin-name"]').textContent = adminName;
-    document.querySelector('[data-dashboard="admin-role"]').textContent = data.admin?.role === "admin" ? "Administrator" : "User";
-    document.querySelector('[data-dashboard="welcome-title"]').textContent = `Welcome back, ${firstName}`;
-    document.querySelector('[data-dashboard="welcome-subtitle"]').textContent = `${todayText} — Here's what's happening today.`;
+    document.querySelector('[data-dashboard="admin-role"]').textContent = data.admin?.role === "admin" ? "Quản trị viên" : "Người dùng";
+    document.querySelector('[data-dashboard="welcome-title"]').textContent = `Chào mừng trở lại, ${firstName}`;
+    document.querySelector('[data-dashboard="welcome-subtitle"]').textContent = `${todayText} — Tổng quan hoạt động hôm nay.`;
 
     document.querySelector('[data-dashboard="total-revenue"]').textContent = formatCurrency(kpis.totalRevenue);
     setTrend(document.querySelector('[data-dashboard="revenue-growth"]'), kpis.revenueGrowthPercent);
@@ -203,7 +203,7 @@ function renderDashboard(data) {
 
     document.querySelector('[data-dashboard="active-rentals"]').textContent = kpis.activeRentals || 0;
     document.querySelector('[data-dashboard="active-rental-percent"]').textContent = formatPercent(kpis.activeRentalPercent);
-    document.querySelector('[data-dashboard="due-today"]').textContent = `${kpis.dueToday || 0} items due for return today`;
+    document.querySelector('[data-dashboard="due-today"]').textContent = `${kpis.dueToday || 0} đơn đến hạn trả hôm nay`;
     document.querySelector('[data-dashboard="active-rental-bar"]').style.width = `${Math.min(kpis.activeRentalPercent || 0, 100)}%`;
 
     document.querySelector('[data-dashboard="total-users"]').textContent = kpis.totalUsers || 0;
@@ -216,7 +216,7 @@ function renderDashboard(data) {
     renderInventorySegments(kpis.inventoryHealthPercent || 0);
 
     renderRecentOrders(data.recentOrders || []);
-    document.querySelector('[data-dashboard="insight"]').textContent = data.insight || "Chưa có đủ dữ liệu để tạo insight.";
+    document.querySelector('[data-dashboard="insight"]').textContent = data.insight || "Chưa có đủ dữ liệu để tạo gợi ý vận hành.";
 }
 
 async function loadDashboard() {
@@ -231,7 +231,7 @@ async function loadDashboard() {
         const data = await parseApiResponse(response);
         renderDashboard(data);
     } catch (error) {
-        console.error("Không thể tải dashboard:", error);
+        console.error("Không thể tải bảng điều khiển:", error);
         document.querySelector('[data-dashboard="insight"]').textContent = error.message;
     }
 }

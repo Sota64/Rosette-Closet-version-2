@@ -89,10 +89,10 @@ const getTopProductInsight = async () => {
   ]);
 
   if (!topProduct) {
-    return "Chua co du lieu don thue. Hay tao don hang dau tien de dashboard bat dau phan tich xu huong.";
+    return "Chưa có dữ liệu đơn thuê. Hãy tạo đơn hàng đầu tiên để bảng điều khiển bắt đầu phân tích xu hướng.";
   }
 
-  return `${topProduct.productName} dang la san pham duoc thue nhieu nhat voi ${topProduct.rentedQuantity} luot thue.`;
+  return `${topProduct.productName} đang là sản phẩm được thuê nhiều nhất với ${topProduct.rentedQuantity} lượt thuê.`;
 };
 
 const getDashboard = async (req, res) => {
@@ -170,7 +170,7 @@ const getDashboard = async (req, res) => {
       ? Number(((activeRentals / totalProducts) * 100).toFixed(1))
       : 0;
 
-    return sendSuccess(res, "Lay thong tin dashboard thanh cong", {
+    return sendSuccess(res, "Lấy thông tin bảng điều khiển thành công", {
       admin: {
         fullName: req.user.fullName,
         role: req.user.role
