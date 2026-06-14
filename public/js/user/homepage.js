@@ -6,6 +6,9 @@ async function loadLayout(placeholderId, url) {
     }
     const html = await response.text();
     document.getElementById(placeholderId).outerHTML = html;
+    if (placeholderId === "navbar-placeholder") {
+      window.initNavbarAuth?.();
+    }
   } catch (error) {
     console.error(`Không thể nạp layout từ ${url}:`, error);
   }
