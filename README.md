@@ -189,6 +189,35 @@ fetch("/api/orders", {
 });
 ```
 
+### Dashboard
+
+- `GET /api/dashboard`: lay KPI, bieu do doanh thu, don thue gan day va insight cho trang dashboard, yeu cau admin.
+
+Response dashboard co dang:
+
+```json
+{
+  "admin": {
+    "fullName": "Admin Name",
+    "role": "admin"
+  },
+  "kpis": {
+    "totalRevenue": 0,
+    "revenueGrowthPercent": 0,
+    "activeRentals": 0,
+    "activeRentalPercent": 0,
+    "dueToday": 0,
+    "totalUsers": 0,
+    "newUsers": 0,
+    "inventoryHealthPercent": 0,
+    "maintenanceProducts": 0
+  },
+  "recentOrders": [],
+  "revenueSeries": [],
+  "insight": "..."
+}
+```
+
 ### RentalOrder
 
 - `POST /api/orders`: tao don thue.

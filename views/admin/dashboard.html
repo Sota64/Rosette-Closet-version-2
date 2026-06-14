@@ -24,8 +24,8 @@
                 <span class="material-symbols-outlined top-bar-icon" data-icon="settings">settings</span>
                 <div class="profile-container">
                     <div class="profile-info">
-                        <p class="profile-role">Administrator</p>
-                        <p class="profile-name">Sophia Rosette</p>
+                        <p class="profile-role" data-dashboard="admin-role">Administrator</p>
+                        <p class="profile-name" data-dashboard="admin-name">Sophia Rosette</p>
                     </div>
                     <img alt="Administrator Profile" class="profile-avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBqYVpIGCwHzlVlF-bV24-pzB6IdjnL4JmyqvoLwRyXLw6HrenUsEAe-FBdk_gXR1AYhonwE1yRPu6GpAISpUEHJ3vkBMDZYuZzLxbxnJOkhz63ZElfWRSKcQovRnNdWUPIyWL3CC9P4I1SE6w02bJdeYfxqpwUgS5msT4FkWe1xmkB6N2YhU2mwVAcnPGvVuJBhCKUyumDWap7yhwIaOxhapxdSMhYjRfM-KYgTLsOUWwbZE78oea4g_bv1QNBuFEM2F4jy4HCDQ"/>
                 </div>
@@ -35,8 +35,8 @@
         <div class="canvas-container">
             <div class="welcome-section">
                 <div>
-                    <h2 class="welcome-title">Welcome back, Sophia</h2>
-                    <p class="welcome-subtitle">Monday, 24 May 2024 — Here's what's happening today.</p>
+                    <h2 class="welcome-title" data-dashboard="welcome-title">Welcome back</h2>
+                    <p class="welcome-subtitle" data-dashboard="welcome-subtitle">Here's what's happening today.</p>
                 </div>
                 <div class="welcome-actions">
                     <button class="btn-action-outline">
@@ -56,13 +56,13 @@
                         <div class="kpi-icon-wrapper">
                             <span class="material-symbols-outlined">payments</span>
                         </div>
-                        <span class="kpi-trend trend-up">
+                        <span class="kpi-trend trend-neutral" data-dashboard="revenue-growth">
                             <span class="material-symbols-outlined">trending_up</span>
-                            +12.5%
+                            0%
                         </span>
                     </div>
                     <h4 class="kpi-title">Total Revenue</h4>
-                    <p class="kpi-value">$142,850.00</p>
+                    <p class="kpi-value" data-dashboard="total-revenue">0 ₫</p>
                     <div class="revenue-chart-container" style="margin-top: 12px; flex: 1;">
                         <svg preserveAspectRatio="none" viewBox="0 0 100 40" style="width: 100%; height: 100%;">
                             <path d="M0 35 Q 20 10, 40 30 T 80 15 T 100 5" fill="none" stroke="#D4AF37" stroke-width="2"></path>
@@ -82,13 +82,13 @@
                         <div class="kpi-icon-wrapper secondary">
                             <span class="material-symbols-outlined">cyclone</span>
                         </div>
-                        <span class="kpi-trend trend-neutral">68%</span>
+                        <span class="kpi-trend trend-neutral" data-dashboard="active-rental-percent">0%</span>
                     </div>
                     <h4 class="kpi-title">Active Rentals</h4>
-                    <p class="kpi-value">154</p>
-                    <p class="card-subtitle" style="margin-top: 8px; color: #5f5e5e; font-size: 12px; margin-bottom: 8px;">24 items due for return today</p>
+                    <p class="kpi-value" data-dashboard="active-rentals">0</p>
+                    <p class="card-subtitle" data-dashboard="due-today" style="margin-top: 8px; color: #5f5e5e; font-size: 12px; margin-bottom: 8px;">0 items due for return today</p>
                     <div class="progress-bar-bg">
-                        <div class="bg-gold progress-bar-fill" style="width: 68%;"></div>
+                        <div class="bg-gold progress-bar-fill" data-dashboard="active-rental-bar" style="width: 0%;"></div>
                     </div>
                 </div>
 
@@ -97,11 +97,11 @@
                         <div class="kpi-icon-wrapper tertiary">
                             <span class="material-symbols-outlined">group_add</span>
                         </div>
-                        <span class="kpi-trend trend-up">+8</span>
+                        <span class="kpi-trend trend-neutral" data-dashboard="new-users">+0</span>
                     </div>
                     <h4 class="kpi-title">New Memberships</h4>
-                    <p class="kpi-value">1,208</p>
-                    <ul class="avatar-list" style="margin-top: 12px;">
+                    <p class="kpi-value" data-dashboard="total-users">0</p>
+                    <ul class="avatar-list" data-dashboard="member-avatars" style="margin-top: 12px;">
                         <li><img alt="Member" src="https://lh3.googleusercontent.com/aida-public/AB6AXuABEUwuSMKZEgiVaI9OLs-9LYFiYKIdXW-96QIBraqHyn_le23IwbaEWYwuIcTCtb8J76YWQDMjIaf5X1FRGpL-7yhnRjEQfuOhv1bPMlKvwRc232sBV_KpU8yRODzvJjboWhS1-v8MhKWRhn7WIBQs2IkPze97vo-8Hb6WOMhbKRj9F_tSPkPlowd5VR34W7CBNtn5YNg1-wIouyY3fMKDYkHzpBlUjvpnsQpc4L1VpPvDGWHAWbZBWEQL421cGUyeME6d5XdkVw"/></li>
                         <li><img alt="Member" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDR4rXKgP__t7RMs2OhUR3qYtJ0IhyhIT5Uriv20yibfbvKBM5GnfguZMZSFfTXmwimvMeab7-PGBFZ9tj2U7taFa3OOoc7kNLomjcl_R9CocVQM9HyH00XUQuvbQhxva8ObKRj26fQDwxwf4T7JPBF1_6GsCCKx8UucX3Bw6MAqrZljojMudpW3A6iuw_iRl_yczSNrH3As9Oy4wxWMUKH3CM9ciB0rUloEV-cm_5iIi9X_A4tUYpCGqgKTDXHDXUEuRB6Yx6x-Q"/></li>
                         <li><img alt="Member" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD1liiJjQUYER3Evig1qZsxog7W0w5NsjlliG-J2BLmn_oO-xJ-7A4Lgvs8LoT2vofo_IwARAzFIjh5tDVMq3w6y62eXyk0f-OEE5i06xoZpmeH3EIm9AFxydcPV0rTk6xoh8Yn31y8zq8mSW8T-8rIbssAOMUapRv5b0RIviuBzc2KulTNAuBBEubaaGUUpCPXUDhlqWQ8VECPlEUWL4QxfKXLwkx-fCg-OrjGp42ywV45-b66k4XKZrrzIIt_I5VzIax2j1MoiQ"/></li>
@@ -114,12 +114,12 @@
                         <div class="kpi-icon-wrapper primary-container">
                             <span class="material-symbols-outlined">check_circle</span>
                         </div>
-                        <span class="kpi-trend trend-up">98.2%</span>
+                        <span class="kpi-trend trend-neutral" data-dashboard="inventory-health-trend">0%</span>
                     </div>
                     <h4 class="kpi-title">Inventory Health</h4>
-                    <p class="kpi-value">98.2%</p>
-                    <p class="card-subtitle" style="margin-top: 8px; color: #5f5e5e; font-size: 12px; margin-bottom: 8px;">Excellent condition tracking</p>
-                    <div class="status-segments">
+                    <p class="kpi-value" data-dashboard="inventory-health">0%</p>
+                    <p class="card-subtitle" data-dashboard="inventory-health-subtitle" style="margin-top: 8px; color: #5f5e5e; font-size: 12px; margin-bottom: 8px;">Loading condition tracking</p>
+                    <div class="status-segments" data-dashboard="inventory-segments">
                         <div class="status-segment active"></div>
                         <div class="status-segment active"></div>
                         <div class="status-segment active"></div>
@@ -145,7 +145,7 @@
                                     <th>Trạng thái</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody data-dashboard="recent-orders">
                                 <tr>
                                     <td>
                                         <div class="customer-cell">
@@ -225,7 +225,7 @@
                             <span class="material-symbols-outlined insight-icon" data-icon="tips_and_updates">tips_and_updates</span>
                             <p class="insight-title">Insight</p>
                         </div>
-                        <p class="insight-content">
+                        <p class="insight-content" data-dashboard="insight">
                             Rentals for the "Midnight" collection are up by 20% this week. Consider prioritizing restock.
                         </p>
                     </div>
@@ -243,6 +243,7 @@
         </div>
     </main>
 
+<script src="/public/js/apiClient.js"></script>
 <script defer src="/public/js/admin/dashboard.js"></script>
 </body>
 </html>

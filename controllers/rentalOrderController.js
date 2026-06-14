@@ -307,6 +307,94 @@ const deleteOrder = async (req, res) => {
   }
 };
 
+const getOrderReports = async (req, res) => {
+  try {
+    const statsArray = await RentalOrder.aggregate([
+      {
+        $match: { status: { $ne: "cancelled" } }
+      },
+      {
+        $group: {
+          _id: null,
+          totalRevenue: { $sum: "$totalAmount" },
+          maxOrder: { $max: "$totalAmount" },
+          minOrder: { $min: "$totalAmount" },
+          avgOrder: { $avg: "$totalAmount" },
+          count: { $sum: 1 }
+        }
+      }
+    ]);
+
+    const stats = statsArray[0] || {
+      totalRevenue: 0,
+      maxOrder: 0,
+      minOrder: 0,
+      avgOrder: 0,
+      count: 0
+    };
+
+    const statsByDay = await RentalOrder.aggregate([
+      {
+        $match: { status: { $ne: "cancelled" } }
+      },
+      {
+        $group: {
+          _id: { $dateToString: { format: "%Y-%m-%d", date: "$startDate" } },
+          totalRevenue: { $sum: "$totalAmount" },
+          count: { $sum: 1 },
+          maxOrder: { $max: "$totalAmount" },
+          minOrder: { $min: "$totalAmount" },
+          avgOrder: { $avg: "$totalAmount" }
+        }
+      },
+      { $sort: { _id: -1 } }
+    ]);
+
+    const statsByMonth = await RentalOrder.aggregate([
+      {
+        $match: { status: { $ne: "cancelled" } }
+      },
+      {
+        $group: {
+          _id: { $dateToString: { format: "%Y-%m", date: "$startDate" } },
+          totalRevenue: { $sum: "$totalAmount" },
+          count: { $sum: 1 },
+          maxOrder: { $max: "$totalAmount" },
+          minOrder: { $min: "$totalAmount" },
+          avgOrder: { $avg: "$totalAmount" }
+        }
+      },
+      { $sort: { _id: -1 } }
+    ]);
+
+    const statsByYear = await RentalOrder.aggregate([
+      {
+        $match: { status: { $ne: "cancelled" } }
+      },
+      {
+        $group: {
+          _id: { $dateToString: { format: "%Y", date: "$startDate" } },
+          totalRevenue: { $sum: "$totalAmount" },
+          count: { $sum: 1 },
+          maxOrder: { $max: "$totalAmount" },
+          minOrder: { $min: "$totalAmount" },
+          avgOrder: { $avg: "$totalAmount" }
+        }
+      },
+      { $sort: { _id: -1 } }
+    ]);
+
+    return sendSuccess(res, "Lay bao cao thong ke thanh cong", {
+      stats,
+      statsByDay,
+      statsByMonth,
+      statsByYear
+    });
+  } catch (error) {
+    return sendError(res, error.message);
+  }
+};
+
 module.exports = {
   createOrder,
   getOrders,
@@ -314,5 +402,6 @@ module.exports = {
   getOrderById,
   updateOrder,
   updateOrderStatus,
-  deleteOrder
+  deleteOrder,
+  getOrderReports
 };

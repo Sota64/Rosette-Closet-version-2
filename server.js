@@ -7,6 +7,7 @@ const categoryRoutes = require("./routes/categoryRoutes");
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const rentalOrderRoutes = require("./routes/rentalOrderRoutes");
+const dashboardRoutes = require("./routes/dashboardRoutes");
 const cookieParser = require("./middleware/cookieParser");
 
 dotenv.config();
@@ -30,6 +31,7 @@ app.use("/api/categories", categoryRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/orders", rentalOrderRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
@@ -49,6 +51,10 @@ app.get("/views/admin/orders.html", (req, res) => {
 
 app.get("/views/admin/users.html", (req, res) => {
   res.sendFile(path.join(__dirname, "views", "admin", "users.html"));
+});
+
+app.get("/views/admin/reports.html", (req, res) => {
+  res.sendFile(path.join(__dirname, "views", "admin", "reports.html"));
 });
 
 app.get("/views/layouts/sidebar.html", (req, res) => {

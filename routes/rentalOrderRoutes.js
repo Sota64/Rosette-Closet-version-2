@@ -6,7 +6,8 @@ const {
   getOrderById,
   updateOrder,
   updateOrderStatus,
-  deleteOrder
+  deleteOrder,
+  getOrderReports
 } = require("../controllers/rentalOrderController");
 const { authenticate, authorizeRoles } = require("../middleware/auth");
 
@@ -15,6 +16,7 @@ const requireAdmin = [authenticate, authorizeRoles("admin")];
 
 router.post("/", authenticate, createOrder);
 router.get("/", requireAdmin, getOrders);
+router.get("/reports/stats", requireAdmin, getOrderReports);
 router.get("/my", authenticate, getMyOrders);
 router.get("/:id", authenticate, getOrderById);
 router.put("/:id", requireAdmin, updateOrder);
