@@ -16,6 +16,8 @@ async function loadLayout(placeholderId, url) {
     const html = await response.text();
     document.getElementById(placeholderId).outerHTML = html;
     if (placeholderId === "navbar-placeholder") {
+      document.dispatchEvent(new CustomEvent("rosette:navbar-loaded"));
+      window.initNavbar?.();
       window.initNavbarAuth?.();
       window.initNavbarCategories?.();
     }
@@ -43,6 +45,10 @@ function getProductImage(product) {
 
 function getCategoryName(product) {
   return product.category?.name || "Bộ sưu tập";
+}
+
+function getProductDetailUrl(product) {
+  return `/views/user/productDetails.html?id=${encodeURIComponent(product._id)}`;
 }
 
 function buildProductsUrl() {
@@ -85,17 +91,19 @@ function renderProducts(products = []) {
   grid.innerHTML = products.map((product) => `
     <article class="product-card">
       <div class="product-image">
-        <img src="${escapeHtml(getProductImage(product))}" alt="${escapeHtml(product.name)}" />
+        <a href="${getProductDetailUrl(product)}">
+          <img src="${escapeHtml(getProductImage(product))}" alt="${escapeHtml(product.name)}" />
+        </a>
         <button type="button" aria-label="Thêm ${escapeHtml(product.name)} vào yêu thích">
           <span class="material-symbols-outlined">favorite</span>
         </button>
       </div>
       <div class="product-info">
         <p>${escapeHtml(getCategoryName(product))}</p>
-        <h3>${escapeHtml(product.name)}</h3>
+        <h3><a href="${getProductDetailUrl(product)}">${escapeHtml(product.name)}</a></h3>
         <div class="product-bottom">
           <span>${formatCurrency(product.rentalPrice)}</span>
-          <a href="#">
+          <a href="${getProductDetailUrl(product)}">
             <button type="button">Thuê ngay</button>
           </a>
         </div>

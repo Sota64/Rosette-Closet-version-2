@@ -174,6 +174,13 @@ img {
   font-size: 16px;
 }
 
+.detail-message {
+  padding: 56px 0;
+  color: var(--on-surface-variant);
+  font-size: 16px;
+  text-align: center;
+}
+
 .product-hero {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -292,6 +299,40 @@ img {
   color: var(--on-surface-variant);
   font-size: 16px;
   line-height: 1.7;
+}
+
+.product-specs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 32px;
+}
+
+.product-specs div {
+  padding: 14px;
+  border: 1px solid rgba(208, 197, 175, 0.35);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.48);
+}
+
+.product-specs span,
+.product-specs strong {
+  display: block;
+}
+
+.product-specs span {
+  margin-bottom: 8px;
+  color: var(--on-surface-variant);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.product-specs strong {
+  color: var(--text-primary);
+  font-size: 14px;
+  line-height: 1.35;
 }
 
 .option-block {
@@ -554,7 +595,8 @@ img {
   gap: 16px;
 }
 
-.slider-actions button {
+.slider-actions button,
+.slider-actions a {
   display: grid;
   place-items: center;
   width: 48px;
@@ -564,7 +606,8 @@ img {
   transition: background var(--transition);
 }
 
-.slider-actions button:hover {
+.slider-actions button:hover,
+.slider-actions a:hover {
   background: rgba(212, 175, 55, 0.1);
 }
 
@@ -586,7 +629,7 @@ img {
   transform: scale(1.1);
 }
 
-.similar-image button {
+.similar-image span {
   position: absolute;
   left: 50%;
   bottom: 16px;
@@ -603,7 +646,7 @@ img {
   white-space: nowrap;
 }
 
-.similar-card:hover .similar-image button {
+.similar-card:hover .similar-image span {
   opacity: 1;
 }
 
@@ -700,6 +743,7 @@ img {
   }
 
   .cta-grid,
+  .product-specs,
   .similar-grid,
   .footer-grid {
     grid-template-columns: 1fr;

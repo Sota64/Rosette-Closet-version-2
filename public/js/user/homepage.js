@@ -7,6 +7,8 @@ async function loadLayout(placeholderId, url) {
     const html = await response.text();
     document.getElementById(placeholderId).outerHTML = html;
     if (placeholderId === "navbar-placeholder") {
+      document.dispatchEvent(new CustomEvent("rosette:navbar-loaded"));
+      window.initNavbar?.();
       window.initNavbarAuth?.();
       window.initNavbarCategories?.();
     }
@@ -30,6 +32,10 @@ function formatCurrency(value = 0) {
 
 function getProductImage(product) {
   return product?.images?.[0] || "/public/images/img1.png";
+}
+
+function getProductDetailUrl(product) {
+  return `/views/user/productDetails.html?id=${encodeURIComponent(product._id)}`;
 }
 
 function getProductSizes(product) {
@@ -102,21 +108,23 @@ function renderProducts(products = []) {
   grid.innerHTML = products.map((product) => `
     <article class="product-card">
       <div class="product-image">
-        <img src="${escapeHtml(getProductImage(product))}" alt="${escapeHtml(product.name)}">
+        <a href="${getProductDetailUrl(product)}">
+          <img src="${escapeHtml(getProductImage(product))}" alt="${escapeHtml(product.name)}">
+        </a>
         ${isNewProduct(product) ? '<span class="product-badge">Mới</span>' : ""}
       </div>
 
       <div class="product-content">
         <div class="product-top">
-          <h3>${escapeHtml(product.name)}</h3>
+          <h3><a href="${getProductDetailUrl(product)}">${escapeHtml(product.name)}</a></h3>
           <span class="price">${formatCurrency(product.rentalPrice)}</span>
         </div>
 
         <p>Size: ${escapeHtml(getProductSizes(product))} | Thuê 3 ngày</p>
 
         <div class="product-actions">
-          <a class="btn btn-gold full-width" href="/views/user/collections.html">Thuê ngay</a>
-          <a class="preview-btn" href="/views/user/collections.html" aria-label="Xem ${escapeHtml(product.name)}">
+          <a class="btn btn-gold full-width" href="${getProductDetailUrl(product)}">Thuê ngay</a>
+          <a class="preview-btn" href="${getProductDetailUrl(product)}" aria-label="Xem ${escapeHtml(product.name)}">
             <span class="material-symbols-outlined">visibility</span>
           </a>
         </div>

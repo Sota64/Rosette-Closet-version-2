@@ -3,89 +3,77 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Midnight Glamour | RosetteCloset</title>
+  <title>Chi tiết sản phẩm | RosetteCloset</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="../CSS/productDetails.css" />
+  <link rel="stylesheet" href="/public/css/layouts/navbar.css" />
+  <link rel="stylesheet" href="/public/css/layouts/footer.css" />
+  <link rel="stylesheet" href="/public/css/user/productDetails.css" />
 </head>
 <body>
-  <header class="topbar">
-    <nav class="nav-container">
-      <a class="brand" href="homepage.html">RosetteCloset</a>
-
-      <div class="nav-menu">
-        <a href="collections.html">Collections</a>
-        <a href="#">New Arrivals</a>
-        <a href="#">Designers</a>
-        <a href="#">Occasions</a>
-        <a href="#">Membership</a>
-      </div>
-
-      <div class="nav-actions">
-        <button type="button" aria-label="Yêu thích"><span class="material-symbols-outlined">favorite</span></button>
-        <button type="button" aria-label="Giỏ hàng"><span class="material-symbols-outlined">shopping_bag</span></button>
-        <a class="signin-button" href="login.html">Sign In</a>
-      </div>
-    </nav>
-  </header>
+  <div id="navbar-placeholder"></div>
 
   <main class="main-content">
     <div class="container">
       <nav class="breadcrumbs" aria-label="Breadcrumb">
-        <a href="homepage.html">Trang chủ</a>
+        <a href="/views/user/homepage.html">Trang chủ</a>
         <span class="material-symbols-outlined">chevron_right</span>
-        <a href="collections.html">Bộ sưu tập</a>
+        <a href="/views/user/collections.html">Bộ sưu tập</a>
         <span class="material-symbols-outlined">chevron_right</span>
-        <a href="#">Váy dạ tiệc</a>
+        <a id="product-category-link" href="/views/user/collections.html">Danh mục</a>
         <span class="material-symbols-outlined">chevron_right</span>
-        <span>Midnight Glamour</span>
+        <span id="product-breadcrumb-name">Chi tiết sản phẩm</span>
       </nav>
 
-      <section class="product-hero">
+      <p id="product-detail-message" class="detail-message">Đang tải chi tiết sản phẩm...</p>
+
+      <section class="product-hero" id="product-detail-content" hidden>
         <div class="gallery">
           <div class="main-image">
-            <img src="/source/public/img1.png" alt="Midnight Glamour Dress" />
+            <img id="product-main-image" src="/public/images/img1.png" alt="Ảnh sản phẩm" />
           </div>
 
-          <div class="thumbnail-grid">
-            <button class="thumbnail active" type="button" aria-label="Xem ảnh chi tiết 1">
-              <img src="/source/public/img6.jpeg" alt="Detail 1" />
-            </button>
-            <button class="thumbnail" type="button" aria-label="Xem ảnh chi tiết 2">
-              <img src="/source/public/img7.jpeg" alt="Detail 2" />
-            </button>
-            <button class="thumbnail" type="button" aria-label="Xem ảnh chi tiết 3">
-              <img src="/source/public/img6.jpeg" alt="Detail 3" />
-            </button>
-            <button class="thumbnail" type="button" aria-label="Xem ảnh chi tiết 4">
-              <img src="/source/public/img7.jpeg" alt="Detail 4" />
-            </button>
-          </div>
+          <div class="thumbnail-grid" id="product-thumbnail-grid"></div>
         </div>
 
         <aside class="product-panel">
-          <span class="badge">Bestseller</span>
-          <h1>Midnight Glamour</h1>
+          <span class="badge" id="product-status">Đang tải</span>
+          <h1 id="product-name">Tên sản phẩm</h1>
           <div class="price-row">
-            <span class="price">1.200.000đ</span>
+            <span class="price" id="product-price">0đ</span>
             <span>/ 3 ngày</span>
           </div>
-          <p class="description">Váy dạ hội lụa satin đen huyền bí với đường xẻ tà quyến rũ, tôn vinh vẻ đẹp kiêu sa của phái đẹp trong những bữa tiệc tối sang trọng.</p>
+          <p class="description" id="product-description"></p>
+
+          <div class="product-specs">
+            <div>
+              <span>Mã sản phẩm</span>
+              <strong id="product-code">Đang cập nhật</strong>
+            </div>
+            <div>
+              <span>Danh mục</span>
+              <strong id="product-category">Đang cập nhật</strong>
+            </div>
+            <div>
+              <span>Màu sắc</span>
+              <strong id="product-color">Đang cập nhật</strong>
+            </div>
+            <div>
+              <span>Tiền cọc</span>
+              <strong id="product-deposit">0đ</strong>
+            </div>
+          </div>
 
           <div class="option-block">
             <div class="option-heading">
               <span>Kích thước</span>
-              <a href="#">Size Guide</a>
+              <a href="/views/user/collections.html">Xem bộ sưu tập</a>
             </div>
-            <div class="size-options">
-              <button type="button">S</button>
-              <button class="selected" type="button">M</button>
-              <button type="button">L</button>
-            </div>
+            <div class="size-options" id="product-size-options"></div>
           </div>
 
           <div class="option-block">
@@ -93,7 +81,7 @@
             <button class="date-button" type="button">
               <span class="date-left">
                 <span class="material-symbols-outlined">calendar_today</span>
-                <span>Chọn ngày nhận &amp; trả váy</span>
+                <span>Chọn ngày nhận và trả sản phẩm</span>
               </span>
               <span class="material-symbols-outlined">expand_more</span>
             </button>
@@ -104,16 +92,16 @@
               <span class="material-symbols-outlined">shopping_bag</span>
               <span>Thêm vào giỏ hàng</span>
             </button>
-            <a class="rent-button" href="rentNow.html">Thuê ngay</a>
+            <a class="rent-button" id="rent-now-link" href="/views/user/collections.html">Thuê ngay</a>
           </div>
         </aside>
       </section>
 
-      <section class="details-section">
+      <section class="details-section" id="product-extra-content" hidden>
         <div class="tabs">
           <button class="active" type="button">Chi tiết sản phẩm</button>
-          <button type="button">Chính sách thuê &amp; Đền bù</button>
-          <button type="button">Đánh giá khách hàng (12)</button>
+          <button type="button">Chính sách thuê và đền bù</button>
+          <button type="button" id="product-review-tab">Đánh giá khách hàng</button>
         </div>
 
         <div class="details-grid">
@@ -121,118 +109,58 @@
             <article class="feature-item">
               <span class="material-symbols-outlined">check_circle</span>
               <div>
-                <h4>Chất liệu cao cấp</h4>
-                <p>Sử dụng lụa Satin thượng hạng, có độ bóng mượt tự nhiên và cảm giác mềm mại tuyệt đối trên da.</p>
-              </div>
-            </article>
-            <article class="feature-item">
-              <span class="material-symbols-outlined">public</span>
-              <div>
-                <h4>Xuất xứ</h4>
-                <p>Thiết kế độc quyền, nguyên liệu nhập khẩu trực tiếp từ Pháp.</p>
+                <h4>Tình trạng sản phẩm</h4>
+                <p id="product-status-note"></p>
               </div>
             </article>
             <article class="feature-item">
               <span class="material-symbols-outlined">straighten</span>
               <div>
-                <h4>Kiểu dáng</h4>
-                <p>Dáng đuôi cá ôm sát, xẻ tà cao quyến rũ phù hợp với các sự kiện gala, tiệc cưới sang trọng.</p>
+                <h4>Kích cỡ hiện có</h4>
+                <p id="product-size-note"></p>
+              </div>
+            </article>
+            <article class="feature-item">
+              <span class="material-symbols-outlined">local_laundry_service</span>
+              <div>
+                <h4>Quy trình sau thuê</h4>
+                <p>Sản phẩm được kiểm tra, vệ sinh và bảo quản sau mỗi lượt thuê để đảm bảo chất lượng khi giao đến khách hàng.</p>
               </div>
             </article>
           </div>
 
           <aside class="styling-card">
-            <h4>Gợi ý phối đồ</h4>
-            <p>"Kết hợp cùng một chiếc vòng cổ kim cương tối giản và giày cao gót quai mảnh màu bạc để hoàn thiện vẻ ngoài vương giả."</p>
+            <h4>Gợi ý thuê đồ</h4>
+            <p id="product-style-note"></p>
             <div class="style-icons">
               <span class="material-symbols-outlined">diamond</span>
-              <span class="material-symbols-outlined">stylus</span>
+              <span class="material-symbols-outlined">styler</span>
             </div>
           </aside>
         </div>
       </section>
 
-      <section class="similar-section">
+      <section class="similar-section" id="similar-section" hidden>
         <div class="section-header">
           <div>
             <h2>Sản phẩm tương tự</h2>
-            <p>Khám phá những thiết kế dạ hội đẳng cấp khác</p>
+            <p>Khám phá thêm các thiết kế cùng danh mục</p>
           </div>
           <div class="slider-actions">
-            <button type="button" aria-label="Sản phẩm trước"><span class="material-symbols-outlined">west</span></button>
-            <button type="button" aria-label="Sản phẩm sau"><span class="material-symbols-outlined">east</span></button>
+            <a href="/views/user/collections.html" aria-label="Xem bộ sưu tập">
+              <span class="material-symbols-outlined">east</span>
+            </a>
           </div>
         </div>
 
-        <div class="similar-grid">
-          <article class="similar-card">
-            <div class="similar-image">
-              <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAUjtHoxLCpz99vMeLebznM48of3xFRzLyuMGwyYeaJoNuTWABCxJr4moDtKFoA5VYs4PLqpagsY5U7aqc3D3wkcn11fM_W-0T_-woiPQ_zQqBoTlSxn2ey3SHG_PReckAsbwsN4nDAeJnNVb6gFBfzWAR3Xu4eVhaJsDSllrF9p5cpX9OExbxO84asFK54ER19KPLFsgv4ioHdVXcIaGAiT1ayaRYEtjr_I-F1ng-6ekL4uq8OdpOEEEL3F30A1_YrAP33Vi6C7Q" alt="Golden Hour" />
-              <button type="button">Quick View</button>
-            </div>
-            <h3>Golden Hour</h3>
-            <p>1.500.000đ</p>
-          </article>
-          <article class="similar-card">
-            <div class="similar-image">
-              <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCbXrQCc1HKUPYWbNAad-BuL5Lu-mF7fuEiQW8_9Zy_iZmWMLlciNr1DOKctVtpPnHmuzTYWv5w9NNjfwJXKZVbmu8fIA3wBdDeR-6xx0CbQtVy-8V3bnpv3Qzz1cOaw3uPkBEBZC_DnNQc6MG5Yc6oIP_jvZVuXp2x2NbsJvlg_J7XsOtmA3nvFvVCi3X8FdKXtiyNvUmW1q9-ZK5PGErmKppbD9MQ-2I7rk9twlLCQksQz27qCLcM7wrwpA70n7-X9fwd5HJCKQ" alt="Emerald Muse" />
-              <button type="button">Quick View</button>
-            </div>
-            <h3>Emerald Muse</h3>
-            <p>1.100.000đ</p>
-          </article>
-          <article class="similar-card">
-            <div class="similar-image">
-              <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuD_McOmk-e7pKbGNaeReD6rBdjqBOyDmYhQMrMNBrd1yL0W3_X3luhWUtfokZTcDzRqh22P099ZxkN_pAsl9o-Xk9WOP4XevN-PulZT--_TkPeDpfTGUZqPLCThM_Bn97vyrkkMActXOQt-AE0LYr2BVypnkZ6mJgcrDtwG75WYWifmG23o0dgJ1yUGu0nLai-mnOWaLqp0ZRjiblyVLkYEe-jmfIECSEAf4GQjzlolA46KLxwXEluVLyJdLj5THecLBdqptRZS1A" alt="Silver Moonlight" />
-              <button type="button">Quick View</button>
-            </div>
-            <h3>Silver Moonlight</h3>
-            <p>1.400.000đ</p>
-          </article>
-          <article class="similar-card">
-            <div class="similar-image">
-              <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCJWCX55E-TTNctCQFS-x_GHbQ3OI3mUKcycJg-cb2O-lPOVUiEnQ3CqXsFNDG3U3jgnhlI0QFnsT6HcWIFh-R8KsLhszUnhhAngyBHXQQ65M49R0yISyzkXvh0DsXIwFLPQohAdcwYe1YQSgR4vEnikirknbH0Un-RAVZNrNWv13m8y7ou5YL3sN2k2d7315oPPbJ8_BbelufWd-N93CzHiM81BMlWHZQ4cF4SFLsfkinuddGp_H5L19LNY-vKA_ltQtK3o0S2Vw" alt="Rose Quartz" />
-              <button type="button">Quick View</button>
-            </div>
-            <h3>Rose Quartz</h3>
-            <p>1.350.000đ</p>
-          </article>
-        </div>
+        <div class="similar-grid" id="similar-products-grid"></div>
       </section>
     </div>
   </main>
 
-  <footer class="site-footer">
-    <div class="footer-grid">
-      <div>
-        <h2>RosetteCloset</h2>
-        <p>Định nghĩa lại phong cách thời trang dự tiệc của bạn với những thiết kế đẳng cấp và dịch vụ thuê váy chuyên nghiệp.</p>
-      </div>
-      <div>
-        <h5>Khám phá</h5>
-        <ul>
-          <li><a href="collections.html">Collections</a></li>
-          <li><a href="#">New Arrivals</a></li>
-          <li><a href="#">Membership</a></li>
-        </ul>
-      </div>
-      <div>
-        <h5>Hỗ trợ</h5>
-        <ul>
-          <li><a href="#">Sustainability</a></li>
-          <li><a href="#">Contact Us</a></li>
-          <li><a href="#">Shipping &amp; Returns</a></li>
-        </ul>
-      </div>
-      <div>
-        <h5>Pháp lý</h5>
-        <ul>
-          <li><a href="#">Privacy Policy</a></li>
-          <li><a href="#">Terms of Service</a></li>
-        </ul>
-      </div>
-    </div>
-    <p class="footer-bottom">© 2024 RosetteCloset. All Rights Reserved.</p>
-  </footer>
+  <div id="footer-placeholder"></div>
+
+  <script src="/public/js/layouts/navbar.js"></script>
+  <script src="/public/js/user/productDetails.js"></script>
 </body>
 </html>
