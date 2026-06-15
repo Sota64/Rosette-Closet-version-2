@@ -67,3 +67,29 @@ async function initNavbarAuth() {
 }
 
 window.initNavbarAuth = initNavbarAuth;
+
+async function initNavbarCategories() {
+  const menu = document.getElementById("navbar-categories-menu");
+  if (!menu) return;
+
+  try {
+    const response = await fetch("/api/categories");
+    const result = await response.json();
+    if (result.success && result.data && result.data.length > 0) {
+      // Keep "Tất Cả" and append others
+      menu.innerHTML = '<a href="/views/user/collections.html" class="dropdown-item">Tất Cả</a>';
+      
+      result.data.forEach(category => {
+        const item = document.createElement("a");
+        item.href = `/views/user/collections.html?category=${category._id || category.name}`;
+        item.className = "dropdown-item";
+        item.innerHTML = `${escapeNavbarHtml(category.name)}`;
+        menu.appendChild(item);
+      });
+    }
+  } catch (error) {
+    console.error("Failed to load categories for navbar:", error);
+  }
+}
+
+window.initNavbarCategories = initNavbarCategories;

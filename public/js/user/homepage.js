@@ -8,6 +8,7 @@ async function loadLayout(placeholderId, url) {
     document.getElementById(placeholderId).outerHTML = html;
     if (placeholderId === "navbar-placeholder") {
       window.initNavbarAuth?.();
+      window.initNavbarCategories?.();
     }
   } catch (error) {
     console.error(`Không thể nạp layout từ ${url}:`, error);
