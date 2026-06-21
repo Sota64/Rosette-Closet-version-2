@@ -10,7 +10,7 @@
 body {
     background-color: #F9F6F0; /* Tertiary Linen */
     color: #1b1c1c; /* on-surface */
-    font-family: 'Inter', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 14px;
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
@@ -94,7 +94,7 @@ html.dark #main-sidebar {
 }
 
 .logo-text {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 24px;
     line-height: 1.4;
     letter-spacing: 0.01em;
@@ -103,7 +103,7 @@ html.dark #main-sidebar {
 }
 
 .logo-sub {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 12px;
     line-height: 1;
     letter-spacing: 0.1em;
@@ -115,7 +115,7 @@ html.dark #main-sidebar {
 .logo-mark {
     display: none;
     color: #735c00;
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 1.5rem;
     font-weight: bold;
 }
@@ -160,7 +160,7 @@ html.dark #main-sidebar {
     gap: 0.75rem;
     padding: 0.75rem 1.5rem;
     color: #c8c6c5; /* secondary-fixed-dim */
-    font-family: 'Inter', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 14px;
     line-height: 1.5;
     font-weight: 400;
@@ -193,7 +193,7 @@ html.dark #main-sidebar {
     padding-bottom: 0.75rem;
     border: none;
     border-radius: 0.25rem; /* rounded-lg */
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 12px;
     line-height: 1;
     letter-spacing: 0.1em;
@@ -304,7 +304,7 @@ html.dark .top-bar {
     border-radius: 0.75rem; /* rounded-full from tailwind config config */
     border: none;
     outline: none;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 14px;
     line-height: 1.5;
     font-weight: 400;
@@ -346,7 +346,7 @@ html.dark .top-bar {
 }
 
 .profile-role {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 10px;
     font-weight: 600;
     color: #5f5e5e; /* secondary */
@@ -354,7 +354,7 @@ html.dark .top-bar {
 }
 
 .profile-name {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 14px;
     font-weight: 600;
     color: #1b1c1c; /* on-surface */
@@ -386,7 +386,7 @@ html.dark .top-bar {
 }
 
 .welcome-title {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 40px;
     line-height: 1.2;
     letter-spacing: -0.02em;
@@ -395,7 +395,7 @@ html.dark .top-bar {
 }
 
 .welcome-subtitle {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 16px;
     line-height: 1.6;
     font-weight: 400;
@@ -416,7 +416,7 @@ html.dark .top-bar {
     border: 1px solid #d0c5af;
     background-color: transparent;
     border-radius: 0.125rem; /* default rounded */
-    font-family: 'Inter', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 14px;
     font-weight: 400;
     cursor: pointer;
@@ -436,7 +436,7 @@ html.dark .top-bar {
     color: #fbf9f9; /* surface */
     border: none;
     border-radius: 0.125rem;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 14px;
     font-weight: 400;
     cursor: pointer;
@@ -461,7 +461,7 @@ html.dark .top-bar {
 }
 
 .card-title {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 12px;
     line-height: 1;
     letter-spacing: 0.1em;
@@ -471,7 +471,7 @@ html.dark .top-bar {
 }
 
 .card-value {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 24px;
     line-height: 1.4;
     font-weight: 500;
@@ -499,7 +499,7 @@ html.dark .top-bar {
 }
 
 .card-subtitle {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 14px;
     color: #5f5e5e;
     margin-top: 0.25rem;
@@ -592,14 +592,14 @@ html.dark .top-bar {
 }
 
 .card-heading {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 18px;
     line-height: 1.4;
     font-weight: 500;
 }
 
 .view-all-link {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 12px;
     font-weight: 600;
     color: #735c00;
@@ -626,7 +626,7 @@ html.dark .top-bar {
 
 .luxury-table th {
     padding: 16px 24px;
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 12px;
     font-weight: 600;
     color: #5f5e5e;
@@ -667,7 +667,7 @@ html.dark .top-bar {
 }
 
 .customer-name {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 13px;
     line-height: 1.4;
     letter-spacing: 0.01em;
@@ -675,14 +675,14 @@ html.dark .top-bar {
 }
 
 .product-cell {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 13px;
     font-style: italic;
     font-weight: 400;
 }
 
 .date-cell {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 13px;
     color: #5f5e5e;
     font-weight: 400;
@@ -692,7 +692,7 @@ html.dark .top-bar {
     display: inline-block;
     padding: 0.25rem 0.75rem;
     border-radius: 0.75rem; /* rounded-full equivalent in config */
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 10px;
     font-weight: 600;
     text-transform: uppercase;
@@ -763,7 +763,7 @@ html.dark .top-bar {
 }
 
 .action-title {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 14px;
     font-weight: 600;
 }
@@ -789,14 +789,14 @@ html.dark .top-bar {
 }
 
 .insight-title {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 12px;
     font-weight: 600;
     color: #735c00;
 }
 
 .insight-content {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 14px;
     color: #4d4635; /* on-surface-variant */
     line-height: 1.625;
@@ -815,7 +815,7 @@ html.dark .top-bar {
 }
 
 .footer-copyright {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 10px;
     letter-spacing: 0.15em;
 }
@@ -823,7 +823,7 @@ html.dark .top-bar {
 .footer-links {
     display: flex;
     gap: 1.5rem;
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 10px;
     list-style: none;
 }
@@ -928,7 +928,7 @@ html.dark .top-bar {
 }
 
 .kpi-trend {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 13px;
     font-weight: 500;
     display: inline-flex;
@@ -961,7 +961,7 @@ html.dark .top-bar {
 }
 
 .kpi-title {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 11px;
     color: #5f5e5e;
     text-transform: uppercase;
@@ -971,7 +971,7 @@ html.dark .top-bar {
 }
 
 .kpi-value {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 28px;
     color: #1b1c1c;
     font-weight: 600;

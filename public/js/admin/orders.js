@@ -217,14 +217,14 @@ function renderOrdersTable(orderList) {
                     ${productsHtml}
                 </td>
                 <td>
-                    <span style="font-size: 13px; color: #1b1c1c; font-family: 'Inter', sans-serif;">
+                    <span style="font-size: 13px; color: #1b1c1c; font-family: 'Be Vietnam Pro', sans-serif;">
                         ${start} - ${end}
                     </span>
                 </td>
-                <td class="text-right font-medium" style="font-family: 'Inter', sans-serif;">
+                <td class="text-right font-medium" style="font-family: 'Be Vietnam Pro', sans-serif;">
                     ${formatCurrency(totalDeposit)}
                 </td>
-                <td class="text-right font-medium" style="font-family: 'Inter', sans-serif; color: #735c00; font-weight: 600;">
+                <td class="text-right font-medium" style="font-family: 'Be Vietnam Pro', sans-serif; color: #735c00; font-weight: 600;">
                     ${formatCurrency(order.totalAmount)}
                 </td>
                 <td>

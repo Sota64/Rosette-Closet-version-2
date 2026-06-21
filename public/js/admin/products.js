@@ -1,4 +1,3 @@
-const fallbackCategories = ["Evening Gown", "Wedding", "Cocktail"];
 const pageState = {
     products: [],
     categories: [],
@@ -127,9 +126,10 @@ async function loadCategories() {
     try {
         const response = await apiFetch("/api/categories");
         const categories = await parseApiResponse(response);
-        pageState.categories = categories.length ? categories : fallbackCategories.map((name) => ({ _id: name, name }));
+        pageState.categories = Array.isArray(categories) ? categories : [];
     } catch (error) {
-        pageState.categories = fallbackCategories.map((name) => ({ _id: name, name }));
+        console.error("Không thể tải danh mục:", error);
+        pageState.categories = [];
     }
 
     renderCategoryOptions();
@@ -172,7 +172,9 @@ function renderCategoryOptions() {
             option.textContent = category.name;
             filterSelect.appendChild(option);
         });
-        filterSelect.value = currentValue || "all";
+        filterSelect.value = pageState.categories.some((category) => (category._id || category.name) === currentValue)
+            ? currentValue
+            : "all";
     }
 }
 

@@ -10,7 +10,7 @@
 body {
     background-color: #F9F6F0; /* Tonal Linen */
     color: #1b1c1c; /* on-surface */
-    font-family: 'Inter', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 14px;
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
@@ -66,7 +66,7 @@ a {
 }
 
 .logo-text {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 24px;
     line-height: 1.4;
     letter-spacing: 0.01em;
@@ -75,7 +75,7 @@ a {
 }
 
 .logo-sub {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 12px;
     line-height: 1;
     letter-spacing: 0.1em;
@@ -87,7 +87,7 @@ a {
 .logo-mark {
     display: none;
     color: #735c00;
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 1.5rem;
     font-weight: bold;
 }
@@ -158,7 +158,7 @@ a {
     color: #241a00;
     padding: 0.75rem 0;
     border-radius: 0.25rem;
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 12px;
     line-height: 1;
     letter-spacing: 0.1em;
@@ -329,7 +329,7 @@ a {
 }
 
 .profile-role {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 12px;
     font-weight: 600;
     color: #1b1c1c;
@@ -371,7 +371,7 @@ a {
 }
 
 .page-title {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 40px; /* display-lg */
     line-height: 1.2;
     letter-spacing: -0.02em;
@@ -391,7 +391,7 @@ a {
     gap: 0.5rem;
     padding: 0.75rem 1.5rem;
     border-radius: 0.125rem;
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 12px;
     font-weight: 600;
     letter-spacing: 0.1em;
@@ -473,7 +473,7 @@ a {
 }
 
 .kpi-trend {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 13px;
     font-weight: 500;
     display: inline-flex;
@@ -510,7 +510,7 @@ a {
 }
 
 .kpi-title {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 11px;
     color: #5f5e5e;
     text-transform: uppercase;
@@ -520,7 +520,7 @@ a {
 }
 
 .kpi-value {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 28px;
     color: #1b1c1c;
     font-weight: 600;
@@ -634,7 +634,7 @@ a {
 
 .products-table th {
     padding: 16px 24px;
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 12px;
     font-weight: 600;
     color: #5f5e5e;
@@ -693,7 +693,7 @@ a {
 }
 
 .product-name {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 18px; /* headline-sm */
     font-weight: 500;
     color: #1b1c1c;
@@ -703,7 +703,7 @@ a {
 .product-code {
     font-size: 11px;
     color: #5f5e5e;
-    font-family: monospace;
+    font-family: 'Be Vietnam Pro', sans-serif;
     margin-top: 2px;
 }
 
@@ -1044,7 +1044,7 @@ a {
 }
 
 .modal-title {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 20px;
     font-weight: 600;
     color: #735c00;
@@ -1078,7 +1078,7 @@ a {
 }
 
 .form-label {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 11px;
     font-weight: 600;
     text-transform: uppercase;
@@ -1091,7 +1091,7 @@ a {
     padding: 10px 14px;
     border: 1px solid #d0c5af;
     border-radius: 8px;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 14px;
     color: #1b1c1c;
     background-color: #ffffff;
@@ -1126,7 +1126,7 @@ a {
     height: 36px;
     border: 1px solid #d0c5af;
     border-radius: 6px;
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 12px;
     font-weight: bold;
     color: #7f7663;
@@ -1172,7 +1172,7 @@ a {
 }
 
 .detail-label {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 11px;
     font-weight: 600;
     text-transform: uppercase;
@@ -1182,7 +1182,7 @@ a {
 }
 
 .detail-value {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 14px;
     color: #1b1c1c;
     word-break: break-word;
@@ -1207,7 +1207,7 @@ a {
     padding: 10px 20px;
     border-radius: 8px;
     cursor: pointer;
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 12px;
     font-weight: 600;
     text-transform: uppercase;
@@ -1229,7 +1229,7 @@ a {
     padding: 10px 20px;
     border-radius: 8px;
     cursor: pointer;
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 12px;
     font-weight: 600;
     text-transform: uppercase;
@@ -1251,7 +1251,7 @@ a {
     padding: 10px 20px;
     border-radius: 8px;
     cursor: pointer;
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 12px;
     font-weight: 600;
     text-transform: uppercase;
@@ -1312,7 +1312,7 @@ a {
 }
 
 .upload-text {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 12px;
     font-weight: 600;
     color: #1b1c1c;
@@ -1321,7 +1321,7 @@ a {
 }
 
 .upload-subtext {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 10px;
     color: #7a7979;
 }
@@ -1361,7 +1361,7 @@ a {
     color: #ffffff;
     opacity: 0;
     transition: opacity 0.2s ease-in-out;
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 11px;
     font-weight: 600;
     text-transform: uppercase;
@@ -1397,7 +1397,7 @@ a {
     border-radius: 8px;
     box-shadow: 0 4px 16px rgba(27, 28, 28, 0.08), 0 2px 4px rgba(27, 28, 28, 0.04);
     border-left: 4px solid #d0c5af;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 13.5px;
     color: #1b1c1c;
     transform: translateX(120%);

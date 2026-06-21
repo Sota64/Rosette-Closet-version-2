@@ -23,7 +23,7 @@
 .logo {
   font-size: 32px;
   font-weight: 700;
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Be Vietnam Pro', sans-serif;
   color: var(--gold-dark, #735c00);
 }
 
@@ -232,7 +232,7 @@
   background: transparent;
   color: var(--text, #1c1c1c);
   cursor: pointer;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Be Vietnam Pro', sans-serif;
   font-size: 14px;
   font-weight: 600;
   text-align: left;

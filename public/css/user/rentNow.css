@@ -33,7 +33,7 @@ body {
   overflow-x: hidden;
   background: linear-gradient(135deg, var(--background-gradient-start) 0%, var(--background-gradient-end) 100%);
   color: var(--on-surface);
-  font-family: "Inter", sans-serif;
+  font-family: 'Be Vietnam Pro', sans-serif;
 }
 
 body::selection {
@@ -93,7 +93,7 @@ img {
 
 .brand {
   color: var(--primary);
-  font-family: "Outfit", sans-serif;
+  font-family: 'Be Vietnam Pro', sans-serif;
   font-size: 32px;
   font-weight: 700;
 }
@@ -290,7 +290,7 @@ img {
 .order-card h3,
 .total-row span,
 .footer-inner h2 {
-  font-family: "Outfit", sans-serif;
+  font-family: 'Be Vietnam Pro', sans-serif;
   font-size: 32px;
   line-height: 1.4;
   font-weight: 500;
@@ -374,7 +374,7 @@ img {
 
 .date-card strong {
   color: var(--primary);
-  font-family: "Outfit", sans-serif;
+  font-family: 'Be Vietnam Pro', sans-serif;
   font-size: 32px;
   line-height: 1.4;
   font-weight: 500;
@@ -387,7 +387,7 @@ img {
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.78);
   color: var(--primary);
-  font-family: "Outfit", sans-serif;
+  font-family: 'Be Vietnam Pro', sans-serif;
   font-size: 20px;
   font-weight: 600;
   line-height: 1.4;
@@ -599,7 +599,7 @@ img {
 
 .total-row strong {
   color: var(--primary);
-  font-family: "Outfit", sans-serif;
+  font-family: 'Be Vietnam Pro', sans-serif;
   font-size: 40px;
   line-height: 1;
   font-weight: 600;
@@ -612,7 +612,7 @@ img {
   background: var(--primary);
   color: var(--on-primary);
   box-shadow: 0 10px 25px rgba(115, 92, 0, 0.18);
-  font-family: "Outfit", sans-serif;
+  font-family: 'Be Vietnam Pro', sans-serif;
   font-size: 18px;
   line-height: 1.4;
   letter-spacing: 0.16em;

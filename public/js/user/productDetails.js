@@ -201,7 +201,7 @@ function showToast(message) {
     color: #ffffff;
     padding: 16px 24px;
     border-radius: 8px;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 14px;
     font-weight: 500;
     box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
