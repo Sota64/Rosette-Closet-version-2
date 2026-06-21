@@ -6,6 +6,8 @@
     <title>Quản lý đơn hàng | RosetteCloset Luxury Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="/public/css/layouts/navbar.css"/>
+    <link rel="stylesheet" href="/public/css/layouts/footer.css"/>
     
     <link rel="stylesheet" href="/public/css/admin/orders.css"/>
 </head>
@@ -29,10 +31,7 @@
                     <span class="material-symbols-outlined">mail</span>
                 </button>
                 <div class="divider"></div>
-                <div class="top-bar-user">
-                    <span>Atelier Dashboard</span>
-                    <span class="material-symbols-outlined text-[18px]">account_circle</span>
-                </div>
+                <div class="navbar-auth" data-navbar-auth></div>
             </div>
         </header>
 
@@ -382,6 +381,7 @@
     </div>
 
     <script src="/public/js/apiClient.js"></script>
+    <script src="/public/js/layouts/navbar.js"></script>
     <script src="/public/js/admin/orders.js"></script>
 </body>
 </html>

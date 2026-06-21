@@ -49,12 +49,12 @@
             <div class="form-grid">
               <label class="field">
                 <span>Họ và tên</span>
-                <input id="customer-name" type="text" placeholder="Nguyễn Văn A" readonly />
+                <input id="customer-name" type="text" placeholder="Nguyễn Văn A" required />
               </label>
 
               <label class="field">
                 <span>Số điện thoại</span>
-                <input id="customer-phone" type="tel" placeholder="0901 234 567" readonly />
+                <input id="customer-phone" type="tel" placeholder="0901 234 567" required />
               </label>
 
               <label class="field full">
@@ -62,9 +62,24 @@
                 <input id="customer-email" type="email" placeholder="example@gmail.com" readonly />
               </label>
 
-              <label class="field full">
-                <span>Địa chỉ nhận sản phẩm</span>
-                <input id="customer-address" type="text" placeholder="Số nhà, tên đường, quận/huyện..." readonly />
+              <label class="field">
+                <span>Tỉnh / Thành phố</span>
+                <input id="customer-province" type="text" placeholder="Ví dụ: Hà Nội" required />
+              </label>
+
+              <label class="field">
+                <span>Quận / Huyện</span>
+                <input id="customer-district" type="text" placeholder="Ví dụ: Cầu Giấy" required />
+              </label>
+
+              <label class="field">
+                <span>Phường / Xã</span>
+                <input id="customer-ward" type="text" placeholder="Ví dụ: Dịch Vọng" required />
+              </label>
+
+              <label class="field">
+                <span>Số nhà, tên đường</span>
+                <input id="customer-street" type="text" placeholder="Ví dụ: 123 Đường Cầu Giấy" required />
               </label>
             </div>
           </section>
@@ -134,10 +149,10 @@
               </div>
             </div>
 
-            <div class="promo-row">
+            <!-- <div class="promo-row">
               <input type="text" placeholder="Mã giảm giá" disabled />
               <button type="button" disabled>Áp dụng</button>
-            </div>
+            </div> -->
 
             <div class="price-list">
               <div>

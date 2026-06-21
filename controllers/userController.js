@@ -187,10 +187,35 @@ const deleteUser = async (req, res) => {
   }
 };
 
+const updateMyProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return sendError(res, "Khong tim thay nguoi dung", 404);
+    }
+
+    const allowedFields = ["fullName", "phone", "address"];
+
+    allowedFields.forEach((field) => {
+      if (req.body[field] !== undefined) {
+        user[field] = req.body[field];
+      }
+    });
+
+    await user.save();
+
+    return sendSuccess(res, "Cap nhat thong tin ca nhan thanh cong", sanitizeUser(user));
+  } catch (error) {
+    return sendError(res, error.message, 400);
+  }
+};
+
 module.exports = {
   getUsers,
   getUserById,
   createUser,
   updateUser,
-  deleteUser
+  deleteUser,
+  updateMyProfile
 };

@@ -130,11 +130,47 @@ function setText(id, value) {
   }
 }
 
+function parseAddress(addressString = "") {
+  if (!addressString) {
+    return { street: "", ward: "", district: "", city: "" };
+  }
+  const parts = addressString.split(",").map((p) => p.trim());
+  const address = {
+    street: "",
+    ward: "",
+    district: "",
+    city: ""
+  };
+
+  if (parts.length >= 4) {
+    address.city = parts[parts.length - 1];
+    address.district = parts[parts.length - 2];
+    address.ward = parts[parts.length - 3];
+    address.street = parts.slice(0, parts.length - 3).join(", ");
+  } else if (parts.length === 3) {
+    address.city = parts[2];
+    address.district = parts[1];
+    address.street = parts[0];
+  } else if (parts.length === 2) {
+    address.city = parts[1];
+    address.street = parts[0];
+  } else {
+    address.street = addressString;
+  }
+
+  return address;
+}
+
 function renderUser(user) {
   setValue("customer-name", user.fullName);
   setValue("customer-phone", user.phone);
   setValue("customer-email", user.email);
-  setValue("customer-address", user.address);
+  
+  const addr = parseAddress(user.address);
+  setValue("customer-province", addr.city);
+  setValue("customer-district", addr.district);
+  setValue("customer-ward", addr.ward);
+  setValue("customer-street", addr.street);
 }
 
 function renderProductsList() {
@@ -265,6 +301,30 @@ async function submitRentalOrder(event) {
     if (button) {
       button.disabled = true;
       button.textContent = "Đang tạo đơn...";
+    }
+
+    // Collect name, phone, and split address fields
+    const fullName = document.getElementById("customer-name")?.value.trim();
+    const phone = document.getElementById("customer-phone")?.value.trim();
+    const street = document.getElementById("customer-street")?.value.trim();
+    const ward = document.getElementById("customer-ward")?.value.trim();
+    const district = document.getElementById("customer-district")?.value.trim();
+    const province = document.getElementById("customer-province")?.value.trim();
+
+    const address = [street, ward, district, province].filter(Boolean).join(", ");
+
+    // Update user profile details in the database
+    const profileResponse = await fetch("/api/users/profile/me", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      credentials: "include",
+      body: JSON.stringify({ fullName, phone, address })
+    });
+    const profileResult = await profileResponse.json();
+    if (!profileResponse.ok || !profileResult.success) {
+      throw new Error(profileResult.message || "Không thể cập nhật thông tin nhận hàng.");
     }
 
     const response = await fetch("/api/orders", {

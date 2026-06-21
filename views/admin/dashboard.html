@@ -6,6 +6,7 @@
     <title>RosetteCloset | Bảng điều khiển quản trị</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="/public/css/layouts/navbar.css"/>
     <link rel="stylesheet" href="/public/css/admin/dashboard.css"/>
 </head>
 <body>
@@ -22,13 +23,7 @@
             <div class="top-bar-right">
                 <span class="material-symbols-outlined top-bar-icon" data-icon="notifications">notifications</span>
                 <span class="material-symbols-outlined top-bar-icon" data-icon="settings">settings</span>
-                <div class="profile-container">
-                    <div class="profile-info">
-                        <p class="profile-role" data-dashboard="admin-role">Quản trị viên</p>
-                        <p class="profile-name" data-dashboard="admin-name">Quản trị viên</p>
-                    </div>
-                    <img alt="Ảnh đại diện quản trị viên" class="profile-avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBqYVpIGCwHzlVlF-bV24-pzB6IdjnL4JmyqvoLwRyXLw6HrenUsEAe-FBdk_gXR1AYhonwE1yRPu6GpAISpUEHJ3vkBMDZYuZzLxbxnJOkhz63ZElfWRSKcQovRnNdWUPIyWL3CC9P4I1SE6w02bJdeYfxqpwUgS5msT4FkWe1xmkB6N2YhU2mwVAcnPGvVuJBhCKUyumDWap7yhwIaOxhapxdSMhYjRfM-KYgTLsOUWwbZE78oea4g_bv1QNBuFEM2F4jy4HCDQ"/>
-                </div>
+                <div class="navbar-auth" data-navbar-auth></div>
             </div>
         </header>
 
@@ -241,9 +236,11 @@
                 </ul>
             </footer>
         </div>
+
     </main>
 
 <script src="/public/js/apiClient.js"></script>
+<script src="/public/js/layouts/navbar.js"></script>
 <script defer src="/public/js/admin/dashboard.js"></script>
 </body>
 </html>

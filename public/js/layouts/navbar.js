@@ -26,22 +26,98 @@ function renderNavbarLogin(authSlot) {
       Đăng nhập
     </a>
   `;
+  authSlot.classList.remove("navbar-auth-menu-open");
 }
 
 function renderNavbarUser(authSlot, user) {
   const name = user.fullName || user.email || "Tài khoản";
-  const profileHref = user.role === "admin" ? "/views/admin/dashboard.html" : "/views/user/homepage.html";
   const roleLabel = user.role === "admin" ? "Quản trị viên" : "Thành viên";
+  const adminItem = user.role === "admin"
+    ? '<a class="navbar-auth-dropdown-item" href="/views/admin/dashboard.html"><span class="material-symbols-outlined">dashboard</span>Trang quản trị</a>'
+    : "";
 
   authSlot.innerHTML = `
-    <a class="navbar-user" href="${profileHref}" aria-label="Tài khoản ${escapeNavbarHtml(name)}">
+    <button class="navbar-user" type="button" aria-label="Mở menu tài khoản ${escapeNavbarHtml(name)}" aria-expanded="false" data-navbar-auth-toggle>
       <span class="navbar-avatar">${escapeNavbarHtml(getNavbarUserInitials(name))}</span>
       <span class="navbar-user-meta">
         <strong>${escapeNavbarHtml(name)}</strong>
         <small>${roleLabel}</small>
       </span>
-    </a>
+      <span class="material-symbols-outlined navbar-auth-chevron">expand_more</span>
+    </button>
+    <div class="navbar-auth-dropdown" role="menu">
+      ${adminItem}
+      <a class="navbar-auth-dropdown-item" href="/views/user/account.html"><span class="material-symbols-outlined">person</span>Thông tin tài khoản</a>
+      <a class="navbar-auth-dropdown-item" href="/views/user/orders.html"><span class="material-symbols-outlined">receipt_long</span>Đơn hàng của tôi</a>
+      <button class="navbar-auth-dropdown-item navbar-auth-logout" type="button" data-navbar-logout><span class="material-symbols-outlined">logout</span>Đăng xuất</button>
+    </div>
   `;
+
+  initNavbarAuthDropdown(authSlot);
+}
+
+function closeNavbarAuthDropdown(authSlot) {
+  const toggle = authSlot.querySelector("[data-navbar-auth-toggle]");
+  authSlot.classList.remove("navbar-auth-menu-open");
+  toggle?.setAttribute("aria-expanded", "false");
+}
+
+function closeAllNavbarAuthDropdowns() {
+  document.querySelectorAll(".navbar-auth-menu-open").forEach((authSlot) => {
+    closeNavbarAuthDropdown(authSlot);
+  });
+}
+
+function toggleNavbarAuthDropdown(authSlot) {
+  const toggle = authSlot.querySelector("[data-navbar-auth-toggle]");
+  const shouldOpen = !authSlot.classList.contains("navbar-auth-menu-open");
+  authSlot.classList.toggle("navbar-auth-menu-open", shouldOpen);
+  toggle?.setAttribute("aria-expanded", String(shouldOpen));
+}
+
+async function handleNavbarLogout() {
+  try {
+    await fetch("/api/auth/logout", {
+      method: "POST",
+      credentials: "include"
+    });
+  } catch (error) {
+    console.error("Không thể đăng xuất:", error);
+  } finally {
+    window.location.href = "/views/login.html";
+  }
+}
+
+function initNavbarAuthDropdown(authSlot) {
+  const toggle = authSlot.querySelector("[data-navbar-auth-toggle]");
+  const logoutButton = authSlot.querySelector("[data-navbar-logout]");
+
+  toggle?.addEventListener("click", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    toggleNavbarAuthDropdown(authSlot);
+  });
+
+  logoutButton?.addEventListener("click", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    handleNavbarLogout();
+  });
+
+  if (window.__rosetteNavbarAuthEventsBound) return;
+  window.__rosetteNavbarAuthEventsBound = true;
+
+  document.addEventListener("click", (event) => {
+    if (!event.target.closest("[data-navbar-auth]")) {
+      closeAllNavbarAuthDropdowns();
+    }
+  });
+  
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      closeAllNavbarAuthDropdowns();
+    }
+  });
 }
 
 async function initNavbarAuth() {

@@ -36,7 +36,6 @@ function initReportsPage() {
     const toggleBtn = document.getElementById('sidebar-toggle');
     const navLinks = document.querySelectorAll('.nav-item');
     const canvas = document.querySelector('.canvas-container');
-    const topBar = document.querySelector('.top-bar');
 
     // Sidebar Collapse / Toggle Logic
     if (toggleBtn && sidebar) {
@@ -47,7 +46,6 @@ function initReportsPage() {
                 sidebar.classList.toggle('sidebar-collapsed');
                 if (content) content.classList.toggle('content-expanded');
                 if (canvas) canvas.classList.toggle('canvas-expanded');
-                if (topBar) topBar.classList.toggle('top-bar-expanded');
             }
             
             const icon = toggleBtn.querySelector('.material-symbols-outlined');
@@ -508,9 +506,13 @@ function showToast(message, type = 'success') {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-    // Load dynamic sidebar first
-    const loaded = await loadLayout("sidebar-placeholder", "../layouts/sidebar.html");
-    if (loaded) {
+    const [sidebarLoaded] = await Promise.all([
+        loadLayout("sidebar-placeholder", "../layouts/sidebar.html"),
+        loadLayout("footer-placeholder", "../layouts/footer.html")
+    ]);
+
+    if (sidebarLoaded) {
+        window.initNavbarAuth?.();
         initReportsPage();
     } else {
         // Fallback fade-in if sidebar fails
