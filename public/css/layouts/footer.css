@@ -1,7 +1,12 @@
 .footer {
   padding-top: 100px;
   background: white;
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--border, rgba(0, 0, 0, 0.08));
+}
+
+.footer .container {
+  width: min(1120px, calc(100% - 48px));
+  margin: 0 auto;
 }
 
 .footer-grid {
@@ -15,11 +20,11 @@
   font-size: 36px;
   font-family: 'Outfit', sans-serif;
   margin-bottom: 20px;
-  color: var(--gold-dark);
+  color: var(--gold-dark, #735c00);
 }
 
 .footer-text {
-  color: var(--text-light);
+  color: var(--text-light, #666666);
   line-height: 1.8;
 }
 
@@ -38,19 +43,19 @@
 
 .footer a,
 .footer li {
-  color: var(--text-light);
-  transition: var(--transition);
+  color: var(--text-light, #666666);
+  transition: var(--transition, color 0.25s ease);
 }
 
 .footer a:hover {
-  color: var(--gold-dark);
+  color: var(--gold-dark, #735c00);
 }
 
 .copyright {
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--border, rgba(0, 0, 0, 0.08));
   padding: 24px;
   text-align: center;
-  color: var(--text-light);
+  color: var(--text-light, #666666);
 }
 
 /* Responsive styles for Footer */

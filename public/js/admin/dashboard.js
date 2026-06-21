@@ -192,8 +192,10 @@ function renderDashboard(data) {
     });
     const kpis = data.kpis || {};
 
-    document.querySelector('[data-dashboard="admin-name"]').textContent = adminName;
-    document.querySelector('[data-dashboard="admin-role"]').textContent = data.admin?.role === "admin" ? "Quản trị viên" : "Người dùng";
+    const adminNameElement = document.querySelector('[data-dashboard="admin-name"]');
+    const adminRoleElement = document.querySelector('[data-dashboard="admin-role"]');
+    if (adminNameElement) adminNameElement.textContent = adminName;
+    if (adminRoleElement) adminRoleElement.textContent = data.admin?.role === "admin" ? "Quản trị viên" : "Người dùng";
     document.querySelector('[data-dashboard="welcome-title"]').textContent = `Chào mừng trở lại, ${firstName}`;
     document.querySelector('[data-dashboard="welcome-subtitle"]').textContent = `${todayText} — Tổng quan hoạt động hôm nay.`;
 
@@ -279,6 +281,7 @@ function initDashboard() {
 document.addEventListener("DOMContentLoaded", async () => {
     const loaded = await loadLayout("sidebar-placeholder", "../layouts/sidebar.html");
     if (loaded) {
+        window.initNavbarAuth?.();
         initDashboard();
     } else {
         document.body.style.opacity = '0';

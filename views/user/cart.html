@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Giỏ hàng của bạn | RosetteCloset</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="/public/css/layouts/navbar.css" />
+  <link rel="stylesheet" href="/public/css/layouts/footer.css" />
+  <link rel="stylesheet" href="/public/css/user/cart.css" />
+</head>
+<body>
+  <div id="navbar-placeholder"></div>
+
+  <main class="cart-page">
+    <div class="container">
+      <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <a href="/views/user/homepage.html">Trang chủ</a>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <span>Giỏ hàng</span>
+      </nav>
+
+      <h1 class="cart-title">Giỏ hàng của bạn</h1>
+
+      <div class="cart-grid" id="cart-container">
+        <!-- Left Side: Cart Items List -->
+        <div class="cart-main">
+          <div class="glass-card cart-items-card">
+            <div id="cart-items-list">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Side: Summary Card -->
+        <aside class="cart-sidebar">
+          <div class="glass-card summary-card">
+            <h3>Tóm tắt đơn hàng</h3>
+
+            <div class="summary-details">
+              <div>
+                <span>Phí thuê váy</span>
+                <span id="summary-rental-price">0đ</span>
+              </div>
+              <div>
+                <span class="deposit-label">
+                  Tiền cọc sản phẩm
+                  <span class="material-symbols-outlined" title="Tiền cọc sẽ được hoàn lại 100% sau khi trả váy an toàn">info</span>
+                </span>
+                <span id="summary-deposit-price">0đ</span>
+              </div>
+              <div class="delivery-row">
+                <span>Phí vận chuyển</span>
+                <strong>Miễn phí</strong>
+              </div>
+            </div>
+
+            <div class="summary-total">
+              <span>Tổng cộng tạm tính</span>
+              <strong id="summary-total-price">0đ</strong>
+            </div>
+
+            <button id="checkout-btn" class="checkout-button" type="button">
+              Tiến hành đặt thuê
+            </button>
+
+            <div class="trust-grid">
+              <div>
+                <span class="material-symbols-outlined">verified_user</span>
+                <p>Bảo mật thanh toán 100%</p>
+              </div>
+              <div>
+                <span class="material-symbols-outlined">assignment_return</span>
+                <p>Hoàn trả cọc nhanh chóng</p>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <!-- Empty Cart View -->
+      <div id="cart-empty-view" class="glass-card cart-empty" hidden>
+        <span class="material-symbols-outlined empty-icon">shopping_bag</span>
+        <h2>Giỏ hàng đang trống</h2>
+        <p>Có vẻ như bạn chưa chọn được bộ trang phục ưng ý nào để thuê.</p>
+        <a href="/views/user/collections.html" class="btn btn-gold">
+          Khám phá bộ sưu tập ngay
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <div id="footer-placeholder"></div>
+
+  <script src="/public/js/layouts/navbar.js"></script>
+  <script src="/public/js/user/cart.js"></script>
+</body>
+</html>

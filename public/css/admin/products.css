@@ -924,20 +924,6 @@ a {
     padding: 0 4px;
 }
 
-/* Footer */
-.branding-footer {
-    padding: 32px;
-    text-align: center;
-}
-
-.footer-copyright {
-    font-family: 'Outfit', sans-serif;
-    font-size: 10px;
-    color: #7f7663;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-}
-
 /* Custom Scrollbar */
 .custom-scrollbar::-webkit-scrollbar {
     height: 4px;

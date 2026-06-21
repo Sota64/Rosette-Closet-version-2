@@ -2,6 +2,7 @@ const express = require("express");
 const {
   getProducts,
   getProductById,
+  getProductDetail,
   createProduct,
   updateProduct,
   deleteProduct
@@ -13,6 +14,7 @@ const router = express.Router();
 const requireAdmin = [authenticate, authorizeRoles("admin")];
 
 router.get("/", getProducts);
+router.get("/:id/detail", getProductDetail);
 router.get("/:id", getProductById);
 router.post("/", ...requireAdmin, uploadProductImages, createProduct);
 router.put("/:id", ...requireAdmin, uploadProductImages, updateProduct);

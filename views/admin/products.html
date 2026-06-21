@@ -6,6 +6,8 @@
     <title>Quản lý kho đồ | RosetteCloset Luxury Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="/public/css/layouts/navbar.css"/>
+    <link rel="stylesheet" href="/public/css/layouts/footer.css"/>
     
     <link rel="stylesheet" href="/public/css/admin/products.css"/>
 </head>
@@ -22,29 +24,23 @@
             
             <div class="top-bar-right">
                 <div class="top-bar-icons">
-                    <button class="top-bar-btn notification-btn">
+                    <button class="top-bar-btn notification-btn" title="Thông báo">
                         <span class="material-symbols-outlined">notifications</span>
                         <span class="notification-badge"></span>
                     </button>
-                    <button class="top-bar-btn">
+                    <button class="top-bar-btn" title="Cài đặt">
                         <span class="material-symbols-outlined">settings</span>
                     </button>
                 </div>
                 <div class="divider"></div>
-                <div class="profile-container">
-                    <div class="profile-info">
-                        <p class="profile-role">Admin</p>
-                        <p class="profile-name">Quản trị viên</p>
-                    </div>
-                    <img alt="Administrator Profile" class="profile-avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtAQ_EdDNlsFXeDRemV3rbB5ZwD4mYKq8FHOkxrFmYGGM1bYTjDYO463UncC5Pg4JIe7VvysCsd-LPTDBhr2zYKCQHLubflor8bd9kqleMJnO5n_Y6h1dhaDDVULlLBS1xjSnYzSXVIueXE9IrU3RA7RWuMAYhSSGNSkG-D8YGxWNt0dpoZh208kKr_VnDclhvJfwbTqUAmZBvqZqBZMFz7_uqIw8IllNwWk84CqUPKsjUO_Me3ZVpxEbt6X0rOlDgf7OnEI-6Sw"/>
-                </div>
+                <div class="navbar-auth" data-navbar-auth></div>
             </div>
         </header>
 
         <div class="canvas-container">
             <div class="page-header">
                 <div>
-                    <h2 class="page-title">Quản lý kho đồ</h2>
+                    <h2 class="page-title">Quản lý sản phẩm</h2>
                     <p class="page-subtitle">Giám sát và quản lý trạng thái các bộ sưu tập cao cấp.</p>
                 </div>
                 <button class="btn btn-add">
@@ -338,9 +334,6 @@
             </div>
         </div>
 
-        <footer class="branding-footer">
-            <p class="footer-copyright">© 2026 RosetteCloset Luxury Inventory System. Bảo mật cấp độ quản trị.</p>
-        </footer>
     </main>
 
     <div id="modal-product-add" class="modal">
@@ -630,6 +623,7 @@
     </div>
 
     <script src="/public/js/apiClient.js"></script>
+    <script src="/public/js/layouts/navbar.js"></script>
     <script src="/public/js/admin/products.js"></script>
 </body>
 </html>

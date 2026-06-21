@@ -19,7 +19,6 @@ function initOrdersPage() {
     const toggleBtn = document.getElementById('sidebar-toggle');
     const navLinks = document.querySelectorAll('.nav-item');
     const canvas = document.querySelector('.canvas-container');
-    const topBar = document.querySelector('.top-bar');
 
     // Sidebar Collapse / Toggle Logic
     if (toggleBtn && sidebar) {
@@ -32,7 +31,6 @@ function initOrdersPage() {
                 sidebar.classList.toggle('sidebar-collapsed');
                 if (content) content.classList.toggle('content-expanded');
                 if (canvas) canvas.classList.toggle('canvas-expanded');
-                if (topBar) topBar.classList.toggle('top-bar-expanded');
             }
             
             // Change icon based on state
@@ -727,9 +725,13 @@ function escapeHtml(str) {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-    // Load dynamic sidebar first
-    const loaded = await loadLayout("sidebar-placeholder", "../layouts/sidebar.html");
-    if (loaded) {
+    const [sidebarLoaded] = await Promise.all([
+        loadLayout("sidebar-placeholder", "../layouts/sidebar.html"),
+        loadLayout("footer-placeholder", "../layouts/footer.html")
+    ]);
+
+    if (sidebarLoaded) {
+        window.initNavbarAuth?.();
         initOrdersPage();
     } else {
         // Fallback fade-in if sidebar fails

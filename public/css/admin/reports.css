@@ -244,11 +244,9 @@ a {
 
 /* --- Top Header/Bar --- */
 .top-bar {
-    position: fixed;
+    position: sticky;
     top: 0;
     right: 0;
-    height: 4rem;
-    width: calc(100% - 280px);
     z-index: 40;
     background-color: #fbf9f9;
     border-bottom: 1px solid #d0c5af;
@@ -256,12 +254,7 @@ a {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 32px;
-    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.top-bar-expanded {
-    width: calc(100% - 80px) !important;
+    padding: 1rem 32px;
 }
 
 .search-wrapper {
@@ -343,7 +336,6 @@ a {
 
 /* --- Canvas Area --- */
 .canvas-container {
-    margin-top: 4rem;
     padding: 40px 32px;
     max-width: 1440px;
     margin-left: auto;
@@ -685,20 +677,6 @@ a {
     font-weight: 500;
 }
 
-/* Footer */
-.branding-footer {
-    padding: 32px 0;
-    text-align: center;
-}
-
-.footer-copyright {
-    font-family: 'Outfit', sans-serif;
-    font-size: 10px;
-    color: #7f7663;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-}
-
 /* Toast Container & Toast */
 #toast-container {
     position: fixed;
@@ -823,12 +801,6 @@ a {
     
     .canvas-container {
         padding: 24px 16px;
-    }
-
-    .top-bar {
-        width: 100% !important;
-        left: 0;
-        padding: 0 16px;
     }
 
     .kpi-grid {

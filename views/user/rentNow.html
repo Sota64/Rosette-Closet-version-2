@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Thuê ngay | RosetteCloset</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="/public/css/layouts/navbar.css" />
+  <link rel="stylesheet" href="/public/css/layouts/footer.css" />
+  <link rel="stylesheet" href="/public/css/user/rentNow.css" />
+</head>
+<body>
+  <div id="navbar-placeholder"></div>
+
+  <main class="checkout-page">
+    <div class="container">
+      <div class="progress-steps" aria-label="Tiến trình đặt thuê">
+        <div class="step active">
+          <span>1</span>
+          <p>Thông tin</p>
+        </div>
+        <div class="step-line"></div>
+        <div class="step active">
+          <span>2</span>
+          <p>Xác nhận</p>
+        </div>
+        <div class="step-line"></div>
+        <div class="step muted">
+          <span>3</span>
+          <p>Hoàn tất</p>
+        </div>
+      </div>
+
+      <p id="rent-now-message" class="checkout-message">Đang tải thông tin thuê sản phẩm...</p>
+
+      <form class="checkout-grid" id="rent-now-form" hidden>
+        <div class="checkout-main">
+          <section class="glass-card checkout-section">
+            <div class="section-title">
+              <span class="material-symbols-outlined filled">person_pin</span>
+              <h2>Thông tin cá nhân</h2>
+            </div>
+
+            <div class="form-grid">
+              <label class="field">
+                <span>Họ và tên</span>
+                <input id="customer-name" type="text" placeholder="Nguyễn Văn A" required />
+              </label>
+
+              <label class="field">
+                <span>Số điện thoại</span>
+                <input id="customer-phone" type="tel" placeholder="0901 234 567" required />
+              </label>
+
+              <label class="field full">
+                <span>Email</span>
+                <input id="customer-email" type="email" placeholder="example@gmail.com" readonly />
+              </label>
+
+              <label class="field">
+                <span>Tỉnh / Thành phố</span>
+                <input id="customer-province" type="text" placeholder="Ví dụ: Hà Nội" required />
+              </label>
+
+              <label class="field">
+                <span>Quận / Huyện</span>
+                <input id="customer-district" type="text" placeholder="Ví dụ: Cầu Giấy" required />
+              </label>
+
+              <label class="field">
+                <span>Phường / Xã</span>
+                <input id="customer-ward" type="text" placeholder="Ví dụ: Dịch Vọng" required />
+              </label>
+
+              <label class="field">
+                <span>Số nhà, tên đường</span>
+                <input id="customer-street" type="text" placeholder="Ví dụ: 123 Đường Cầu Giấy" required />
+              </label>
+            </div>
+          </section>
+
+          <section class="glass-card checkout-section">
+            <div class="section-title">
+              <span class="material-symbols-outlined filled">calendar_today</span>
+              <h2>Thời gian thuê</h2>
+            </div>
+
+            <div class="date-grid">
+              <label class="date-card">
+                <span>Ngày nhận sản phẩm</span>
+                <input id="rental-start-date" type="date" required />
+                <small>Dự kiến giao trong ngày nhận</small>
+              </label>
+
+              <label class="date-card">
+                <span>Ngày trả sản phẩm</span>
+                <input id="rental-return-date" type="date" required />
+                <small>Thời hạn thuê được tính theo ngày</small>
+              </label>
+            </div>
+          </section>
+
+          <section class="glass-card checkout-section">
+            <div class="section-title">
+              <span class="material-symbols-outlined filled">payments</span>
+              <h2>Phương thức thanh toán</h2>
+            </div>
+
+            <div class="payment-list">
+              <label class="payment-option selected">
+                <span class="payment-content">
+                  <span class="material-symbols-outlined">account_balance</span>
+                  <span>Chuyển khoản ngân hàng</span>
+                </span>
+                <input type="radio" name="payment" value="bank_transfer" checked />
+              </label>
+
+              <label class="payment-option">
+                <span class="payment-content">
+                  <span class="material-symbols-outlined">local_shipping</span>
+                  <span>Thanh toán khi nhận hàng</span>
+                </span>
+                <input type="radio" name="payment" value="cash_on_delivery" />
+              </label>
+            </div>
+          </section>
+        </div>
+
+        <aside class="order-sidebar">
+          <div class="glass-card order-card">
+            <h3>Tóm tắt đơn hàng</h3>
+
+            <div id="order-products-list">
+              <div class="order-product">
+                <div class="product-thumb">
+                  <img id="order-product-image" src="/public/images/img1.png" alt="Ảnh sản phẩm" />
+                </div>
+                <div>
+                  <h4 id="order-product-name">Tên sản phẩm</h4>
+                  <p id="order-product-category">Phân loại: Đang cập nhật</p>
+                  <p id="order-product-size">Size: Đang cập nhật</p>
+                  <strong id="order-product-price">0đ</strong>
+                </div>
+              </div>
+            </div>
+
+            <!-- <div class="promo-row">
+              <input type="text" placeholder="Mã giảm giá" disabled />
+              <button type="button" disabled>Áp dụng</button>
+            </div> -->
+
+            <div class="price-list">
+              <div>
+                <span id="rental-days-label">Phí thuê</span>
+                <span id="rental-price-total">0đ</span>
+              </div>
+              <div>
+                <span class="deposit-label">
+                  Tiền cọc
+                  <span class="material-symbols-outlined" title="Tiền cọc sẽ được hoàn lại sau khi trả sản phẩm">info</span>
+                </span>
+                <span id="rental-deposit">0đ</span>
+              </div>
+              <div>
+                <span>Phí vận chuyển</span>
+                <strong>Miễn phí</strong>
+              </div>
+            </div>
+
+            <div class="total-row">
+              <span>Tổng cộng</span>
+              <strong id="rental-total">0đ</strong>
+            </div>
+
+            <button class="confirm-button" id="confirm-rental-button" type="submit">Xác nhận đặt lịch</button>
+
+            <p class="checkout-feedback" id="checkout-feedback"></p>
+
+            <div class="trust-grid">
+              <div>
+                <span class="material-symbols-outlined">verified_user</span>
+                <p>Thanh toán<br />bảo mật 100%</p>
+              </div>
+              <div>
+                <span class="material-symbols-outlined">assignment_return</span>
+                <p>Hoàn tiền cọc<br />sau khi trả đồ</p>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </form>
+    </div>
+  </main>
+
+  <div id="footer-placeholder"></div>
+
+  <script src="/public/js/layouts/navbar.js"></script>
+  <script src="/public/js/user/rentNow.js"></script>
+</body>
+</html>

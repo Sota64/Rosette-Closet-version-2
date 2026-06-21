@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Đơn hàng của tôi | RosetteCloset</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="/public/css/layouts/navbar.css" />
+  <link rel="stylesheet" href="/public/css/layouts/footer.css" />
+  <link rel="stylesheet" href="/public/css/user/account.css" />
+</head>
+<body>
+  <div id="navbar-placeholder"></div>
+
+  <main class="account-page">
+    <div class="container">
+      <nav class="account-breadcrumbs" aria-label="Breadcrumb">
+        <a href="/views/user/homepage.html">Trang chủ</a>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <span>Đơn hàng của tôi</span>
+      </nav>
+
+      <section class="account-shell">
+        <div class="account-heading">
+          <p>Lịch sử thuê</p>
+          <h1>Đơn hàng của tôi</h1>
+        </div>
+
+        <div class="orders-list" id="orders-list">
+          <div class="account-card account-empty">Đang tải đơn hàng...</div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <div id="footer-placeholder"></div>
+
+  <script src="/public/js/layouts/navbar.js"></script>
+  <script src="/public/js/user/orders.js"></script>
+</body>
+</html>

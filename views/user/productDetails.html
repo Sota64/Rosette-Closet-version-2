@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chi tiết sản phẩm | RosetteCloset</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="/public/css/layouts/navbar.css" />
+  <link rel="stylesheet" href="/public/css/layouts/footer.css" />
+  <link rel="stylesheet" href="/public/css/user/productDetails.css" />
+</head>
+<body>
+  <div id="navbar-placeholder"></div>
+
+  <main class="main-content">
+    <div class="container">
+      <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <a href="/views/user/homepage.html">Trang chủ</a>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <a href="/views/user/collections.html">Bộ sưu tập</a>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <a id="product-category-link" href="/views/user/collections.html">Danh mục</a>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <span id="product-breadcrumb-name">Chi tiết sản phẩm</span>
+      </nav>
+
+      <p id="product-detail-message" class="detail-message">Đang tải chi tiết sản phẩm...</p>
+
+      <section class="product-hero" id="product-detail-content" hidden>
+        <div class="gallery">
+          <div class="main-image">
+            <img id="product-main-image" src="/public/images/img1.png" alt="Ảnh sản phẩm" />
+          </div>
+
+          <div class="thumbnail-grid" id="product-thumbnail-grid"></div>
+        </div>
+
+        <aside class="product-panel">
+          <span class="badge" id="product-status">Đang tải</span>
+          <h1 id="product-name">Tên sản phẩm</h1>
+          <div class="price-row">
+            <span class="price" id="product-price">0đ</span>
+            <span>/ 3 ngày</span>
+          </div>
+          <p class="description" id="product-description"></p>
+
+          <div class="product-specs">
+            <div>
+              <span>Mã sản phẩm</span>
+              <strong id="product-code">Đang cập nhật</strong>
+            </div>
+            <div>
+              <span>Danh mục</span>
+              <strong id="product-category">Đang cập nhật</strong>
+            </div>
+            <div>
+              <span>Màu sắc</span>
+              <strong id="product-color">Đang cập nhật</strong>
+            </div>
+            <div>
+              <span>Tiền cọc</span>
+              <strong id="product-deposit">0đ</strong>
+            </div>
+          </div>
+
+          <div class="option-block">
+            <div class="option-heading">
+              <span>Kích thước</span>
+              <a href="/views/user/collections.html">Xem bộ sưu tập</a>
+            </div>
+            <div class="size-options" id="product-size-options"></div>
+          </div>
+
+          <div class="option-block">
+            <span class="option-label">Thời gian thuê</span>
+            <button class="date-button" type="button">
+              <span class="date-left">
+                <span class="material-symbols-outlined">calendar_today</span>
+                <span>Chọn ngày nhận và trả sản phẩm</span>
+              </span>
+              <span class="material-symbols-outlined">expand_more</span>
+            </button>
+          </div>
+
+          <div class="cta-grid">
+            <button class="cart-button" type="button">
+              <span class="material-symbols-outlined">shopping_bag</span>
+              <span>Thêm vào giỏ hàng</span>
+            </button>
+            <a class="rent-button" id="rent-now-link" href="/views/user/rentNow.html">Thuê ngay</a>
+          </div>
+        </aside>
+      </section>
+
+      <section class="details-section" id="product-extra-content" hidden>
+        <div class="tabs">
+          <button class="active" type="button">Chi tiết sản phẩm</button>
+          <button type="button">Chính sách thuê và đền bù</button>
+          <button type="button" id="product-review-tab">Đánh giá khách hàng</button>
+        </div>
+
+        <div class="details-grid">
+          <div class="feature-list">
+            <article class="feature-item">
+              <span class="material-symbols-outlined">check_circle</span>
+              <div>
+                <h4>Tình trạng sản phẩm</h4>
+                <p id="product-status-note"></p>
+              </div>
+            </article>
+            <article class="feature-item">
+              <span class="material-symbols-outlined">straighten</span>
+              <div>
+                <h4>Kích cỡ hiện có</h4>
+                <p id="product-size-note"></p>
+              </div>
+            </article>
+            <article class="feature-item">
+              <span class="material-symbols-outlined">local_laundry_service</span>
+              <div>
+                <h4>Quy trình sau thuê</h4>
+                <p>Sản phẩm được kiểm tra, vệ sinh và bảo quản sau mỗi lượt thuê để đảm bảo chất lượng khi giao đến khách hàng.</p>
+              </div>
+            </article>
+          </div>
+
+          <aside class="styling-card">
+            <h4>Gợi ý thuê đồ</h4>
+            <p id="product-style-note"></p>
+            <div class="style-icons">
+              <span class="material-symbols-outlined">diamond</span>
+              <span class="material-symbols-outlined">styler</span>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="similar-section" id="similar-section" hidden>
+        <div class="section-header">
+          <div>
+            <h2>Sản phẩm tương tự</h2>
+            <p>Khám phá thêm các thiết kế cùng danh mục</p>
+          </div>
+          <div class="slider-actions">
+            <a href="/views/user/collections.html" aria-label="Xem bộ sưu tập">
+              <span class="material-symbols-outlined">east</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="similar-grid" id="similar-products-grid"></div>
+      </section>
+    </div>
+  </main>
+
+  <div id="footer-placeholder"></div>
+
+  <script src="/public/js/layouts/navbar.js"></script>
+  <script src="/public/js/user/productDetails.js"></script>
+</body>
+</html>

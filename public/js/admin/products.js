@@ -751,8 +751,13 @@ function initProductsPage() {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-    const loaded = await loadLayout("sidebar-placeholder", "../layouts/sidebar.html");
-    if (loaded) {
+    const [sidebarLoaded] = await Promise.all([
+        loadLayout("sidebar-placeholder", "../layouts/sidebar.html"),
+        loadLayout("footer-placeholder", "../layouts/footer.html")
+    ]);
+
+    if (sidebarLoaded) {
+        window.initNavbarAuth?.();
         initProductsPage();
     } else {
         document.body.style.opacity = "0";

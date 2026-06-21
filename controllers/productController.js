@@ -1,5 +1,6 @@
 const Product = require("../models/Product");
 const Category = require("../models/Category");
+const Review = require("../models/Review");
 const mongoose = require("mongoose");
 const { sendSuccess, sendError } = require("../middleware/response");
 
@@ -267,6 +268,61 @@ const getProductById = async (req, res) => {
   }
 };
 
+const getProductDetail = async (req, res) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return sendError(res, "ID san pham khong hop le", 400);
+    }
+
+    const product = await Product.findById(req.params.id).populate("category", "name description");
+
+    if (!product) {
+      return sendError(res, "Khong tim thay san pham", 404);
+    }
+
+    const [similarProducts, reviewStats] = await Promise.all([
+      Product.find({
+        _id: { $ne: product._id },
+        category: product.category?._id || product.category,
+        status: "available"
+      })
+        .populate("category", "name description")
+        .sort("-createdAt")
+        .limit(4),
+      Review.aggregate([
+        {
+          $match: {
+            product: product._id
+          }
+        },
+        {
+          $group: {
+            _id: "$product",
+            averageRating: { $avg: "$rating" },
+            totalReviews: { $sum: 1 }
+          }
+        }
+      ])
+    ]);
+
+    const stats = reviewStats[0] || {
+      averageRating: 0,
+      totalReviews: 0
+    };
+
+    return sendSuccess(res, "Lay chi tiet san pham thanh cong", {
+      product,
+      similarProducts,
+      reviewSummary: {
+        averageRating: Number((stats.averageRating || 0).toFixed(1)),
+        totalReviews: stats.totalReviews || 0
+      }
+    });
+  } catch (error) {
+    return sendError(res, error.message);
+  }
+};
+
 const createProduct = async (req, res) => {
   try {
     const payload = await buildProductPayload(req.body, req.files);
@@ -322,6 +378,7 @@ const deleteProduct = async (req, res) => {
 module.exports = {
   getProducts,
   getProductById,
+  getProductDetail,
   createProduct,
   updateProduct,
   deleteProduct
