@@ -1,5 +1,5 @@
 const rentNowState = {
-  product: null,
+  products: [],
   rentalDays: 3
 };
 
@@ -137,39 +137,41 @@ function renderUser(user) {
   setValue("customer-address", user.address);
 }
 
-function renderProduct(product) {
-  const image = document.getElementById("order-product-image");
-  const size = product.sizes?.[0] || "Đang cập nhật";
+function renderProductsList() {
+  const listEl = document.getElementById("order-products-list");
+  if (!listEl) return;
 
-  rentNowState.product = product;
-
-  if (image) {
-    image.src = getProductImage(product);
-    image.alt = product.name || "Ảnh sản phẩm";
-  }
-
-  setText("order-product-name", product.name || "Sản phẩm");
-  setText("order-product-category", `Phân loại: ${getCategoryName(product)}`);
-  setText("order-product-size", `Size: ${size}`);
-  setText("order-product-price", formatCurrency(product.rentalPrice));
-  setText("rental-deposit", formatCurrency(product.deposit));
-
-  updateOrderSummary();
+  listEl.innerHTML = rentNowState.products.map(item => {
+    const imgUrl = item.image || getProductImage(item);
+    return `
+      <div class="order-product" style="display: flex; gap: 16px; margin-bottom: 16px; border-bottom: 1px dashed var(--outline-variant); padding-bottom: 16px;">
+        <div class="product-thumb" style="width: 72px; height: 96px; flex-shrink: 0; overflow: hidden; border-radius: 6px;">
+          <img src="${escapeHtml(imgUrl)}" alt="${escapeHtml(item.name)}" style="width: 100%; height: 100%; object-fit: cover;" />
+        </div>
+        <div>
+          <h4 style="font-size: 15px; font-weight: 600; color: var(--primary); margin: 0 0 4px 0;">${escapeHtml(item.name)}</h4>
+          <p style="font-size: 13px; color: var(--on-surface-variant); margin: 0 0 2px 0;">Phân loại: ${escapeHtml(item.category || getCategoryName(item))}</p>
+          <p style="font-size: 13px; color: var(--on-surface-variant); margin: 0 0 4px 0;">Size: ${escapeHtml(item.size || "Mặc định")} | SL: ${item.quantity || 1}</p>
+          <strong style="font-size: 14px; font-weight: 600; color: var(--on-surface);">${formatCurrency(item.rentalPrice)}</strong>
+        </div>
+      </div>
+    `;
+  }).join("");
 }
 
 function updateOrderSummary() {
-  const product = rentNowState.product;
-  if (!product) return;
+  const products = rentNowState.products;
+  if (!products || products.length === 0) return;
 
   rentNowState.rentalDays = getRentalDays();
 
-  const rentalTotal = Number(product.rentalPrice || 0);
-  const deposit = Number(product.deposit || 0);
-  const total = rentalTotal + deposit;
+  const rentalTotal = products.reduce((sum, item) => sum + Number(item.rentalPrice || 0) * (Number(item.quantity) || 1), 0);
+  const depositTotal = products.reduce((sum, item) => sum + Number(item.deposit || 0) * (Number(item.quantity) || 1), 0);
+  const total = rentalTotal + depositTotal;
 
   setText("rental-days-label", `Phí thuê (${rentNowState.rentalDays} ngày)`);
   setText("rental-price-total", formatCurrency(rentalTotal));
-  setText("rental-deposit", formatCurrency(deposit));
+  setText("rental-deposit", formatCurrency(depositTotal));
   setText("rental-total", formatCurrency(total));
 }
 
@@ -218,12 +220,12 @@ function bindDateInputs() {
 }
 
 function buildOrderPayload() {
-  const product = rentNowState.product;
+  const products = rentNowState.products;
   const startDate = document.getElementById("rental-start-date")?.value;
   const returnDate = document.getElementById("rental-return-date")?.value;
   const paymentMethod = document.querySelector('input[name="payment"]:checked')?.value || "bank_transfer";
 
-  if (!product?._id) {
+  if (!products || products.length === 0) {
     throw new Error("Không tìm thấy sản phẩm để đặt thuê.");
   }
 
@@ -235,19 +237,21 @@ function buildOrderPayload() {
     throw new Error("Ngày trả sản phẩm phải sau ngày nhận.");
   }
 
+  const items = products.map(item => ({
+    product: item._id,
+    quantity: Number(item.quantity) || 1,
+    rentalPrice: Number(item.rentalPrice || 0),
+    deposit: Number(item.deposit || 0)
+  }));
+
+  const totalAmount = items.reduce((sum, item) => sum + (item.rentalPrice + item.deposit) * item.quantity, 0);
+
   return {
     startDate,
     returnDate,
     paymentMethod,
-    items: [
-      {
-        product: product._id,
-        quantity: 1,
-        rentalPrice: Number(product.rentalPrice || 0),
-        deposit: Number(product.deposit || 0)
-      }
-    ],
-    totalAmount: Number(product.rentalPrice || 0) + Number(product.deposit || 0)
+    items,
+    totalAmount
   };
 }
 
@@ -274,6 +278,13 @@ async function submitRentalOrder(event) {
     const data = await parseApiResponse(response, "Không thể tạo đơn thuê");
     const order = data.order || data;
 
+    // Clear cart if successfully checked out from cart
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("from") === "cart") {
+      localStorage.removeItem("rosette_cart");
+      document.dispatchEvent(new CustomEvent("rosette:cart-updated"));
+    }
+
     setFeedback(`Đặt thuê thành công. Mã đơn: #${String(order._id).slice(-6).toUpperCase()}`, "success");
   } catch (error) {
     setFeedback(error.message, "error");
@@ -293,16 +304,45 @@ async function loadRentNowPage() {
     bindDateInputs();
     bindPaymentOptions();
 
-    const productId = await resolveProductId();
-    const product = await fetchProduct(productId);
+    const params = new URLSearchParams(window.location.search);
+    const isFromCart = params.get("from") === "cart";
 
-    renderProduct(product);
-    if (form) form.hidden = false;
+    if (isFromCart) {
+      const cart = JSON.parse(localStorage.getItem("rosette_cart") || "[]");
+      if (!cart || cart.length === 0) {
+        throw new Error("Giỏ hàng của bạn đang trống.");
+      }
+      rentNowState.products = cart;
+      renderProductsList();
+      updateOrderSummary();
+      if (form) form.hidden = false;
+    } else {
+      const productId = await resolveProductId();
+      const product = await fetchProduct(productId);
+      const size = params.get("size") || product.sizes?.[0] || "Đang cập nhật";
 
-    if (product.status !== "available") {
-      const button = document.getElementById("confirm-rental-button");
-      if (button) button.disabled = true;
-      setFeedback("Sản phẩm này hiện chưa sẵn sàng để thuê.", "error");
+      rentNowState.products = [{
+        _id: product._id,
+        name: product.name,
+        rentalPrice: product.rentalPrice,
+        deposit: product.deposit,
+        image: getProductImage(product),
+        size: size,
+        color: product.color || "Đang cập nhật",
+        category: getCategoryName(product),
+        quantity: 1,
+        status: product.status
+      }];
+
+      renderProductsList();
+      updateOrderSummary();
+      if (form) form.hidden = false;
+
+      if (product.status !== "available") {
+        const button = document.getElementById("confirm-rental-button");
+        if (button) button.disabled = true;
+        setFeedback("Sản phẩm này hiện chưa sẵn sàng để thuê.", "error");
+      }
     }
 
     try {

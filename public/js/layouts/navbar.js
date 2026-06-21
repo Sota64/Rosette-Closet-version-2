@@ -93,3 +93,42 @@ async function initNavbarCategories() {
 }
 
 window.initNavbarCategories = initNavbarCategories;
+
+function updateNavbarCartBadge() {
+  const badge = document.getElementById("navbar-cart-badge");
+  if (!badge) return;
+
+  try {
+    const cart = JSON.parse(localStorage.getItem("rosette_cart") || "[]");
+    const count = cart.reduce((total, item) => total + (Number(item.quantity) || 1), 0);
+
+    if (count > 0) {
+      badge.textContent = count;
+      badge.hidden = false;
+      badge.style.display = "flex";
+    } else {
+      badge.hidden = true;
+      badge.style.display = "none";
+    }
+  } catch (error) {
+    console.error("Error reading cart for navbar badge:", error);
+    badge.hidden = true;
+    badge.style.display = "none";
+  }
+}
+
+function initNavbarCart() {
+  updateNavbarCartBadge();
+  document.addEventListener("rosette:cart-updated", updateNavbarCartBadge);
+}
+
+window.initNavbarCart = initNavbarCart;
+
+// Hook initNavbarCart into the general navbar initialization
+const originalInitNavbarAuth = window.initNavbarAuth;
+window.initNavbarAuth = async function() {
+  if (originalInitNavbarAuth) {
+    await originalInitNavbarAuth();
+  }
+  initNavbarCart();
+};

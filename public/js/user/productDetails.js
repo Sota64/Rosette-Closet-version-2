@@ -178,6 +178,100 @@ function renderSimilarProducts(products = []) {
   `).join("");
 }
 
+function showToast(message) {
+  let toastContainer = document.getElementById("toast-container");
+  if (!toastContainer) {
+    toastContainer = document.createElement("div");
+    toastContainer.id = "toast-container";
+    toastContainer.style.cssText = `
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    `;
+    document.body.appendChild(toastContainer);
+  }
+
+  const toast = document.createElement("div");
+  toast.style.cssText = `
+    background: rgba(31, 27, 19, 0.95);
+    color: #ffffff;
+    padding: 16px 24px;
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
+    border-left: 4px solid #d4af37;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transform: translateY(20px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  `;
+  toast.innerHTML = `
+    <span class="material-symbols-outlined" style="color: #d4af37;">check_circle</span>
+    <span>${message}</span>
+  `;
+
+  toastContainer.appendChild(toast);
+
+  setTimeout(() => {
+    toast.style.transform = "translateY(0)";
+    toast.style.opacity = "1";
+  }, 10);
+
+  setTimeout(() => {
+    toast.style.transform = "translateY(-20px)";
+    toast.style.opacity = "0";
+    setTimeout(() => {
+      toast.remove();
+    }, 300);
+  }, 3000);
+}
+
+function addToCart(product) {
+  const selectedSizeBtn = document.querySelector("#product-size-options button.selected");
+  if (!selectedSizeBtn) {
+    showToast("Vui lòng chọn kích cỡ trang phục!");
+    return;
+  }
+  const size = selectedSizeBtn.textContent;
+
+  let cart = [];
+  try {
+    cart = JSON.parse(localStorage.getItem("rosette_cart") || "[]");
+  } catch (error) {
+    cart = [];
+  }
+
+  const existingIndex = cart.findIndex(item => item._id === product._id && item.size === size);
+
+  if (existingIndex > -1) {
+    cart[existingIndex].quantity = (cart[existingIndex].quantity || 1) + 1;
+  } else {
+    cart.push({
+      _id: product._id,
+      name: product.name,
+      rentalPrice: product.rentalPrice,
+      deposit: product.deposit,
+      image: getProductImage(product),
+      size: size,
+      color: product.color || "Mặc định",
+      category: getCategoryName(product),
+      quantity: 1
+    });
+  }
+
+  localStorage.setItem("rosette_cart", JSON.stringify(cart));
+  document.dispatchEvent(new CustomEvent("rosette:cart-updated"));
+  showToast(`Đã thêm ${product.name} (Size ${size}) vào giỏ hàng!`);
+}
+
 function renderProductDetail(data) {
   const product = data.product;
   const reviewSummary = data.reviewSummary || {};
@@ -209,6 +303,13 @@ function renderProductDetail(data) {
   const rentNowLink = document.getElementById("rent-now-link");
   if (rentNowLink) {
     rentNowLink.href = `/views/user/rentNow.html?id=${encodeURIComponent(product._id)}`;
+  }
+
+  const cartBtn = document.querySelector(".cart-button");
+  if (cartBtn) {
+    const newCartBtn = cartBtn.cloneNode(true);
+    cartBtn.parentNode.replaceChild(newCartBtn, cartBtn);
+    newCartBtn.addEventListener("click", () => addToCart(product));
   }
 
   renderGallery(product);
