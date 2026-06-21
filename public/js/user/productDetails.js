@@ -208,7 +208,7 @@ function renderProductDetail(data) {
 
   const rentNowLink = document.getElementById("rent-now-link");
   if (rentNowLink) {
-    rentNowLink.href = categoryHref;
+    rentNowLink.href = `/views/user/rentNow.html?id=${encodeURIComponent(product._id)}`;
   }
 
   renderGallery(product);

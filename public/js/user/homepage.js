@@ -38,6 +38,10 @@ function getProductDetailUrl(product) {
   return `/views/user/productDetails.html?id=${encodeURIComponent(product._id)}`;
 }
 
+function getRentNowUrl(product) {
+  return `/views/user/rentNow.html?id=${encodeURIComponent(product._id)}`;
+}
+
 function getProductSizes(product) {
   return product?.sizes?.length ? product.sizes.join(", ") : "Đang cập nhật";
 }
@@ -123,7 +127,7 @@ function renderProducts(products = []) {
         <p>Size: ${escapeHtml(getProductSizes(product))} | Thuê 3 ngày</p>
 
         <div class="product-actions">
-          <a class="btn btn-gold full-width" href="${getProductDetailUrl(product)}">Thuê ngay</a>
+          <a class="btn btn-gold full-width" href="${getRentNowUrl(product)}">Thuê ngay</a>
           <a class="preview-btn" href="${getProductDetailUrl(product)}" aria-label="Xem ${escapeHtml(product.name)}">
             <span class="material-symbols-outlined">visibility</span>
           </a>

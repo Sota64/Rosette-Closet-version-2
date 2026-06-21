@@ -50,6 +50,10 @@ function getProductDetailUrl(product) {
   return `/views/user/productDetails.html?id=${encodeURIComponent(product._id)}`;
 }
 
+function getRentNowUrl(product) {
+  return `/views/user/rentNow.html?id=${encodeURIComponent(product._id)}`;
+}
+
 function buildProductsUrl() {
   const params = new URLSearchParams({
     page: newArrivalsState.page,
@@ -99,7 +103,7 @@ function renderProducts(products = []) {
         <h3><a href="${getProductDetailUrl(product)}">${escapeHtml(product.name)}</a></h3>
         <div class="product-bottom">
           <span>${formatCurrency(product.rentalPrice)}</span>
-          <a href="${getProductDetailUrl(product)}">
+          <a href="${getRentNowUrl(product)}">
             <button type="button">Thuê ngay</button>
           </a>
         </div>

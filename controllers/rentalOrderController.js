@@ -1,9 +1,11 @@
 const RentalOrder = require("../models/RentalOrder");
 const Product = require("../models/Product");
+const Payment = require("../models/Payment");
 const mongoose = require("mongoose");
 const { sendSuccess, sendError } = require("../middleware/response");
 
 const orderStatuses = ["pending", "approved", "delivering", "renting", "returned", "completed", "cancelled"];
+const paymentMethods = ["bank_transfer", "cash_on_delivery"];
 
 const escapeRegex = (value) => {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -86,12 +88,32 @@ const createOrder = async (req, res) => {
       items,
       totalAmount: req.body.totalAmount !== undefined ? Number(req.body.totalAmount) : calculateTotalAmount(items)
     };
+    const paymentMethod = req.body.paymentMethod;
+
+    delete orderData.paymentMethod;
+
+    if (paymentMethod && !paymentMethods.includes(paymentMethod)) {
+      return sendError(res, "Phuong thuc thanh toan khong hop le", 400);
+    }
 
     const order = await RentalOrder.create(orderData);
     await order.populate("user", "fullName email phone address");
     await order.populate("items.product", "name rentalPrice deposit status images code");
 
-    return sendSuccess(res, "Tao don thue thanh cong", order, 201);
+    let payment = null;
+
+    if (paymentMethod) {
+      payment = await Payment.create({
+        rentalOrder: order._id,
+        amount: order.totalAmount,
+        method: paymentMethod
+      });
+    }
+
+    return sendSuccess(res, "Tao don thue thanh cong", {
+      order,
+      payment
+    }, 201);
   } catch (error) {
     return sendError(res, error.message, 400);
   }
