@@ -98,6 +98,11 @@ function initOrdersPage() {
     // Load related resources
     loadUsersAndProducts();
 
+    ["add", "edit"].forEach((prefix) => {
+        document.getElementById(`${prefix}-order-start-date`)?.addEventListener("change", () => calculateTotalOrderAmount(prefix));
+        document.getElementById(`${prefix}-order-return-date`)?.addEventListener("change", () => calculateTotalOrderAmount(prefix));
+    });
+
     // Load orders
     loadOrders();
 }
@@ -175,11 +180,15 @@ function renderOrdersTable(orderList) {
         const end = new Date(order.returnDate).toLocaleDateString("vi-VN", {
             day: '2-digit', month: '2-digit', year: 'numeric'
         });
+        const rentalDays = getRentalDays(
+            formatDateToYYYYMMDD(order.startDate),
+            formatDateToYYYYMMDD(order.returnDate)
+        );
 
         // Compute total deposit
         let totalDeposit = 0;
         if (order.items && order.items.length > 0) {
-            totalDeposit = order.items.reduce((sum, item) => sum + (item.deposit || 0) * (item.quantity || 1), 0);
+            totalDeposit = order.items.reduce((sum, item) => sum + (item.deposit || 0) * rentalDays * (item.quantity || 1), 0);
         }
 
         // Generate product names summary
@@ -378,19 +387,31 @@ function calculateTotalOrderAmount(prefix) {
     const container = document.getElementById(`${prefix}-order-items-container`);
     if (!container) return;
 
+    const startDate = document.getElementById(`${prefix}-order-start-date`)?.value;
+    const returnDate = document.getElementById(`${prefix}-order-return-date`)?.value;
+    const rentalDays = getRentalDays(startDate, returnDate);
     let total = 0;
     const rows = container.querySelectorAll(".order-item-row");
     rows.forEach(row => {
         const qty = parseInt(row.querySelector(".item-quantity").value) || 0;
         const price = parseFloat(row.querySelector(".item-price").value) || 0;
         const deposit = parseFloat(row.querySelector(".item-deposit").value) || 0;
-        total += (price + deposit) * qty;
+        total += ((price + deposit) * rentalDays) * qty;
     });
 
     const displayEl = document.getElementById(`${prefix}-order-total-display`);
     if (displayEl) {
         displayEl.textContent = formatCurrency(total);
     }
+}
+
+function getRentalDays(startDate, returnDate) {
+    if (!startDate || !returnDate) return 1;
+
+    const diffMs = new Date(returnDate).getTime() - new Date(startDate).getTime();
+    const diffDays = Math.ceil(diffMs / (24 * 60 * 60 * 1000));
+
+    return Math.max(diffDays, 1);
 }
 
 function resetModalFields(modal) {
@@ -530,6 +551,10 @@ async function openOrderDetailModal(id) {
             day: '2-digit', month: '2-digit', year: 'numeric'
         });
         const statusMeta = getStatusMeta(order.status);
+        const rentalDays = getRentalDays(
+            formatDateToYYYYMMDD(order.startDate),
+            formatDateToYYYYMMDD(order.returnDate)
+        );
 
         document.getElementById("detail-order-id").textContent = `#${order._id.toUpperCase()}`;
         
@@ -548,8 +573,8 @@ async function openOrderDetailModal(id) {
         const itemsListEl = document.getElementById("detail-order-items-list");
         itemsListEl.innerHTML = order.items.map(item => {
             const productTitle = item.product?.name || "Sản phẩm đã xóa";
-            const itemRent = (item.rentalPrice || 0) * (item.quantity || 1);
-            const itemDep = (item.deposit || 0) * (item.quantity || 1);
+            const itemRent = (item.rentalPrice || 0) * rentalDays * (item.quantity || 1);
+            const itemDep = (item.deposit || 0) * rentalDays * (item.quantity || 1);
             rentalSum += itemRent;
             depositSum += itemDep;
 
@@ -557,7 +582,7 @@ async function openOrderDetailModal(id) {
                 <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #efeded; font-size: 13px;">
                     <div>
                         <div style="font-weight: 500;">${escapeHtml(productTitle)}</div>
-                        <div style="font-size: 11px; color: #7a7979;">Đơn giá thuê: ${formatCurrency(item.rentalPrice)} | Cọc: ${formatCurrency(item.deposit)} | SL: ${item.quantity}</div>
+                        <div style="font-size: 11px; color: #7a7979;">Đơn giá thuê/ngày: ${formatCurrency(item.rentalPrice)} | Cọc/ngày: ${formatCurrency(item.deposit)} | ${rentalDays} ngày | SL: ${item.quantity}</div>
                     </div>
                     <div style="text-align: right; font-weight: 500;">
                         <div>Thuê: ${formatCurrency(itemRent)}</div>

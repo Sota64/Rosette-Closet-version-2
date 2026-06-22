@@ -67,9 +67,20 @@ const buildOrderItems = async (items = []) => {
   });
 };
 
-const calculateTotalAmount = (items) => {
+const calculateRentalDays = (startDate, returnDate) => {
+  const start = new Date(startDate);
+  const end = new Date(returnDate);
+  const diffMs = end.getTime() - start.getTime();
+  const diffDays = Math.ceil(diffMs / (24 * 60 * 60 * 1000));
+
+  return Math.max(diffDays, 1);
+};
+
+const calculateTotalAmount = (items, startDate, returnDate) => {
+  const rentalDays = calculateRentalDays(startDate, returnDate);
+
   return items.reduce((total, item) => {
-    return total + (item.rentalPrice + item.deposit) * item.quantity;
+    return total + ((item.rentalPrice + item.deposit) * rentalDays) * item.quantity;
   }, 0);
 };
 
@@ -86,7 +97,9 @@ const createOrder = async (req, res) => {
       ...req.body,
       user: req.user.role === "admin" && req.body.user ? req.body.user : req.user._id,
       items,
-      totalAmount: req.body.totalAmount !== undefined ? Number(req.body.totalAmount) : calculateTotalAmount(items)
+      totalAmount: req.body.totalAmount !== undefined
+        ? Number(req.body.totalAmount)
+        : calculateTotalAmount(items, req.body.startDate, req.body.returnDate)
     };
     const paymentMethod = req.body.paymentMethod;
 
@@ -254,11 +267,26 @@ const updateOrder = async (req, res) => {
       }
     });
 
-    if (req.body.items !== undefined) {
-      payload.items = await buildOrderItems(req.body.items);
+    const needsTotalRecalculation = req.body.items !== undefined ||
+      (req.body.totalAmount === undefined && (req.body.startDate !== undefined || req.body.returnDate !== undefined));
+
+    if (needsTotalRecalculation) {
+      const existingOrder = await RentalOrder.findById(req.params.id);
+      if (!existingOrder) {
+        return sendError(res, "Khong tim thay don thue", 404);
+      }
+
+      if (req.body.items !== undefined) {
+        payload.items = await buildOrderItems(req.body.items);
+      }
+
       payload.totalAmount = req.body.totalAmount !== undefined
         ? Number(req.body.totalAmount)
-        : calculateTotalAmount(payload.items);
+        : calculateTotalAmount(
+          payload.items || existingOrder.items,
+          payload.startDate || existingOrder.startDate,
+          payload.returnDate || existingOrder.returnDate
+        );
     }
 
     if (payload.status && !orderStatuses.includes(payload.status)) {

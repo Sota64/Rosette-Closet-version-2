@@ -153,8 +153,8 @@ async function openOrderDetailModal(orderId) {
       const deposit = item.deposit || 0;
       const quantity = item.quantity || 1;
 
-      totalRent += rentalPrice * quantity;
-      totalDeposit += deposit * quantity;
+      totalRent += rentalPrice * rentalDays * quantity;
+      totalDeposit += deposit * rentalDays * quantity;
 
       return `
         <div class="modal-product-item">
@@ -164,8 +164,8 @@ async function openOrderDetailModal(orderId) {
             <p class="modal-product-meta">Size: ${escapeHtml(size)} | Màu: ${escapeHtml(color)} | Số lượng: ${quantity}</p>
           </div>
           <div class="modal-product-price">
-            <strong>${formatCurrency(rentalPrice)}</strong>
-            <span>Cọc: ${formatCurrency(deposit)}</span>
+            <strong>${formatCurrency(rentalPrice)} / ngày</strong>
+            <span>Cọc/ngày: ${formatCurrency(deposit)}</span>
           </div>
         </div>
       `;
