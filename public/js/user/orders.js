@@ -45,6 +45,37 @@ function getStatusLabel(status) {
   return labels[status] || status || "Không rõ";
 }
 
+function getProductImage(item) {
+  return item?.product?.images?.[0] || "/public/images/img1.png";
+}
+
+function renderOrderThumbnails(items = []) {
+  const visibleItems = items.slice(0, 2);
+  const remainingCount = Math.max(items.length - visibleItems.length, 0);
+
+  if (!visibleItems.length) {
+    return `
+      <div class="order-thumb-stack order-thumb-stack-empty" aria-label="Đơn hàng chưa có ảnh sản phẩm">
+        <span class="material-symbols-outlined">inventory_2</span>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="order-thumb-stack" aria-label="${items.length} sản phẩm trong đơn hàng">
+      ${visibleItems.map((item) => {
+        const productName = item.product?.name || "Sản phẩm";
+        return `
+          <div class="order-thumb">
+            <img src="${escapeHtml(getProductImage(item))}" alt="${escapeHtml(productName)}" />
+          </div>
+        `;
+      }).join("")}
+      ${remainingCount > 0 ? `<span class="order-thumb-more">+${remainingCount}</span>` : ""}
+    </div>
+  `;
+}
+
 function renderOrders(orders = []) {
   const container = document.getElementById("orders-list");
   if (!container) return;
@@ -55,6 +86,7 @@ function renderOrders(orders = []) {
   }
 
   container.innerHTML = orders.map((order) => {
+    const items = order.items || [];
     const products = (order.items || [])
       .map((item) => {
         const productName = item.product?.name || "Sản phẩm";
@@ -65,15 +97,18 @@ function renderOrders(orders = []) {
 
     return `
       <article class="account-card order-card">
-        <div class="order-card-header">
-          <div>
-            <h2>Đơn #${escapeHtml(String(order._id || "").slice(-6).toUpperCase())}</h2>
-            <p class="order-meta">${formatDate(order.startDate)} - ${formatDate(order.returnDate)}</p>
+        ${renderOrderThumbnails(items)}
+        <div class="order-card-content">
+          <div class="order-card-header">
+            <div>
+              <h2>Đơn #${escapeHtml(String(order._id || "").slice(-6).toUpperCase())}</h2>
+              <p class="order-meta">${formatDate(order.startDate)} - ${formatDate(order.returnDate)}</p>
+            </div>
+            <span class="order-status">${escapeHtml(getStatusLabel(order.status))}</span>
           </div>
-          <span class="order-status">${escapeHtml(getStatusLabel(order.status))}</span>
+          <p class="order-products">${products || "Chưa có sản phẩm"}</p>
+          <p class="order-total">${formatCurrency(order.totalAmount)}</p>
         </div>
-        <p class="order-products">${products || "Chưa có sản phẩm"}</p>
-        <p class="order-total">${formatCurrency(order.totalAmount)}</p>
       </article>
     `;
   }).join("");

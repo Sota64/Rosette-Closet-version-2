@@ -1,7 +1,49 @@
 const rentNowState = {
   products: [],
-  rentalDays: 3
+  rentalDays: 3,
+  addressData: []
 };
+
+const ADDRESS_API_URL = "https://provinces.open-api.vn/api/?depth=3";
+const ADDRESS_CACHE_KEY = "rosette_vietnam_address_data";
+const ADDRESS_CACHE_MAX_AGE = 7 * 24 * 60 * 60 * 1000;
+const FALLBACK_ADDRESS_DATA = [
+  {
+    name: "Thành phố Hà Nội",
+    districts: [
+      { name: "Quận Ba Đình", wards: [{ name: "Phường Phúc Xá" }, { name: "Phường Trúc Bạch" }, { name: "Phường Vĩnh Phúc" }, { name: "Phường Cống Vị" }, { name: "Phường Liễu Giai" }, { name: "Phường Nguyễn Trung Trực" }, { name: "Phường Quán Thánh" }, { name: "Phường Ngọc Hà" }, { name: "Phường Điện Biên" }, { name: "Phường Đội Cấn" }, { name: "Phường Ngọc Khánh" }, { name: "Phường Kim Mã" }, { name: "Phường Giảng Võ" }, { name: "Phường Thành Công" }] },
+      { name: "Quận Hoàn Kiếm", wards: [{ name: "Phường Phúc Tân" }, { name: "Phường Đồng Xuân" }, { name: "Phường Hàng Mã" }, { name: "Phường Hàng Buồm" }, { name: "Phường Hàng Đào" }, { name: "Phường Hàng Bạc" }, { name: "Phường Tràng Tiền" }, { name: "Phường Hàng Bài" }] },
+      { name: "Quận Cầu Giấy", wards: [{ name: "Phường Nghĩa Đô" }, { name: "Phường Nghĩa Tân" }, { name: "Phường Mai Dịch" }, { name: "Phường Dịch Vọng" }, { name: "Phường Dịch Vọng Hậu" }, { name: "Phường Quan Hoa" }, { name: "Phường Yên Hoà" }, { name: "Phường Trung Hoà" }] },
+      { name: "Quận Đống Đa", wards: [{ name: "Phường Cát Linh" }, { name: "Phường Văn Miếu" }, { name: "Phường Quốc Tử Giám" }, { name: "Phường Láng Thượng" }, { name: "Phường Ô Chợ Dừa" }, { name: "Phường Trung Liệt" }, { name: "Phường Khâm Thiên" }] },
+      { name: "Quận Hai Bà Trưng", wards: [{ name: "Phường Nguyễn Du" }, { name: "Phường Bạch Đằng" }, { name: "Phường Phạm Đình Hổ" }, { name: "Phường Lê Đại Hành" }, { name: "Phường Bách Khoa" }, { name: "Phường Minh Khai" }] },
+      { name: "Quận Thanh Xuân", wards: [{ name: "Phường Nhân Chính" }, { name: "Phường Thượng Đình" }, { name: "Phường Khương Trung" }, { name: "Phường Khương Mai" }, { name: "Phường Thanh Xuân Trung" }, { name: "Phường Thanh Xuân Bắc" }] },
+      { name: "Quận Tây Hồ", wards: [{ name: "Phường Phú Thượng" }, { name: "Phường Nhật Tân" }, { name: "Phường Tứ Liên" }, { name: "Phường Quảng An" }, { name: "Phường Xuân La" }, { name: "Phường Bưởi" }] },
+      { name: "Quận Hà Đông", wards: [{ name: "Phường Nguyễn Trãi" }, { name: "Phường Mộ Lao" }, { name: "Phường Văn Quán" }, { name: "Phường Phúc La" }, { name: "Phường Yết Kiêu" }, { name: "Phường La Khê" }] },
+      { name: "Quận Long Biên", wards: [{ name: "Phường Ngọc Lâm" }, { name: "Phường Bồ Đề" }, { name: "Phường Gia Thuỵ" }, { name: "Phường Đức Giang" }, { name: "Phường Việt Hưng" }, { name: "Phường Long Biên" }] },
+      { name: "Quận Nam Từ Liêm", wards: [{ name: "Phường Cầu Diễn" }, { name: "Phường Mỹ Đình 1" }, { name: "Phường Mỹ Đình 2" }, { name: "Phường Mễ Trì" }, { name: "Phường Phú Đô" }, { name: "Phường Tây Mỗ" }] },
+      { name: "Quận Bắc Từ Liêm", wards: [{ name: "Phường Thượng Cát" }, { name: "Phường Liên Mạc" }, { name: "Phường Đông Ngạc" }, { name: "Phường Đức Thắng" }, { name: "Phường Xuân Đỉnh" }, { name: "Phường Cổ Nhuế 1" }] },
+      { name: "Quận Hoàng Mai", wards: [{ name: "Phường Thanh Trì" }, { name: "Phường Vĩnh Hưng" }, { name: "Phường Định Công" }, { name: "Phường Đại Kim" }, { name: "Phường Hoàng Liệt" }, { name: "Phường Tân Mai" }] }
+    ]
+  },
+  {
+    name: "Thành phố Hồ Chí Minh",
+    districts: [
+      { name: "Quận 1", wards: [{ name: "Phường Bến Nghé" }, { name: "Phường Bến Thành" }, { name: "Phường Cầu Kho" }, { name: "Phường Cầu Ông Lãnh" }, { name: "Phường Đa Kao" }] },
+      { name: "Quận 3", wards: [{ name: "Phường 1" }, { name: "Phường 2" }, { name: "Phường 3" }, { name: "Phường 4" }, { name: "Phường 5" }] },
+      { name: "Quận 7", wards: [{ name: "Phường Tân Thuận Đông" }, { name: "Phường Tân Thuận Tây" }, { name: "Phường Tân Kiểng" }, { name: "Phường Tân Hưng" }, { name: "Phường Phú Mỹ" }] },
+      { name: "Quận Bình Thạnh", wards: [{ name: "Phường 1" }, { name: "Phường 2" }, { name: "Phường 3" }, { name: "Phường 5" }, { name: "Phường 7" }] },
+      { name: "Thành phố Thủ Đức", wards: [{ name: "Phường Linh Trung" }, { name: "Phường Linh Tây" }, { name: "Phường Hiệp Bình Chánh" }, { name: "Phường Thảo Điền" }, { name: "Phường An Phú" }] }
+    ]
+  },
+  {
+    name: "Thành phố Đà Nẵng",
+    districts: [
+      { name: "Quận Hải Châu", wards: [{ name: "Phường Hải Châu I" }, { name: "Phường Hải Châu II" }, { name: "Phường Thạch Thang" }, { name: "Phường Thanh Bình" }] },
+      { name: "Quận Sơn Trà", wards: [{ name: "Phường An Hải Bắc" }, { name: "Phường An Hải Tây" }, { name: "Phường Phước Mỹ" }, { name: "Phường Thọ Quang" }] },
+      { name: "Quận Ngũ Hành Sơn", wards: [{ name: "Phường Mỹ An" }, { name: "Phường Khuê Mỹ" }, { name: "Phường Hoà Hải" }, { name: "Phường Hoà Quý" }] }
+    ]
+  }
+];
 
 async function loadLayout(placeholderId, url) {
   try {
@@ -130,6 +172,166 @@ function setText(id, value) {
   }
 }
 
+function normalizeAddressName(value = "") {
+  return String(value)
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/^(tinh|thanh pho|tp|quan|huyen|thi xa|phuong|xa|thi tran)\s+/i, "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLowerCase();
+}
+
+function getCachedAddressData() {
+  try {
+    const cached = JSON.parse(localStorage.getItem(ADDRESS_CACHE_KEY) || "null");
+    if (!cached?.data || !cached?.savedAt) return null;
+    if (Date.now() - cached.savedAt > ADDRESS_CACHE_MAX_AGE) return null;
+    return cached.data;
+  } catch (error) {
+    return null;
+  }
+}
+
+function saveCachedAddressData(data) {
+  try {
+    localStorage.setItem(ADDRESS_CACHE_KEY, JSON.stringify({
+      savedAt: Date.now(),
+      data
+    }));
+  } catch (error) {
+    console.warn("Không thể lưu cache địa chỉ:", error);
+  }
+}
+
+async function loadVietnamAddressData() {
+  const cached = getCachedAddressData();
+  if (cached) {
+    rentNowState.addressData = cached;
+    return cached;
+  }
+
+  try {
+    const response = await fetch(ADDRESS_API_URL);
+    if (!response.ok) {
+      throw new Error("Không thể tải danh sách tỉnh thành");
+    }
+
+    const data = await response.json();
+    if (!Array.isArray(data) || data.length === 0) {
+      throw new Error("Dữ liệu tỉnh thành không hợp lệ");
+    }
+
+    rentNowState.addressData = data;
+    saveCachedAddressData(data);
+    return data;
+  } catch (error) {
+    console.warn("Đang dùng dữ liệu địa chỉ dự phòng:", error);
+    rentNowState.addressData = FALLBACK_ADDRESS_DATA;
+    return FALLBACK_ADDRESS_DATA;
+  }
+}
+
+function setSelectOptions(select, options, placeholder, selectedName = "") {
+  if (!select) return;
+
+  select.innerHTML = `<option value="">${placeholder}</option>`;
+
+  options.forEach((item) => {
+    const option = document.createElement("option");
+    option.value = item.name;
+    option.textContent = item.name;
+    select.appendChild(option);
+  });
+
+  if (selectedName) {
+    const selected = Array.from(select.options).find((option) => (
+      normalizeAddressName(option.value) === normalizeAddressName(selectedName)
+    ));
+
+    if (selected) {
+      select.value = selected.value;
+    } else {
+      const customOption = document.createElement("option");
+      customOption.value = selectedName;
+      customOption.textContent = selectedName;
+      select.appendChild(customOption);
+      select.value = selectedName;
+    }
+  }
+}
+
+function findProvince(name) {
+  const normalized = normalizeAddressName(name);
+  return rentNowState.addressData.find((province) => normalizeAddressName(province.name) === normalized);
+}
+
+function findDistrict(province, name) {
+  const normalized = normalizeAddressName(name);
+  return province?.districts?.find((district) => normalizeAddressName(district.name) === normalized);
+}
+
+function populateProvinceSelect(selectedProvince = "") {
+  const provinceSelect = document.getElementById("customer-province");
+  setSelectOptions(provinceSelect, rentNowState.addressData, "Chọn tỉnh / thành phố", selectedProvince);
+}
+
+function populateDistrictSelect(provinceName, selectedDistrict = "") {
+  const districtSelect = document.getElementById("customer-district");
+  const province = findProvince(provinceName);
+  const districts = province?.districts || [];
+
+  setSelectOptions(districtSelect, districts, "Chọn quận / huyện", selectedDistrict);
+  if (districtSelect) {
+    districtSelect.disabled = districts.length === 0;
+  }
+}
+
+function populateWardSelect(provinceName, districtName, selectedWard = "") {
+  const wardSelect = document.getElementById("customer-ward");
+  const province = findProvince(provinceName);
+  const district = findDistrict(province, districtName);
+  const wards = district?.wards || [];
+
+  setSelectOptions(wardSelect, wards, "Chọn phường / xã", selectedWard);
+  if (wardSelect) {
+    wardSelect.disabled = wards.length === 0;
+  }
+}
+
+function setSelectedAddress(address) {
+  populateProvinceSelect(address.city);
+  populateDistrictSelect(document.getElementById("customer-province")?.value, address.district);
+  populateWardSelect(
+    document.getElementById("customer-province")?.value,
+    document.getElementById("customer-district")?.value,
+    address.ward
+  );
+  setValue("customer-street", address.street);
+}
+
+async function initAddressSelectors() {
+  await loadVietnamAddressData();
+  populateProvinceSelect();
+
+  const provinceSelect = document.getElementById("customer-province");
+  const districtSelect = document.getElementById("customer-district");
+  const wardSelect = document.getElementById("customer-ward");
+
+  provinceSelect?.addEventListener("change", () => {
+    populateDistrictSelect(provinceSelect.value);
+    populateWardSelect(provinceSelect.value, "");
+  });
+
+  districtSelect?.addEventListener("change", () => {
+    populateWardSelect(provinceSelect?.value, districtSelect.value);
+  });
+
+  if (wardSelect) {
+    wardSelect.disabled = true;
+  }
+}
+
 function parseAddress(addressString = "") {
   if (!addressString) {
     return { street: "", ward: "", district: "", city: "" };
@@ -167,10 +369,7 @@ function renderUser(user) {
   setValue("customer-email", user.email);
   
   const addr = parseAddress(user.address);
-  setValue("customer-province", addr.city);
-  setValue("customer-district", addr.district);
-  setValue("customer-ward", addr.ward);
-  setValue("customer-street", addr.street);
+  setSelectedAddress(addr);
 }
 
 function renderProductsList() {
@@ -311,6 +510,10 @@ async function submitRentalOrder(event) {
     const district = document.getElementById("customer-district")?.value.trim();
     const province = document.getElementById("customer-province")?.value.trim();
 
+    if (!province || !district || !ward || !street) {
+      throw new Error("Vui lòng chọn đầy đủ tỉnh/thành phố, quận/huyện, phường/xã và nhập địa chỉ chi tiết.");
+    }
+
     const address = [street, ward, district, province].filter(Boolean).join(", ");
 
     // Update user profile details in the database
@@ -345,10 +548,12 @@ async function submitRentalOrder(event) {
       document.dispatchEvent(new CustomEvent("rosette:cart-updated"));
     }
 
-    setFeedback(`Đặt thuê thành công. Mã đơn: #${String(order._id).slice(-6).toUpperCase()}`, "success");
+    setFeedback("Đặt thuê thành công! Đang chuyển hướng...", "success");
+    setTimeout(() => {
+      window.location.href = `/views/user/checkout-success.html?orderId=${order._id}`;
+    }, 1000);
   } catch (error) {
     setFeedback(error.message, "error");
-  } finally {
     if (button) {
       button.disabled = false;
       button.textContent = "Xác nhận đặt lịch";
@@ -363,6 +568,7 @@ async function loadRentNowPage() {
   try {
     bindDateInputs();
     bindPaymentOptions();
+    await initAddressSelectors();
 
     const params = new URLSearchParams(window.location.search);
     const isFromCart = params.get("from") === "cart";

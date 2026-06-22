@@ -427,6 +427,10 @@ img {
   gap: 18px;
 }
 
+.cart-empty[hidden] {
+  display: none !important;
+}
+
 .empty-icon {
   font-size: 64px;
   color: var(--outline-variant);

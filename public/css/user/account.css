@@ -34,7 +34,8 @@ a {
 
 button,
 input,
-textarea {
+textarea,
+select {
   font: inherit;
 }
 
@@ -100,7 +101,8 @@ textarea {
 }
 
 .account-card input,
-.account-card textarea {
+.account-card textarea,
+.account-card select {
   width: 100%;
   border: 1px solid rgba(115, 92, 0, 0.18);
   border-radius: 6px;
@@ -111,8 +113,18 @@ textarea {
 }
 
 .account-card input:focus,
-.account-card textarea:focus {
+.account-card textarea:focus,
+.account-card select:focus {
   border-color: var(--primary);
+}
+
+.account-card select {
+  cursor: pointer;
+}
+
+.account-card select:disabled {
+  cursor: not-allowed;
+  opacity: 0.72;
 }
 
 .account-card input[readonly] {
@@ -151,8 +163,86 @@ textarea {
 
 .order-card {
   width: min(840px, 100%);
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.order-card-content {
+  min-width: 0;
+  flex: 1;
   display: grid;
   gap: 16px;
+}
+
+.order-thumb-stack {
+  position: relative;
+  flex: 0 0 128px;
+  min-height: 104px;
+}
+
+.order-thumb {
+  position: absolute;
+  width: 82px;
+  height: 104px;
+  overflow: hidden;
+  border: 3px solid rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: 0 14px 32px rgba(31, 27, 19, 0.16);
+}
+
+.order-thumb:first-child {
+  left: 0;
+  top: 0;
+  z-index: 2;
+}
+
+.order-thumb:nth-child(2) {
+  left: 42px;
+  top: 10px;
+  z-index: 1;
+}
+
+.order-thumb img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.order-thumb-more {
+  position: absolute;
+  right: 0;
+  bottom: 4px;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 42px;
+  height: 34px;
+  border: 2px solid rgba(255, 255, 255, 0.92);
+  border-radius: 999px;
+  background: var(--primary);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 800;
+  box-shadow: 0 10px 24px rgba(31, 27, 19, 0.18);
+}
+
+.order-thumb-stack-empty {
+  display: grid;
+  place-items: center;
+  width: 104px;
+  min-height: 104px;
+  border: 1px dashed rgba(115, 92, 0, 0.28);
+  border-radius: 8px;
+  color: var(--text-light);
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.order-thumb-stack-empty .material-symbols-outlined {
+  font-size: 36px;
 }
 
 .order-card-header {
@@ -207,5 +297,14 @@ textarea {
   .order-card-header {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .order-card {
+    flex-direction: column;
+  }
+
+  .order-thumb-stack {
+    flex-basis: auto;
+    width: 128px;
   }
 }

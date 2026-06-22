@@ -91,7 +91,7 @@ function initOrdersPage() {
     // Bind click outside to close modals
     window.addEventListener("click", (event) => {
         if (event.target.classList.contains("modal")) {
-            event.target.style.display = "none";
+            closeModal(event.target.id);
         }
     });
 
@@ -393,6 +393,45 @@ function calculateTotalOrderAmount(prefix) {
     }
 }
 
+function resetModalFields(modal) {
+    modal.querySelectorAll("form").forEach((form) => form.reset());
+    modal.querySelectorAll('input[type="hidden"]').forEach((input) => {
+        input.value = "";
+    });
+}
+
+function resetOrderItems(prefix, shouldCreateEmptyRow = false) {
+    const container = document.getElementById(`${prefix}-order-items-container`);
+    if (container) {
+        container.innerHTML = "";
+        if (shouldCreateEmptyRow) {
+            createOrderItemRow(`${prefix}-order-items-container`);
+        }
+    }
+
+    const totalDisplay = document.getElementById(`${prefix}-order-total-display`);
+    if (totalDisplay) {
+        totalDisplay.textContent = formatCurrency(0);
+    }
+}
+
+function resetOrderModalState(id, modal) {
+    resetModalFields(modal);
+
+    if (id === "modal-order-add") {
+        resetOrderItems("add", true);
+    }
+
+    if (id === "modal-order-edit") {
+        resetOrderItems("edit");
+    }
+
+    if (id === "modal-order-delete") {
+        const deleteLabel = document.getElementById("delete-order-id-label");
+        if (deleteLabel) deleteLabel.textContent = "";
+    }
+}
+
 function openModal(id) {
     const modal = document.getElementById(id);
     if (modal) {
@@ -403,6 +442,7 @@ function openModal(id) {
 function closeModal(id) {
     const modal = document.getElementById(id);
     if (modal) {
+        resetOrderModalState(id, modal);
         modal.style.display = "none";
     }
 }

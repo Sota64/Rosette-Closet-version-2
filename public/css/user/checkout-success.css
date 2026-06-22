@@ -1,0 +1,444 @@
+:root {
+  --background: #fff8f0;
+  --background-gradient-start: #f5f5dc;
+  --background-gradient-end: #ffffff;
+  --surface: #fff8f0;
+  --surface-glass: rgba(255, 255, 255, 0.7);
+  --surface-container-low: #fbf3e5;
+  --surface-container-highest: #eae1d4;
+  --primary: #735c00;
+  --primary-container: #d4af37;
+  --on-primary: #ffffff;
+  --on-primary-container: #554300;
+  --on-surface: #1f1b13;
+  --on-surface-variant: #4d4635;
+  --text-secondary: #666666;
+  --outline: #7f7663;
+  --outline-variant: #d0c5af;
+  --border-subtle: rgba(212, 175, 55, 0.2);
+  --container-max: 1280px;
+  --gutter: 24px;
+  --section-padding: 80px;
+  --transition: 0.35s ease;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  overflow-x: hidden;
+  background: linear-gradient(135deg, var(--background-gradient-start) 0%, var(--background-gradient-end) 100%);
+  color: var(--on-surface);
+  font-family: 'Be Vietnam Pro', sans-serif;
+}
+
+.success-page {
+  padding: 128px 0 var(--section-padding);
+}
+
+.container {
+  width: min(var(--container-max), calc(100% - 48px));
+  margin: 0 auto;
+}
+
+/* Progress steps matching checkout */
+.progress-steps {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 48px;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--on-surface-variant);
+}
+
+.step span {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--outline);
+  border-radius: 999px;
+  font-size: 12px;
+  line-height: 1;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.step p {
+  font-size: 12px;
+  line-height: 1;
+  letter-spacing: 0.2em;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.step.active {
+  color: var(--primary);
+}
+
+.step.active span {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: var(--on-primary);
+}
+
+.step.active p {
+  font-weight: 700;
+}
+
+.step-line {
+  width: 48px;
+  height: 1px;
+  background: var(--outline-variant);
+}
+
+/* Success Card wrapper & card styling */
+.success-card-wrapper {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.glass-card {
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-top-color: rgba(255, 255, 255, 0.55);
+  border-left-color: rgba(255, 255, 255, 0.55);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.6);
+  box-shadow: 0 15px 35px -5px rgba(28, 28, 28, 0.08);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.success-card {
+  width: 100%;
+  max-width: 680px;
+  padding: 48px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Animate checkmark on load */
+.success-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: rgba(115, 92, 0, 0.08);
+  margin-bottom: 24px;
+  animation: pulse-success 2s infinite ease-in-out;
+}
+
+.success-checkmark {
+  font-size: 56px;
+  color: var(--primary);
+  animation: scale-up 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes scale-up {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse-success {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(115, 92, 0, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 0 16px rgba(115, 92, 0, 0);
+  }
+}
+
+.success-title {
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--primary);
+  margin-bottom: 12px;
+}
+
+.success-subtitle {
+  font-size: 15px;
+  color: var(--on-surface-variant);
+  line-height: 1.6;
+  margin-bottom: 36px;
+  max-width: 480px;
+}
+
+/* Order Summary Box */
+.order-summary-box {
+  width: 100%;
+  background: var(--surface-container-low);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 32px;
+  border: 1px solid rgba(115, 92, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  color: var(--on-surface-variant);
+}
+
+.summary-row.highlight {
+  border-top: 1px solid var(--outline-variant);
+  padding-top: 16px;
+  margin-top: 8px;
+}
+
+.summary-value {
+  color: var(--on-surface);
+  font-weight: 500;
+}
+
+#order-code {
+  font-family: monospace;
+  font-size: 16px;
+  letter-spacing: 0.05em;
+  color: var(--primary);
+}
+
+.summary-value.price {
+  color: var(--primary);
+  font-size: 20px;
+  font-weight: 700;
+}
+
+/* Bank Details Box */
+.bank-details-box {
+  width: 100%;
+  border: 1px solid var(--primary-container);
+  background: rgba(212, 175, 55, 0.06);
+  border-radius: 12px;
+  padding: 28px;
+  margin-bottom: 36px;
+  text-align: left;
+}
+
+.bank-details-box h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.bank-details-box h3 .material-symbols-outlined {
+  font-size: 20px;
+}
+
+.bank-instruction {
+  font-size: 13.5px;
+  color: var(--on-surface-variant);
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.bank-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.bank-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.bank-item span {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: rgba(31, 27, 19, 0.6);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.bank-item strong {
+  font-size: 14.5px;
+  color: var(--on-surface);
+  font-weight: 600;
+}
+
+.copy-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-copy {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  color: var(--primary);
+  background: rgba(115, 92, 0, 0.08);
+  transition: background var(--transition), transform 0.1s;
+}
+
+.btn-copy:hover {
+  background: rgba(115, 92, 0, 0.15);
+}
+
+.btn-copy:active {
+  transform: scale(0.92);
+}
+
+.btn-copy .material-symbols-outlined {
+  font-size: 16px;
+}
+
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+}
+
+.btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  transition: transform var(--transition), box-shadow var(--transition), background var(--transition);
+}
+
+.btn-solid {
+  background: var(--primary);
+  color: var(--on-primary);
+  box-shadow: 0 8px 20px rgba(115, 92, 0, 0.15);
+}
+
+.btn-solid:hover {
+  background: #5c4a00;
+  box-shadow: 0 12px 28px rgba(115, 92, 0, 0.25);
+  transform: translateY(-2px);
+}
+
+.btn-primary-outline {
+  border: 1px solid var(--primary);
+  color: var(--primary);
+  background: transparent;
+}
+
+.btn-primary-outline:hover {
+  background: rgba(115, 92, 0, 0.05);
+  transform: translateY(-2px);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn .material-symbols-outlined {
+  font-size: 18px;
+}
+
+/* Toast styling for copy notifications */
+.toast-copy {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: rgba(31, 27, 19, 0.95);
+  color: #ffffff;
+  padding: 12px 24px;
+  border-radius: 999px;
+  font-size: 13.5px;
+  font-weight: 500;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s;
+  opacity: 0;
+  z-index: 9999;
+}
+
+.toast-copy.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+.toast-copy .material-symbols-outlined {
+  font-size: 18px;
+  color: var(--primary-container);
+}
+
+/* Responsiveness */
+@media (max-width: 767px) {
+  .progress-steps {
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .step {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .step p {
+    max-width: 88px;
+    line-height: 1.25;
+  }
+
+  .step-line {
+    width: 28px;
+    margin-top: 16px;
+  }
+
+  .success-card {
+    padding: 32px 24px;
+  }
+
+  .bank-info-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .action-buttons {
+    flex-direction: column-reverse;
+  }
+
+  .btn {
+    width: 100%;
+  }
+}
