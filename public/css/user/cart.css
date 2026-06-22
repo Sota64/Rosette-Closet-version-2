@@ -33,7 +33,7 @@ body {
   overflow-x: hidden;
   background: linear-gradient(135deg, var(--background-gradient-start) 0%, var(--background-gradient-end) 100%);
   color: var(--on-surface);
-  font-family: "Inter", sans-serif;
+  font-family: 'Be Vietnam Pro', sans-serif;
 }
 
 a {
@@ -92,7 +92,7 @@ img {
 
 /* Cart Title */
 .cart-title {
-  font-family: "Outfit", sans-serif;
+  font-family: 'Be Vietnam Pro', sans-serif;
   font-size: 36px;
   font-weight: 600;
   color: var(--on-surface);
@@ -166,7 +166,7 @@ img {
 }
 
 .cart-item-details h3 {
-  font-family: "Outfit", sans-serif;
+  font-family: 'Be Vietnam Pro', sans-serif;
   font-size: 18px;
   font-weight: 600;
   color: var(--primary);
@@ -295,7 +295,7 @@ img {
 }
 
 .summary-card h3 {
-  font-family: "Outfit", sans-serif;
+  font-family: 'Be Vietnam Pro', sans-serif;
   font-size: 24px;
   font-weight: 500;
   color: var(--on-surface);
@@ -352,7 +352,7 @@ img {
 }
 
 .summary-total strong {
-  font-family: "Outfit", sans-serif;
+  font-family: 'Be Vietnam Pro', sans-serif;
   font-size: 32px;
   font-weight: 600;
   color: var(--primary);
@@ -366,7 +366,7 @@ img {
   background: var(--primary);
   color: var(--on-primary);
   box-shadow: 0 10px 25px rgba(115, 92, 0, 0.18);
-  font-family: "Outfit", sans-serif;
+  font-family: 'Be Vietnam Pro', sans-serif;
   font-size: 16px;
   font-weight: 600;
   letter-spacing: 0.1em;
@@ -427,13 +427,17 @@ img {
   gap: 18px;
 }
 
+.cart-empty[hidden] {
+  display: none !important;
+}
+
 .empty-icon {
   font-size: 64px;
   color: var(--outline-variant);
 }
 
 .cart-empty h2 {
-  font-family: "Outfit", sans-serif;
+  font-family: 'Be Vietnam Pro', sans-serif;
   font-size: 28px;
   color: var(--on-surface);
 }

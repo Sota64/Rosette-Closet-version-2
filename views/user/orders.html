@@ -7,7 +7,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="/public/css/layouts/navbar.css" />
@@ -39,6 +39,19 @@
   </main>
 
   <div id="footer-placeholder"></div>
+
+  <!-- Modal Chi tiết Đơn hàng -->
+  <div id="modal-order-detail" class="modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="detail-modal-title">Chi tiết đơn hàng</h2>
+        <button class="modal-close" onclick="closeOrderDetailModal()">&times;</button>
+      </div>
+      <div class="modal-body" id="detail-modal-body">
+        <!-- Nạp động thông tin -->
+      </div>
+    </div>
+  </div>
 
   <script src="/public/js/layouts/navbar.js"></script>
   <script src="/public/js/user/orders.js"></script>

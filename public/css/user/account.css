@@ -24,7 +24,7 @@ body {
   overflow-x: hidden;
   background: linear-gradient(135deg, var(--background-gradient-start) 0%, var(--background-gradient-end) 100%);
   color: var(--text);
-  font-family: "Inter", sans-serif;
+  font-family: 'Be Vietnam Pro', sans-serif;
 }
 
 a {
@@ -34,7 +34,8 @@ a {
 
 button,
 input,
-textarea {
+textarea,
+select {
   font: inherit;
 }
 
@@ -75,7 +76,7 @@ textarea {
 }
 
 .account-heading h1 {
-  font-family: "Outfit", sans-serif;
+  font-family: 'Be Vietnam Pro', sans-serif;
   font-size: clamp(36px, 6vw, 64px);
   font-weight: 600;
 }
@@ -100,7 +101,8 @@ textarea {
 }
 
 .account-card input,
-.account-card textarea {
+.account-card textarea,
+.account-card select {
   width: 100%;
   border: 1px solid rgba(115, 92, 0, 0.18);
   border-radius: 6px;
@@ -111,8 +113,18 @@ textarea {
 }
 
 .account-card input:focus,
-.account-card textarea:focus {
+.account-card textarea:focus,
+.account-card select:focus {
   border-color: var(--primary);
+}
+
+.account-card select {
+  cursor: pointer;
+}
+
+.account-card select:disabled {
+  cursor: not-allowed;
+  opacity: 0.72;
 }
 
 .account-card input[readonly] {
@@ -151,8 +163,86 @@ textarea {
 
 .order-card {
   width: min(840px, 100%);
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.order-card-content {
+  min-width: 0;
+  flex: 1;
   display: grid;
   gap: 16px;
+}
+
+.order-thumb-stack {
+  position: relative;
+  flex: 0 0 128px;
+  min-height: 104px;
+}
+
+.order-thumb {
+  position: absolute;
+  width: 82px;
+  height: 104px;
+  overflow: hidden;
+  border: 3px solid rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: 0 14px 32px rgba(31, 27, 19, 0.16);
+}
+
+.order-thumb:first-child {
+  left: 0;
+  top: 0;
+  z-index: 2;
+}
+
+.order-thumb:nth-child(2) {
+  left: 42px;
+  top: 10px;
+  z-index: 1;
+}
+
+.order-thumb img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.order-thumb-more {
+  position: absolute;
+  right: 0;
+  bottom: 4px;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 42px;
+  height: 34px;
+  border: 2px solid rgba(255, 255, 255, 0.92);
+  border-radius: 999px;
+  background: var(--primary);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 800;
+  box-shadow: 0 10px 24px rgba(31, 27, 19, 0.18);
+}
+
+.order-thumb-stack-empty {
+  display: grid;
+  place-items: center;
+  width: 104px;
+  min-height: 104px;
+  border: 1px dashed rgba(115, 92, 0, 0.28);
+  border-radius: 8px;
+  color: var(--text-light);
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.order-thumb-stack-empty .material-symbols-outlined {
+  font-size: 36px;
 }
 
 .order-card-header {
@@ -163,7 +253,7 @@ textarea {
 }
 
 .order-card h2 {
-  font-family: "Outfit", sans-serif;
+  font-family: 'Be Vietnam Pro', sans-serif;
   font-size: 22px;
 }
 
@@ -185,7 +275,7 @@ textarea {
 }
 
 .order-total {
-  font-family: "Outfit", sans-serif;
+  font-family: 'Be Vietnam Pro', sans-serif;
   font-size: 20px;
   font-weight: 700;
 }
@@ -208,4 +298,274 @@ textarea {
     align-items: stretch;
     flex-direction: column;
   }
+
+  .order-card {
+    flex-direction: column;
+  }
+
+  .order-thumb-stack {
+    flex-basis: auto;
+    width: 128px;
+  }
 }
+
+/* Make order cards interactive */
+.order-card {
+  cursor: pointer;
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.order-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.08);
+}
+
+/* Modal overlay */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  outline: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Modal Content Container */
+.modal-content {
+  position: relative;
+  width: min(640px, 90%);
+  max-height: 90vh;
+  overflow-y: auto;
+  border: 1px solid rgba(115, 92, 0, 0.18);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.modal-title {
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.modal-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--text-light);
+  font-size: 20px;
+  line-height: 1;
+  transition: background var(--transition), color var(--transition);
+}
+
+.modal-close:hover {
+  background: rgba(0, 0, 0, 0.1);
+  color: var(--text);
+}
+
+.modal-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Modal detail blocks */
+.detail-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.detail-section-title {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--primary);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  border-bottom: 1px solid rgba(115, 92, 0, 0.1);
+  padding-bottom: 6px;
+  margin-bottom: 6px;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.detail-item span {
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.detail-item strong {
+  font-size: 14px;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.detail-item.full {
+  grid-column: 1 / -1;
+}
+
+/* Products in detail modal */
+.modal-product-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modal-product-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 0;
+  border-bottom: 1px dashed rgba(0, 0, 0, 0.06);
+}
+
+.modal-product-item:last-child {
+  border-bottom: 0;
+}
+
+.modal-product-thumb {
+  width: 56px;
+  height: 72px;
+  border-radius: 4px;
+  overflow: hidden;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.modal-product-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.modal-product-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.modal-product-meta {
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.modal-product-price {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.modal-product-price strong {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.modal-product-price span {
+  font-size: 11px;
+  color: var(--text-light);
+}
+
+/* Cost Summary inside Modal */
+.modal-cost-summary {
+  background: rgba(115, 92, 0, 0.05);
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.modal-cost-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13.5px;
+  color: var(--text-light);
+}
+
+.modal-cost-row.total {
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  padding-top: 10px;
+  margin-top: 4px;
+  font-weight: 700;
+  color: var(--primary);
+  font-size: 16px;
+}
+
+/* Bank Details inside Modal */
+.modal-bank-box {
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  background: rgba(212, 175, 55, 0.05);
+  border-radius: 8px;
+  padding: 16px;
+  font-size: 13px;
+}
+
+.modal-bank-title {
+  color: var(--primary);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.modal-bank-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.modal-bank-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-bank-item span {
+  font-size: 11px;
+  color: var(--text-light);
+}
+
+.modal-bank-item strong {
+  font-size: 13px;
+}
+

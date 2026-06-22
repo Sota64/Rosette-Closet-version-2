@@ -7,7 +7,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="/public/css/layouts/navbar.css" />
@@ -48,8 +48,29 @@
           </label>
 
           <label>
-            Địa chỉ
-            <textarea name="address" id="account-address" rows="4"></textarea>
+            Tỉnh / Thành phố
+            <select id="account-province" required>
+              <option value="">Chọn tỉnh / thành phố</option>
+            </select>
+          </label>
+
+          <label>
+            Quận / Huyện
+            <select id="account-district" required disabled>
+              <option value="">Chọn quận / huyện</option>
+            </select>
+          </label>
+
+          <label>
+            Phường / Xã
+            <select id="account-ward" required disabled>
+              <option value="">Chọn phường / xã</option>
+            </select>
+          </label>
+
+          <label>
+            Số nhà, tên đường
+            <input type="text" id="account-street" placeholder="Ví dụ: 123 Đường Cầu Giấy" required />
           </label>
 
           <div class="account-actions">

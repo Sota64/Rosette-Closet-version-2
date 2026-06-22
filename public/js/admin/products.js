@@ -1,4 +1,3 @@
-const fallbackCategories = ["Evening Gown", "Wedding", "Cocktail"];
 const pageState = {
     products: [],
     categories: [],
@@ -127,9 +126,10 @@ async function loadCategories() {
     try {
         const response = await apiFetch("/api/categories");
         const categories = await parseApiResponse(response);
-        pageState.categories = categories.length ? categories : fallbackCategories.map((name) => ({ _id: name, name }));
+        pageState.categories = Array.isArray(categories) ? categories : [];
     } catch (error) {
-        pageState.categories = fallbackCategories.map((name) => ({ _id: name, name }));
+        console.error("Không thể tải danh mục:", error);
+        pageState.categories = [];
     }
 
     renderCategoryOptions();
@@ -172,7 +172,9 @@ function renderCategoryOptions() {
             option.textContent = category.name;
             filterSelect.appendChild(option);
         });
-        filterSelect.value = currentValue || "all";
+        filterSelect.value = pageState.categories.some((category) => (category._id || category.name) === currentValue)
+            ? currentValue
+            : "all";
     }
 }
 
@@ -360,6 +362,48 @@ function setImagePreview(previewId, src) {
     }
 }
 
+function resetNewCategoryControls() {
+    const addCategorySelect = document.getElementById("add-product-category");
+    const newCategoryWrapper = document.getElementById("new-category-wrapper");
+    const newCategoryInput = document.getElementById("new-category-input");
+
+    if (newCategoryWrapper) newCategoryWrapper.style.display = "none";
+    if (newCategoryInput) {
+        newCategoryInput.required = false;
+        newCategoryInput.value = "";
+    }
+    if (addCategorySelect) {
+        addCategorySelect.style.display = "block";
+        addCategorySelect.required = true;
+        addCategorySelect.value = "";
+    }
+}
+
+function resetModalFields(modal) {
+    modal.querySelectorAll("form").forEach((form) => form.reset());
+    modal.querySelectorAll('input[type="hidden"]').forEach((input) => {
+        input.value = "";
+    });
+}
+
+function resetProductModalState(id, modal) {
+    resetModalFields(modal);
+
+    if (id === "modal-product-add") {
+        resetNewCategoryControls();
+        setImagePreview("add-product-image-preview", "");
+    }
+
+    if (id === "modal-product-edit") {
+        setImagePreview("edit-product-image-preview", "");
+    }
+
+    if (id === "modal-product-delete") {
+        const deleteName = document.getElementById("delete-product-name");
+        if (deleteName) deleteName.textContent = "";
+    }
+}
+
 function showToast(message, type = 'success') {
     let container = document.getElementById('toast-container');
     if (!container) {
@@ -419,6 +463,7 @@ function showToast(message, type = 'success') {
 function closeModal(id) {
     const modal = document.getElementById(id);
     if (modal) {
+        resetProductModalState(id, modal);
         modal.style.display = "none";
     }
 }
@@ -617,14 +662,7 @@ function bindCategoryCreation() {
             }
         });
 
-        cancelNewCategoryBtn.addEventListener("click", () => {
-            newCategoryWrapper.style.display = "none";
-            newCategoryInput.required = false;
-            newCategoryInput.value = "";
-            addCategorySelect.style.display = "block";
-            addCategorySelect.required = true;
-            addCategorySelect.value = "";
-        });
+        cancelNewCategoryBtn.addEventListener("click", resetNewCategoryControls);
     }
 }
 
@@ -733,7 +771,7 @@ function initProductsPage() {
 
     window.addEventListener("click", (event) => {
         if (event.target.classList.contains("modal")) {
-            event.target.style.display = "none";
+            closeModal(event.target.id);
         }
     });
 

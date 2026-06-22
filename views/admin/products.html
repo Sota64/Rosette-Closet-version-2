@@ -1,629 +1,1075 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="vi">
-<head>
-    <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Quản lý kho đồ | RosetteCloset Luxury Admin</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-    <link rel="stylesheet" href="/public/css/layouts/navbar.css"/>
-    <link rel="stylesheet" href="/public/css/layouts/footer.css"/>
-    
-    <link rel="stylesheet" href="/public/css/admin/products.css"/>
-</head>
-<body>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/public/css/layouts/navbar.css" />
+    <link rel="stylesheet" href="/public/css/layouts/footer.css" />
 
+    <link rel="stylesheet" href="/public/css/admin/products.css" />
+  </head>
+  <body>
     <div id="sidebar-placeholder"></div>
 
     <main id="main-content">
-        <header class="top-bar">
-            <div class="search-wrapper">
-                <span class="material-symbols-outlined search-icon">search</span>
-                <input class="search-input" placeholder="Tìm kiếm sản phẩm, mã vạch..." type="text"/>
-            </div>
-            
-            <div class="top-bar-right">
-                <div class="top-bar-icons">
-                    <button class="top-bar-btn notification-btn" title="Thông báo">
-                        <span class="material-symbols-outlined">notifications</span>
-                        <span class="notification-badge"></span>
-                    </button>
-                    <button class="top-bar-btn" title="Cài đặt">
-                        <span class="material-symbols-outlined">settings</span>
-                    </button>
-                </div>
-                <div class="divider"></div>
-                <div class="navbar-auth" data-navbar-auth></div>
-            </div>
-        </header>
-
-        <div class="canvas-container">
-            <div class="page-header">
-                <div>
-                    <h2 class="page-title">Quản lý sản phẩm</h2>
-                    <p class="page-subtitle">Giám sát và quản lý trạng thái các bộ sưu tập cao cấp.</p>
-                </div>
-                <button class="btn btn-add">
-                    <span class="material-symbols-outlined">add</span>
-                    Thêm sản phẩm mới
-                </button>
-            </div>
-
-            <div class="kpi-grid">
-                <div class="kpi-card">
-                    <div class="kpi-header">
-                        <div class="kpi-icon-wrapper">
-                            <span class="material-symbols-outlined">inventory_2</span>
-                        </div>
-                        <span class="kpi-trend trend-neutral" data-stat="product-growth">
-                            <span class="material-symbols-outlined">trending_up</span>
-                            0%
-                        </span>
-                    </div>
-                    <h4 class="kpi-title">Tổng sản phẩm</h4>
-                    <p class="kpi-value">1,248</p>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-header">
-                        <div class="kpi-icon-wrapper secondary">
-                            <span class="material-symbols-outlined">shopping_bag</span>
-                        </div>
-                        <span class="kpi-trend trend-neutral" data-stat="rented-percent">0%</span>
-                    </div>
-                    <h4 class="kpi-title">Đang cho thuê</h4>
-                    <p class="kpi-value">432</p>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-header">
-                        <div class="kpi-icon-wrapper tertiary">
-                            <span class="material-symbols-outlined">dry_cleaning</span>
-                        </div>
-                        <span class="kpi-trend trend-error">Cần xử lý</span>
-                    </div>
-                    <h4 class="kpi-title">Đang vệ sinh</h4>
-                    <p class="kpi-value">56</p>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-header">
-                        <div class="kpi-icon-wrapper primary-container">
-                            <span class="material-symbols-outlined">check_circle</span>
-                        </div>
-                        <span class="kpi-trend trend-up">Hợp lệ</span>
-                    </div>
-                    <h4 class="kpi-title">Sẵn sàng</h4>
-                    <p class="kpi-value">760</p>
-                </div>
-            </div>
-
-            <div class="filter-bar">
-                <div class="search-filter-wrapper">
-                    <span class="material-symbols-outlined filter-icon">filter_list</span>
-                    <input class="filter-search-input" placeholder="Tìm theo tên sản phẩm..." type="text"/>
-                </div>
-                <select class="filter-select">
-                    <option>Tất cả danh mục</option>
-                    <option>Evening Gown</option>
-                    <option>Wedding</option>
-                    <option>Cocktail</option>
-                </select>
-                <select class="filter-select">
-                    <option>Trạng thái</option>
-                    <option>Available</option>
-                    <option>Rented</option>
-                    <option>Cleaning</option>
-                </select>
-                <select class="filter-select">
-                    <option>Giá thuê</option>
-                    <option>Dưới 2tr</option>
-                    <option>2tr - 5tr</option>
-                    <option>Trên 5tr</option>
-                </select>
-                <button class="btn-refresh">
-                    <span class="material-symbols-outlined">refresh</span>
-                </button>
-            </div>
-
-            <div class="table-card">
-                <div class="table-wrapper">
-                    <table class="products-table">
-                        <thead>
-                            <tr>
-                                <th>SẢN PHẨM</th>
-                                <th>DANH MỤC</th>
-                                <th>MÀU SẮC</th>
-                                <th class="text-center">KÍCH CỠ</th>
-                                <th>GIÁ THUÊ</th>
-                                <th>TIỀN CỌC</th>
-                                <th>TRẠNG THÁI</th>
-                                <th class="text-right">THAO TÁC</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <div class="product-cell">
-                                        <div class="product-img-wrapper">
-                                            <img class="product-img" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCtIxSzy4dLT4f1u2pSUGXCP4UjSM44a0rfpETpjBkMIQB1GZLnO8tzVkLlXCRJGX6CA1WzeLeSEi7_qo5bdOcTAkw9mDcpd6StSwSr-ntKfydyrjqq85GCVMtGjV_MUftlzIYL3YKaz1hiSJTbWBWdR8ouudx-RlP80zcHx_KYEBtJCuftn87O6OTzNuZc_boGGxzH1Sio_BM2o51edwUbjY3VFsy6a5VEItIZsY_ngDSp4CW6qZieIXZ4Mj5iNe5QytFVaUUNng" alt="Midnight Glamour"/>
-                                        </div>
-                                        <div class="product-info">
-                                            <p class="product-name">Midnight Glamour</p>
-                                            <p class="product-code">#RC-88021</p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td><span class="category-tag">Evening Gown</span></td>
-                                <td><span class="color-text" style="color: #4d4635;">Đen huyền bí</span></td>
-                                <td>
-                                    <div class="size-group">
-                                        <span class="size-tag size-active">S</span>
-                                        <span class="size-tag size-active">M</span>
-                                        <span class="size-tag">L</span>
-                                    </div>
-                                </td>
-                                <td><span class="price-text">3.500.000đ</span></td>
-                                <td><span class="price-text" style="font-weight: normal; color: #5f5e5e;">2.000.000đ</span></td>
-                                <td>
-                                    <span class="status-badge badge-available">
-                                        <span class="badge-dot"></span>
-                                        Available
-                                    </span>
-                                </td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <button class="action-btn-icon" title="Xem chi tiết">
-                                            <span class="material-symbols-outlined">visibility</span>
-                                        </button>
-                                        <button class="action-btn-icon" title="Chỉnh sửa">
-                                            <span class="material-symbols-outlined">edit</span>
-                                        </button>
-                                        <button class="action-btn-icon btn-delete" title="Xóa">
-                                            <span class="material-symbols-outlined">delete</span>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="product-cell">
-                                        <div class="product-img-wrapper">
-                                            <img class="product-img" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXfaWybtiqKwORexX_9eiTYzwUDa30bLG0PpSMhm5If-Hw2Td8VI2mMpL9WmWtpaBJrZsDKtwVQ2lkHS34ymDVeLg16qZYMsXl40D6qe8zkENEen3YiqEsf6uQidgSBswKrR-Q06GmY4vgEq_XqcPfAOsgZDBe0YkIIgfo6mc-lWNmqxcAL-lYcV3KfZZ8vVfTbJK1pPAJAbJcS_ehvwUApv4jT3rSsCIt15wMT5AkIWLVlgcCY4ilahtdFGYPS3CNO4YhoQDDZw" alt="Golden Ember"/>
-                                        </div>
-                                        <div class="product-info">
-                                            <p class="product-name">Golden Ember</p>
-                                            <p class="product-code">#RC-88045</p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td><span class="category-tag">Cocktail</span></td>
-                                <td><span class="color-text" style="color: #4d4635;">Vàng ánh kim</span></td>
-                                <td>
-                                    <div class="size-group">
-                                        <span class="size-tag">S</span>
-                                        <span class="size-tag size-active">M</span>
-                                        <span class="size-tag">L</span>
-                                    </div>
-                                </td>
-                                <td><span class="price-text">2.200.000đ</span></td>
-                                <td><span class="price-text" style="font-weight: normal; color: #5f5e5e;">1.000.000đ</span></td>
-                                <td>
-                                    <span class="status-badge badge-rented">
-                                        <span class="badge-dot"></span>
-                                        Rented
-                                    </span>
-                                </td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <button class="action-btn-icon" title="Xem chi tiết">
-                                            <span class="material-symbols-outlined">visibility</span>
-                                        </button>
-                                        <button class="action-btn-icon" title="Chỉnh sửa">
-                                            <span class="material-symbols-outlined">edit</span>
-                                        </button>
-                                        <button class="action-btn-icon btn-delete" title="Xóa">
-                                            <span class="material-symbols-outlined">delete</span>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="product-cell">
-                                        <div class="product-img-wrapper">
-                                            <img class="product-img" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAuJryF6CUNLcV1HbwhOPnSK5Q8yYlUimPpPQbatjJd5yGysUtN77mIRKSLWUKcnxS9TPHD1X_uiDYbvBm0fBMpILqxlfE9Mc8syMsWMJ0TRCGdQraD8n9SL9LyJh-QhEDzKwnTIQWdFO3DLH-NEHTQ13y6NarcvnTdDEY3s0bmz9MtdbDfhr0nfl9vDlrsI_OnyAlQT8zwyoOPIVFzUbHV-tp34at1-iT-DDIO3CvQEjzZP4JR6dPEQrls8GDnFwlEkK6BTUMzpg" alt="Petal Whisper"/>
-                                        </div>
-                                        <div class="product-info">
-                                            <p class="product-name">Petal Whisper</p>
-                                            <p class="product-code">#RC-92011</p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td><span class="category-tag">Wedding</span></td>
-                                <td><span class="color-text" style="color: #4d4635;">Trắng tinh khôi</span></td>
-                                <td>
-                                    <div class="size-group">
-                                        <span class="size-tag size-active">S</span>
-                                        <span class="size-tag size-active">M</span>
-                                        <span class="size-tag size-active">L</span>
-                                    </div>
-                                </td>
-                                <td><span class="price-text">8.900.000đ</span></td>
-                                <td><span class="price-text" style="font-weight: normal; color: #5f5e5e;">5.000.000đ</span></td>
-                                <td>
-                                    <span class="status-badge badge-cleaning">
-                                        <span class="badge-dot badge-pulse"></span>
-                                        Cleaning
-                                    </span>
-                                </td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <button class="action-btn-icon" title="Xem chi tiết">
-                                            <span class="material-symbols-outlined">visibility</span>
-                                        </button>
-                                        <button class="action-btn-icon" title="Chỉnh sửa">
-                                            <span class="material-symbols-outlined">edit</span>
-                                        </button>
-                                        <button class="action-btn-icon btn-delete" title="Xóa">
-                                            <span class="material-symbols-outlined">delete</span>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="product-cell">
-                                        <div class="product-img-wrapper">
-                                            <img class="product-img" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8F6Rs9yhEzU0H5oL9L8RZd_2J6eFoT_ny77tHCaIp5iFwZ71_Kitaq5rmXZ-zepPBwrTdGoghCPbHKY7H2Ii2Jpzrve0eEg3mQgRLsruAfPlKo2GncT2VKvyZkSNpoeVuYTjazrQmFCqF2h5MCAO5nOIIGvvoKeC3vCMet-lHCaIWYOClh8NHZHmHKCdT-ZXnpy8rYzPgiezpWfZG3VPSaYoknjpk7VsPD6ec23e92UI0IWnKqlMp4o3g4qox2AW9NUZZnhXLuw" alt="Velvet Noir"/>
-                                        </div>
-                                        <div class="product-info">
-                                            <p class="product-name">Velvet Noir</p>
-                                            <p class="product-code">#RC-88102</p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td><span class="category-tag">Cocktail</span></td>
-                                <td><span class="color-text" style="color: #4d4635;">Đen nhung</span></td>
-                                <td>
-                                    <div class="size-group">
-                                        <span class="size-tag">S</span>
-                                        <span class="size-tag">M</span>
-                                        <span class="size-tag">L</span>
-                                    </div>
-                                </td>
-                                <td><span class="price-text">1.800.000đ</span></td>
-                                <td><span class="price-text" style="font-weight: normal; color: #5f5e5e;">800.000đ</span></td>
-                                <td>
-                                    <span class="status-badge badge-outofstock">
-                                        <span class="badge-dot"></span>
-                                        Out of Stock
-                                    </span>
-                                </td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <button class="action-btn-icon" title="Xem chi tiết">
-                                            <span class="material-symbols-outlined">visibility</span>
-                                        </button>
-                                        <button class="action-btn-icon" title="Chỉnh sửa">
-                                            <span class="material-symbols-outlined">edit</span>
-                                        </button>
-                                        <button class="action-btn-icon btn-delete" title="Xóa">
-                                            <span class="material-symbols-outlined">delete</span>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="pagination">
-                    <p class="pagination-text">Đang hiển thị 1 đến 4 trên 1,248 sản phẩm</p>
-                    <div class="pagination-buttons">
-                        <button class="pagination-btn-nav" disabled>
-                            <span class="material-symbols-outlined">chevron_left</span>
-                        </button>
-                        <button class="pagination-btn-num pagination-active">1</button>
-                        <button class="pagination-btn-num">2</button>
-                        <button class="pagination-btn-num">3</button>
-                        <span class="pagination-ellipsis">...</span>
-                        <button class="pagination-btn-num">312</button>
-                        <button class="pagination-btn-nav">
-                            <span class="material-symbols-outlined">chevron_right</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
+      <header class="top-bar">
+        <div class="search-wrapper">
+          <span class="material-symbols-outlined search-icon">search</span>
+          <input
+            class="search-input"
+            placeholder="Tìm kiếm sản phẩm, mã vạch..."
+            type="text"
+          />
         </div>
 
+        <div class="top-bar-right">
+          <div class="top-bar-icons">
+            <button class="top-bar-btn notification-btn" title="Thông báo">
+              <span class="material-symbols-outlined">notifications</span>
+              <span class="notification-badge"></span>
+            </button>
+            <button class="top-bar-btn" title="Cài đặt">
+              <span class="material-symbols-outlined">settings</span>
+            </button>
+          </div>
+          <div class="divider"></div>
+          <div class="navbar-auth" data-navbar-auth></div>
+        </div>
+      </header>
+
+      <div class="canvas-container">
+        <div class="page-header">
+          <div>
+            <h2 class="page-title">Quản lý sản phẩm</h2>
+            <p class="page-subtitle">
+              Giám sát và quản lý trạng thái các bộ sưu tập cao cấp.
+            </p>
+          </div>
+          <button class="btn btn-add">
+            <span class="material-symbols-outlined">add</span>
+            Thêm sản phẩm mới
+          </button>
+        </div>
+
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <div class="kpi-icon-wrapper">
+                <span class="material-symbols-outlined">inventory_2</span>
+              </div>
+              <span class="kpi-trend trend-neutral" data-stat="product-growth">
+                <span class="material-symbols-outlined">trending_up</span>
+                0%
+              </span>
+            </div>
+            <h4 class="kpi-title">Tổng sản phẩm</h4>
+            <p class="kpi-value">1,248</p>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <div class="kpi-icon-wrapper secondary">
+                <span class="material-symbols-outlined">shopping_bag</span>
+              </div>
+              <span class="kpi-trend trend-neutral" data-stat="rented-percent"
+                >0%</span
+              >
+            </div>
+            <h4 class="kpi-title">Đang cho thuê</h4>
+            <p class="kpi-value">432</p>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <div class="kpi-icon-wrapper tertiary">
+                <span class="material-symbols-outlined">dry_cleaning</span>
+              </div>
+              <span class="kpi-trend trend-error">Cần xử lý</span>
+            </div>
+            <h4 class="kpi-title">Đang vệ sinh</h4>
+            <p class="kpi-value">56</p>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <div class="kpi-icon-wrapper primary-container">
+                <span class="material-symbols-outlined">check_circle</span>
+              </div>
+              <span class="kpi-trend trend-up">Hợp lệ</span>
+            </div>
+            <h4 class="kpi-title">Sẵn sàng</h4>
+            <p class="kpi-value">760</p>
+          </div>
+        </div>
+
+        <div class="filter-bar">
+          <div class="search-filter-wrapper">
+            <span class="material-symbols-outlined filter-icon"
+              >filter_list</span
+            >
+            <input
+              class="filter-search-input"
+              placeholder="Tìm theo tên sản phẩm..."
+              type="text"
+            />
+          </div>
+          <select class="filter-select">
+            <option value="all">Tất cả danh mục</option>
+          </select>
+          <select class="filter-select">
+            <option>Trạng thái</option>
+            <option>Available</option>
+            <option>Rented</option>
+            <option>Cleaning</option>
+          </select>
+          <select class="filter-select">
+            <option>Giá thuê</option>
+            <option>Dưới 2tr</option>
+            <option>2tr - 5tr</option>
+            <option>Trên 5tr</option>
+          </select>
+          <button class="btn-refresh">
+            <span class="material-symbols-outlined">refresh</span>
+          </button>
+        </div>
+
+        <div class="table-card">
+          <div class="table-wrapper">
+            <table class="products-table">
+              <thead>
+                <tr>
+                  <th>SẢN PHẨM</th>
+                  <th>DANH MỤC</th>
+                  <th>MÀU SẮC</th>
+                  <th class="text-center">KÍCH CỠ</th>
+                  <th>GIÁ THUÊ</th>
+                  <th>TIỀN CỌC</th>
+                  <th>TRẠNG THÁI</th>
+                  <th class="text-right">THAO TÁC</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <div class="product-cell">
+                      <div class="product-img-wrapper">
+                        <img
+                          class="product-img"
+                          src="https://lh3.googleusercontent.com/aida-public/AB6AXuCtIxSzy4dLT4f1u2pSUGXCP4UjSM44a0rfpETpjBkMIQB1GZLnO8tzVkLlXCRJGX6CA1WzeLeSEi7_qo5bdOcTAkw9mDcpd6StSwSr-ntKfydyrjqq85GCVMtGjV_MUftlzIYL3YKaz1hiSJTbWBWdR8ouudx-RlP80zcHx_KYEBtJCuftn87O6OTzNuZc_boGGxzH1Sio_BM2o51edwUbjY3VFsy6a5VEItIZsY_ngDSp4CW6qZieIXZ4Mj5iNe5QytFVaUUNng"
+                          alt="Midnight Glamour"
+                        />
+                      </div>
+                      <div class="product-info">
+                        <p class="product-name">Midnight Glamour</p>
+                        <p class="product-code">#RC-88021</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td><span class="category-tag">Evening Gown</span></td>
+                  <td>
+                    <span class="color-text" style="color: #4d4635"
+                      >Đen huyền bí</span
+                    >
+                  </td>
+                  <td>
+                    <div class="size-group">
+                      <span class="size-tag size-active">S</span>
+                      <span class="size-tag size-active">M</span>
+                      <span class="size-tag">L</span>
+                    </div>
+                  </td>
+                  <td><span class="price-text">3.500.000đ</span></td>
+                  <td>
+                    <span
+                      class="price-text"
+                      style="font-weight: normal; color: #5f5e5e"
+                      >2.000.000đ</span
+                    >
+                  </td>
+                  <td>
+                    <span class="status-badge badge-available">
+                      <span class="badge-dot"></span>
+                      Available
+                    </span>
+                  </td>
+                  <td>
+                    <div class="action-buttons">
+                      <button class="action-btn-icon" title="Xem chi tiết">
+                        <span class="material-symbols-outlined"
+                          >visibility</span
+                        >
+                      </button>
+                      <button class="action-btn-icon" title="Chỉnh sửa">
+                        <span class="material-symbols-outlined">edit</span>
+                      </button>
+                      <button class="action-btn-icon btn-delete" title="Xóa">
+                        <span class="material-symbols-outlined">delete</span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="product-cell">
+                      <div class="product-img-wrapper">
+                        <img
+                          class="product-img"
+                          src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXfaWybtiqKwORexX_9eiTYzwUDa30bLG0PpSMhm5If-Hw2Td8VI2mMpL9WmWtpaBJrZsDKtwVQ2lkHS34ymDVeLg16qZYMsXl40D6qe8zkENEen3YiqEsf6uQidgSBswKrR-Q06GmY4vgEq_XqcPfAOsgZDBe0YkIIgfo6mc-lWNmqxcAL-lYcV3KfZZ8vVfTbJK1pPAJAbJcS_ehvwUApv4jT3rSsCIt15wMT5AkIWLVlgcCY4ilahtdFGYPS3CNO4YhoQDDZw"
+                          alt="Golden Ember"
+                        />
+                      </div>
+                      <div class="product-info">
+                        <p class="product-name">Golden Ember</p>
+                        <p class="product-code">#RC-88045</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td><span class="category-tag">Cocktail</span></td>
+                  <td>
+                    <span class="color-text" style="color: #4d4635"
+                      >Vàng ánh kim</span
+                    >
+                  </td>
+                  <td>
+                    <div class="size-group">
+                      <span class="size-tag">S</span>
+                      <span class="size-tag size-active">M</span>
+                      <span class="size-tag">L</span>
+                    </div>
+                  </td>
+                  <td><span class="price-text">2.200.000đ</span></td>
+                  <td>
+                    <span
+                      class="price-text"
+                      style="font-weight: normal; color: #5f5e5e"
+                      >1.000.000đ</span
+                    >
+                  </td>
+                  <td>
+                    <span class="status-badge badge-rented">
+                      <span class="badge-dot"></span>
+                      Rented
+                    </span>
+                  </td>
+                  <td>
+                    <div class="action-buttons">
+                      <button class="action-btn-icon" title="Xem chi tiết">
+                        <span class="material-symbols-outlined"
+                          >visibility</span
+                        >
+                      </button>
+                      <button class="action-btn-icon" title="Chỉnh sửa">
+                        <span class="material-symbols-outlined">edit</span>
+                      </button>
+                      <button class="action-btn-icon btn-delete" title="Xóa">
+                        <span class="material-symbols-outlined">delete</span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="product-cell">
+                      <div class="product-img-wrapper">
+                        <img
+                          class="product-img"
+                          src="https://lh3.googleusercontent.com/aida-public/AB6AXuAuJryF6CUNLcV1HbwhOPnSK5Q8yYlUimPpPQbatjJd5yGysUtN77mIRKSLWUKcnxS9TPHD1X_uiDYbvBm0fBMpILqxlfE9Mc8syMsWMJ0TRCGdQraD8n9SL9LyJh-QhEDzKwnTIQWdFO3DLH-NEHTQ13y6NarcvnTdDEY3s0bmz9MtdbDfhr0nfl9vDlrsI_OnyAlQT8zwyoOPIVFzUbHV-tp34at1-iT-DDIO3CvQEjzZP4JR6dPEQrls8GDnFwlEkK6BTUMzpg"
+                          alt="Petal Whisper"
+                        />
+                      </div>
+                      <div class="product-info">
+                        <p class="product-name">Petal Whisper</p>
+                        <p class="product-code">#RC-92011</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td><span class="category-tag">Wedding</span></td>
+                  <td>
+                    <span class="color-text" style="color: #4d4635"
+                      >Trắng tinh khôi</span
+                    >
+                  </td>
+                  <td>
+                    <div class="size-group">
+                      <span class="size-tag size-active">S</span>
+                      <span class="size-tag size-active">M</span>
+                      <span class="size-tag size-active">L</span>
+                    </div>
+                  </td>
+                  <td><span class="price-text">8.900.000đ</span></td>
+                  <td>
+                    <span
+                      class="price-text"
+                      style="font-weight: normal; color: #5f5e5e"
+                      >5.000.000đ</span
+                    >
+                  </td>
+                  <td>
+                    <span class="status-badge badge-cleaning">
+                      <span class="badge-dot badge-pulse"></span>
+                      Cleaning
+                    </span>
+                  </td>
+                  <td>
+                    <div class="action-buttons">
+                      <button class="action-btn-icon" title="Xem chi tiết">
+                        <span class="material-symbols-outlined"
+                          >visibility</span
+                        >
+                      </button>
+                      <button class="action-btn-icon" title="Chỉnh sửa">
+                        <span class="material-symbols-outlined">edit</span>
+                      </button>
+                      <button class="action-btn-icon btn-delete" title="Xóa">
+                        <span class="material-symbols-outlined">delete</span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="product-cell">
+                      <div class="product-img-wrapper">
+                        <img
+                          class="product-img"
+                          src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8F6Rs9yhEzU0H5oL9L8RZd_2J6eFoT_ny77tHCaIp5iFwZ71_Kitaq5rmXZ-zepPBwrTdGoghCPbHKY7H2Ii2Jpzrve0eEg3mQgRLsruAfPlKo2GncT2VKvyZkSNpoeVuYTjazrQmFCqF2h5MCAO5nOIIGvvoKeC3vCMet-lHCaIWYOClh8NHZHmHKCdT-ZXnpy8rYzPgiezpWfZG3VPSaYoknjpk7VsPD6ec23e92UI0IWnKqlMp4o3g4qox2AW9NUZZnhXLuw"
+                          alt="Velvet Noir"
+                        />
+                      </div>
+                      <div class="product-info">
+                        <p class="product-name">Velvet Noir</p>
+                        <p class="product-code">#RC-88102</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td><span class="category-tag">Cocktail</span></td>
+                  <td>
+                    <span class="color-text" style="color: #4d4635"
+                      >Đen nhung</span
+                    >
+                  </td>
+                  <td>
+                    <div class="size-group">
+                      <span class="size-tag">S</span>
+                      <span class="size-tag">M</span>
+                      <span class="size-tag">L</span>
+                    </div>
+                  </td>
+                  <td><span class="price-text">1.800.000đ</span></td>
+                  <td>
+                    <span
+                      class="price-text"
+                      style="font-weight: normal; color: #5f5e5e"
+                      >800.000đ</span
+                    >
+                  </td>
+                  <td>
+                    <span class="status-badge badge-outofstock">
+                      <span class="badge-dot"></span>
+                      Out of Stock
+                    </span>
+                  </td>
+                  <td>
+                    <div class="action-buttons">
+                      <button class="action-btn-icon" title="Xem chi tiết">
+                        <span class="material-symbols-outlined"
+                          >visibility</span
+                        >
+                      </button>
+                      <button class="action-btn-icon" title="Chỉnh sửa">
+                        <span class="material-symbols-outlined">edit</span>
+                      </button>
+                      <button class="action-btn-icon btn-delete" title="Xóa">
+                        <span class="material-symbols-outlined">delete</span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="pagination">
+            <p class="pagination-text">
+              Đang hiển thị 1 đến 4 trên 1,248 sản phẩm
+            </p>
+            <div class="pagination-buttons">
+              <button class="pagination-btn-nav" disabled>
+                <span class="material-symbols-outlined">chevron_left</span>
+              </button>
+              <button class="pagination-btn-num pagination-active">1</button>
+              <button class="pagination-btn-num">2</button>
+              <button class="pagination-btn-num">3</button>
+              <span class="pagination-ellipsis">...</span>
+              <button class="pagination-btn-num">312</button>
+              <button class="pagination-btn-nav">
+                <span class="material-symbols-outlined">chevron_right</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </main>
 
     <div id="modal-product-add" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">Thêm sản phẩm mới</h3>
-                <button class="modal-close" onclick="closeModal('modal-product-add')">&times;</button>
-            </div>
-            <form id="form-product-add" onsubmit="handleProductAdd(event)">
-                <div class="form-group">
-                    <label class="form-label">Tên sản phẩm</label>
-                    <input type="text" class="form-input" required placeholder="Nhập tên sản phẩm..." name="name"/>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Mô tả chi tiết</label>
-                    <textarea class="form-textarea" required placeholder="Nhập mô tả sản phẩm..." name="description"></textarea>
-                </div>
-                <div class="form-row">
-                    <div class="form-group" id="add-category-group">
-                        <label class="form-label">Danh mục</label>
-                        <div class="category-input-wrapper" style="position: relative; display: flex; align-items: center; width: 100%;">
-                            <select class="form-select" required name="category" id="add-product-category" style="width: 100%;">
-                                <option value="">Chọn danh mục</option>
-                                <option value="Evening Gown">Evening Gown</option>
-                                <option value="Wedding">Wedding</option>
-                                <option value="Cocktail">Cocktail</option>
-                            </select>
-                            <div id="new-category-wrapper" style="display: none; align-items: center; gap: 8px; width: 100%;">
-                                <input type="text" id="new-category-input" class="form-input" placeholder="Nhập tên danh mục mới..." style="flex: 1;" />
-                                <button type="button" id="cancel-new-category" class="btn-modal-cancel" style="padding: 8px; min-width: auto; margin: 0; display: flex; align-items: center; justify-content: center;" title="Hủy thêm danh mục mới">
-                                    <span class="material-symbols-outlined" style="font-size: 18px;">close</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Màu sắc</label>
-                        <input type="text" class="form-input" required placeholder="Ví dụ: Đỏ ruby, Trắng ngọc trai..." name="color"/>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Kích cỡ (Sizes)</label>
-                    <div class="form-sizes-group">
-                        <input type="checkbox" id="add-size-xs" class="size-checkbox-input" name="sizes" value="XS">
-                        <label for="add-size-xs" class="size-checkbox-label">XS</label>
-                        
-                        <input type="checkbox" id="add-size-s" class="size-checkbox-input" name="sizes" value="S">
-                        <label for="add-size-s" class="size-checkbox-label">S</label>
-                        
-                        <input type="checkbox" id="add-size-m" class="size-checkbox-input" name="sizes" value="M">
-                        <label for="add-size-m" class="size-checkbox-label">M</label>
-                        
-                        <input type="checkbox" id="add-size-l" class="size-checkbox-input" name="sizes" value="L">
-                        <label for="add-size-l" class="size-checkbox-label">L</label>
-                        
-                        <input type="checkbox" id="add-size-xl" class="size-checkbox-input" name="sizes" value="XL">
-                        <label for="add-size-xl" class="size-checkbox-label">XL</label>
-                        
-                        <input type="checkbox" id="add-size-xxl" class="size-checkbox-input" name="sizes" value="XXL">
-                        <label for="add-size-xxl" class="size-checkbox-label">XXL</label>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Giá thuê (VNĐ)</label>
-                        <input type="number" class="form-input" required min="0" placeholder="Ví dụ: 3500000" name="rentalPrice"/>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Tiền đặt cọc (VNĐ)</label>
-                        <input type="number" class="form-input" required min="0" placeholder="Ví dụ: 2000000" name="deposit"/>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Trạng thái</label>
-                        <select class="form-select" name="status">
-                            <option value="available">Available</option>
-                            <option value="rented">Rented</option>
-                            <option value="maintenance">Cleaning</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Ảnh sản phẩm</label>
-                    <div class="image-upload-wrapper">
-                        <label for="add-product-image" class="upload-dropzone" id="add-dropzone">
-                            <input type="file" id="add-product-image" class="product-image-input" accept="image/*" name="image" data-preview="add-product-image-preview" style="display: none;"/>
-                            <div class="upload-placeholder" id="add-upload-placeholder">
-                                <svg class="upload-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                                    <circle cx="8.5" cy="8.5" r="1.5"/>
-                                    <polyline points="21 15 16 10 5 21"/>
-                                </svg>
-                                <span class="upload-text">Tải ảnh sản phẩm</span>
-                                <span class="upload-subtext">Hỗ trợ JPG, PNG, WEBP. Tối đa 5MB</span>
-                            </div>
-                            <div class="upload-preview-container" id="add-preview-container" style="display: none;">
-                                <img id="add-product-image-preview" class="upload-preview-img" src="" alt="Xem trước ảnh sản phẩm"/>
-                                <div class="upload-preview-overlay">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 4px;">
-                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                                        <polyline points="17 8 12 3 7 8"/>
-                                        <line x1="12" y1="3" x2="12" y2="15"/>
-                                    </svg>
-                                    <span>Thay đổi ảnh sản phẩm</span>
-                                </div>
-                            </div>
-                        </label>
-                    </div>
-                </div>
-                <div class="modal-actions">
-                    <button type="button" class="btn-modal-cancel" onclick="closeModal('modal-product-add')">Hủy bỏ</button>
-                    <button type="submit" class="btn-modal-confirm">Lưu lại</button>
-                </div>
-            </form>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title">Thêm sản phẩm mới</h3>
+          <button class="modal-close" onclick="closeModal('modal-product-add')">
+            &times;
+          </button>
         </div>
+        <form id="form-product-add" onsubmit="handleProductAdd(event)">
+          <div class="form-group">
+            <label class="form-label">Tên sản phẩm</label>
+            <input
+              type="text"
+              class="form-input"
+              required
+              placeholder="Nhập tên sản phẩm..."
+              name="name"
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Mô tả chi tiết</label>
+            <textarea
+              class="form-textarea"
+              required
+              placeholder="Nhập mô tả sản phẩm..."
+              name="description"
+            ></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group" id="add-category-group">
+              <label class="form-label">Danh mục</label>
+              <div
+                class="category-input-wrapper"
+                style="
+                  position: relative;
+                  display: flex;
+                  align-items: center;
+                  width: 100%;
+                "
+              >
+                <select
+                  class="form-select"
+                  required
+                  name="category"
+                  id="add-product-category"
+                  style="width: 100%"
+                >
+                  <option value="">Chọn danh mục</option>
+                </select>
+                <div
+                  id="new-category-wrapper"
+                  style="
+                    display: none;
+                    align-items: center;
+                    gap: 8px;
+                    width: 100%;
+                  "
+                >
+                  <input
+                    type="text"
+                    id="new-category-input"
+                    class="form-input"
+                    placeholder="Nhập tên danh mục mới..."
+                    style="flex: 1"
+                  />
+                  <button
+                    type="button"
+                    id="cancel-new-category"
+                    class="btn-modal-cancel"
+                    style="
+                      padding: 8px;
+                      min-width: auto;
+                      margin: 0;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                    "
+                    title="Hủy thêm danh mục mới"
+                  >
+                    <span
+                      class="material-symbols-outlined"
+                      style="font-size: 18px"
+                      >close</span
+                    >
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Màu sắc</label>
+              <input
+                type="text"
+                class="form-input"
+                required
+                placeholder="Ví dụ: Đỏ ruby, Trắng ngọc trai..."
+                name="color"
+              />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Kích cỡ (Sizes)</label>
+            <div class="form-sizes-group">
+              <input
+                type="checkbox"
+                id="add-size-xs"
+                class="size-checkbox-input"
+                name="sizes"
+                value="XS"
+              />
+              <label for="add-size-xs" class="size-checkbox-label">XS</label>
+
+              <input
+                type="checkbox"
+                id="add-size-s"
+                class="size-checkbox-input"
+                name="sizes"
+                value="S"
+              />
+              <label for="add-size-s" class="size-checkbox-label">S</label>
+
+              <input
+                type="checkbox"
+                id="add-size-m"
+                class="size-checkbox-input"
+                name="sizes"
+                value="M"
+              />
+              <label for="add-size-m" class="size-checkbox-label">M</label>
+
+              <input
+                type="checkbox"
+                id="add-size-l"
+                class="size-checkbox-input"
+                name="sizes"
+                value="L"
+              />
+              <label for="add-size-l" class="size-checkbox-label">L</label>
+
+              <input
+                type="checkbox"
+                id="add-size-xl"
+                class="size-checkbox-input"
+                name="sizes"
+                value="XL"
+              />
+              <label for="add-size-xl" class="size-checkbox-label">XL</label>
+
+              <input
+                type="checkbox"
+                id="add-size-xxl"
+                class="size-checkbox-input"
+                name="sizes"
+                value="XXL"
+              />
+              <label for="add-size-xxl" class="size-checkbox-label">XXL</label>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Giá thuê (VNĐ)</label>
+              <input
+                type="number"
+                class="form-input"
+                required
+                min="0"
+                placeholder="Ví dụ: 3500000"
+                name="rentalPrice"
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Tiền đặt cọc (VNĐ)</label>
+              <input
+                type="number"
+                class="form-input"
+                required
+                min="0"
+                placeholder="Ví dụ: 2000000"
+                name="deposit"
+              />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Trạng thái</label>
+              <select class="form-select" name="status">
+                <option value="available">Available</option>
+                <option value="rented">Rented</option>
+                <option value="maintenance">Cleaning</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Ảnh sản phẩm</label>
+            <div class="image-upload-wrapper">
+              <label
+                for="add-product-image"
+                class="upload-dropzone"
+                id="add-dropzone"
+              >
+                <input
+                  type="file"
+                  id="add-product-image"
+                  class="product-image-input"
+                  accept="image/*"
+                  name="image"
+                  data-preview="add-product-image-preview"
+                  style="display: none"
+                />
+                <div class="upload-placeholder" id="add-upload-placeholder">
+                  <svg
+                    class="upload-icon"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    width="36"
+                    height="36"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                    <circle cx="8.5" cy="8.5" r="1.5" />
+                    <polyline points="21 15 16 10 5 21" />
+                  </svg>
+                  <span class="upload-text">Tải ảnh sản phẩm</span>
+                  <span class="upload-subtext"
+                    >Hỗ trợ JPG, PNG, WEBP. Tối đa 5MB</span
+                  >
+                </div>
+                <div
+                  class="upload-preview-container"
+                  id="add-preview-container"
+                  style="display: none"
+                >
+                  <img
+                    id="add-product-image-preview"
+                    class="upload-preview-img"
+                    src=""
+                    alt="Xem trước ảnh sản phẩm"
+                  />
+                  <div class="upload-preview-overlay">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      width="22"
+                      height="22"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      style="margin-bottom: 4px"
+                    >
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                      <polyline points="17 8 12 3 7 8" />
+                      <line x1="12" y1="3" x2="12" y2="15" />
+                    </svg>
+                    <span>Thay đổi ảnh sản phẩm</span>
+                  </div>
+                </div>
+              </label>
+            </div>
+          </div>
+          <div class="modal-actions">
+            <button
+              type="button"
+              class="btn-modal-cancel"
+              onclick="closeModal('modal-product-add')"
+            >
+              Hủy bỏ
+            </button>
+            <button type="submit" class="btn-modal-confirm">Lưu lại</button>
+          </div>
+        </form>
+      </div>
     </div>
 
     <div id="modal-product-detail" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">Chi tiết sản phẩm</h3>
-                <button class="modal-close" onclick="closeModal('modal-product-detail')">&times;</button>
-            </div>
-            <div class="detail-grid">
-                <div class="detail-img-preview">
-                    <img id="detail-product-img" class="detail-img" src="" alt="Ảnh sản phẩm"/>
-                </div>
-                
-                <span class="detail-label">Tên sản phẩm:</span>
-                <span id="detail-product-name" class="detail-value" style="font-weight: bold; font-size: 16px;">Midnight Glamour</span>
-                
-                <span class="detail-label">Mã sản phẩm:</span>
-                <span id="detail-product-code" class="detail-value" style="font-family: monospace;">#RC-88021</span>
-                
-                <span class="detail-label">Danh mục:</span>
-                <span id="detail-product-category" class="detail-value">Evening Gown</span>
-                
-                <span class="detail-label">Màu sắc:</span>
-                <span id="detail-product-color" class="detail-value">Đen huyền bí</span>
-                
-                <span class="detail-label">Kích cỡ sẵn có:</span>
-                <span id="detail-product-sizes" class="detail-value">S, M</span>
-                
-                <span class="detail-label">Giá thuê:</span>
-                <span id="detail-product-price" class="detail-value" style="color: #735c00; font-weight: 600;">3.500.000đ</span>
-                
-                <span class="detail-label">Tiền đặt cọc:</span>
-                <span id="detail-product-deposit" class="detail-value">2.000.000đ</span>
-                
-                <span class="detail-label">Trạng thái:</span>
-                <span id="detail-product-status" class="detail-value">Available</span>
-                
-                <span class="detail-label">Mô tả sản phẩm:</span>
-                <span id="detail-product-description" class="detail-value description">Đầm dạ hội lụa satin cao cấp thiết kế sang trọng pha chút cổ điển, đính pha lê lấp lánh phần ngực giúp tôn dáng và toát lên vẻ quý phái.</span>
-            </div>
-            <div class="modal-actions">
-                <button type="button" class="btn-modal-cancel" onclick="closeModal('modal-product-detail')" style="width: 100%;">Đóng cửa sổ</button>
-            </div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title">Chi tiết sản phẩm</h3>
+          <button
+            class="modal-close"
+            onclick="closeModal('modal-product-detail')"
+          >
+            &times;
+          </button>
         </div>
+        <div class="detail-grid">
+          <div class="detail-img-preview">
+            <img
+              id="detail-product-img"
+              class="detail-img"
+              src=""
+              alt="Ảnh sản phẩm"
+            />
+          </div>
+
+          <span class="detail-label">Tên sản phẩm:</span>
+          <span
+            id="detail-product-name"
+            class="detail-value"
+            style="font-weight: bold; font-size: 16px"
+            >Midnight Glamour</span
+          >
+
+          <span class="detail-label">Mã sản phẩm:</span>
+          <span
+            id="detail-product-code"
+            class="detail-value"
+            style="font-family: 'Be Vietnam Pro', sans-serif"
+            >#RC-88021</span
+          >
+
+          <span class="detail-label">Danh mục:</span>
+          <span id="detail-product-category" class="detail-value"
+            >Evening Gown</span
+          >
+
+          <span class="detail-label">Màu sắc:</span>
+          <span id="detail-product-color" class="detail-value"
+            >Đen huyền bí</span
+          >
+
+          <span class="detail-label">Kích cỡ sẵn có:</span>
+          <span id="detail-product-sizes" class="detail-value">S, M</span>
+
+          <span class="detail-label">Giá thuê:</span>
+          <span
+            id="detail-product-price"
+            class="detail-value"
+            style="color: #735c00; font-weight: 600"
+            >3.500.000đ</span
+          >
+
+          <span class="detail-label">Tiền đặt cọc:</span>
+          <span id="detail-product-deposit" class="detail-value"
+            >2.000.000đ</span
+          >
+
+          <span class="detail-label">Trạng thái:</span>
+          <span id="detail-product-status" class="detail-value">Available</span>
+
+          <span class="detail-label">Mô tả sản phẩm:</span>
+          <span id="detail-product-description" class="detail-value description"
+            >Đầm dạ hội lụa satin cao cấp thiết kế sang trọng pha chút cổ điển,
+            đính pha lê lấp lánh phần ngực giúp tôn dáng và toát lên vẻ quý
+            phái.</span
+          >
+        </div>
+        <div class="modal-actions">
+          <button
+            type="button"
+            class="btn-modal-cancel"
+            onclick="closeModal('modal-product-detail')"
+            style="width: 100%"
+          >
+            Đóng cửa sổ
+          </button>
+        </div>
+      </div>
     </div>
 
     <div id="modal-product-edit" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">Chỉnh sửa sản phẩm</h3>
-                <button class="modal-close" onclick="closeModal('modal-product-edit')">&times;</button>
-            </div>
-            <form id="form-product-edit" onsubmit="handleProductEdit(event)">
-                <input type="hidden" id="edit-product-id" name="id"/>
-                <div class="form-group">
-                    <label class="form-label">Tên sản phẩm</label>
-                    <input type="text" id="edit-product-name" class="form-input" required placeholder="Nhập tên sản phẩm..." name="name"/>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Mô tả chi tiết</label>
-                    <textarea id="edit-product-description" class="form-textarea" required placeholder="Nhập mô tả sản phẩm..." name="description"></textarea>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Danh mục</label>
-                        <select id="edit-product-category" class="form-select" required name="category">
-                            <option value="">Chọn danh mục</option>
-                            <option value="Evening Gown">Evening Gown</option>
-                            <option value="Wedding">Wedding</option>
-                            <option value="Cocktail">Cocktail</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Màu sắc</label>
-                        <input type="text" id="edit-product-color" class="form-input" required placeholder="Ví dụ: Đỏ ruby, Trắng ngọc trai..." name="color"/>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Kích cỡ (Sizes)</label>
-                    <div class="form-sizes-group">
-                        <input type="checkbox" id="edit-size-xs" class="size-checkbox-input" name="sizes" value="XS">
-                        <label for="edit-size-xs" class="size-checkbox-label">XS</label>
-                        
-                        <input type="checkbox" id="edit-size-s" class="size-checkbox-input" name="sizes" value="S">
-                        <label for="edit-size-s" class="size-checkbox-label">S</label>
-                        
-                        <input type="checkbox" id="edit-size-m" class="size-checkbox-input" name="sizes" value="M">
-                        <label for="edit-size-m" class="size-checkbox-label">M</label>
-                        
-                        <input type="checkbox" id="edit-size-l" class="size-checkbox-input" name="sizes" value="L">
-                        <label for="edit-size-l" class="size-checkbox-label">L</label>
-                        
-                        <input type="checkbox" id="edit-size-xl" class="size-checkbox-input" name="sizes" value="XL">
-                        <label for="edit-size-xl" class="size-checkbox-label">XL</label>
-                        
-                        <input type="checkbox" id="edit-size-xxl" class="size-checkbox-input" name="sizes" value="XXL">
-                        <label for="edit-size-xxl" class="size-checkbox-label">XXL</label>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Giá thuê (VNĐ)</label>
-                        <input type="number" id="edit-product-price" class="form-input" required min="0" placeholder="Ví dụ: 3500000" name="rentalPrice"/>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Tiền đặt cọc (VNĐ)</label>
-                        <input type="number" id="edit-product-deposit" class="form-input" required min="0" placeholder="Ví dụ: 2000000" name="deposit"/>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Trạng thái</label>
-                        <select id="edit-product-status" class="form-select" name="status">
-                            <option value="available">Available</option>
-                            <option value="rented">Rented</option>
-                            <option value="maintenance">Cleaning</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Ảnh sản phẩm</label>
-                    <div class="image-upload-wrapper">
-                        <label for="edit-product-image" class="upload-dropzone" id="edit-dropzone">
-                            <input type="file" id="edit-product-image" class="product-image-input" accept="image/*" name="image" data-preview="edit-product-image-preview" style="display: none;"/>
-                            <div class="upload-placeholder" id="edit-upload-placeholder">
-                                <svg class="upload-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                                    <circle cx="8.5" cy="8.5" r="1.5"/>
-                                    <polyline points="21 15 16 10 5 21"/>
-                                </svg>
-                                <span class="upload-text">Tải ảnh sản phẩm</span>
-                                <span class="upload-subtext">Hỗ trợ JPG, PNG, WEBP. Tối đa 5MB</span>
-                            </div>
-                            <div class="upload-preview-container" id="edit-preview-container" style="display: none;">
-                                <img id="edit-product-image-preview" class="upload-preview-img" src="" alt="Xem trước ảnh sản phẩm"/>
-                                <div class="upload-preview-overlay">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 4px;">
-                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                                        <polyline points="17 8 12 3 7 8"/>
-                                        <line x1="12" y1="3" x2="12" y2="15"/>
-                                    </svg>
-                                    <span>Thay đổi ảnh sản phẩm</span>
-                                </div>
-                            </div>
-                        </label>
-                    </div>
-                </div>
-                <div class="modal-actions">
-                    <button type="button" class="btn-modal-cancel" onclick="closeModal('modal-product-edit')">Hủy bỏ</button>
-                    <button type="submit" class="btn-modal-confirm">Cập nhật</button>
-                </div>
-            </form>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title">Chỉnh sửa sản phẩm</h3>
+          <button
+            class="modal-close"
+            onclick="closeModal('modal-product-edit')"
+          >
+            &times;
+          </button>
         </div>
+        <form id="form-product-edit" onsubmit="handleProductEdit(event)">
+          <input type="hidden" id="edit-product-id" name="id" />
+          <div class="form-group">
+            <label class="form-label">Tên sản phẩm</label>
+            <input
+              type="text"
+              id="edit-product-name"
+              class="form-input"
+              required
+              placeholder="Nhập tên sản phẩm..."
+              name="name"
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Mô tả chi tiết</label>
+            <textarea
+              id="edit-product-description"
+              class="form-textarea"
+              required
+              placeholder="Nhập mô tả sản phẩm..."
+              name="description"
+            ></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Danh mục</label>
+              <select
+                id="edit-product-category"
+                class="form-select"
+                required
+                name="category"
+              >
+                <option value="">Chọn danh mục</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Màu sắc</label>
+              <input
+                type="text"
+                id="edit-product-color"
+                class="form-input"
+                required
+                placeholder="Ví dụ: Đỏ ruby, Trắng ngọc trai..."
+                name="color"
+              />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Kích cỡ (Sizes)</label>
+            <div class="form-sizes-group">
+              <input
+                type="checkbox"
+                id="edit-size-xs"
+                class="size-checkbox-input"
+                name="sizes"
+                value="XS"
+              />
+              <label for="edit-size-xs" class="size-checkbox-label">XS</label>
+
+              <input
+                type="checkbox"
+                id="edit-size-s"
+                class="size-checkbox-input"
+                name="sizes"
+                value="S"
+              />
+              <label for="edit-size-s" class="size-checkbox-label">S</label>
+
+              <input
+                type="checkbox"
+                id="edit-size-m"
+                class="size-checkbox-input"
+                name="sizes"
+                value="M"
+              />
+              <label for="edit-size-m" class="size-checkbox-label">M</label>
+
+              <input
+                type="checkbox"
+                id="edit-size-l"
+                class="size-checkbox-input"
+                name="sizes"
+                value="L"
+              />
+              <label for="edit-size-l" class="size-checkbox-label">L</label>
+
+              <input
+                type="checkbox"
+                id="edit-size-xl"
+                class="size-checkbox-input"
+                name="sizes"
+                value="XL"
+              />
+              <label for="edit-size-xl" class="size-checkbox-label">XL</label>
+
+              <input
+                type="checkbox"
+                id="edit-size-xxl"
+                class="size-checkbox-input"
+                name="sizes"
+                value="XXL"
+              />
+              <label for="edit-size-xxl" class="size-checkbox-label">XXL</label>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Giá thuê (VNĐ)</label>
+              <input
+                type="number"
+                id="edit-product-price"
+                class="form-input"
+                required
+                min="0"
+                placeholder="Ví dụ: 3500000"
+                name="rentalPrice"
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Tiền đặt cọc (VNĐ)</label>
+              <input
+                type="number"
+                id="edit-product-deposit"
+                class="form-input"
+                required
+                min="0"
+                placeholder="Ví dụ: 2000000"
+                name="deposit"
+              />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Trạng thái</label>
+              <select
+                id="edit-product-status"
+                class="form-select"
+                name="status"
+              >
+                <option value="available">Available</option>
+                <option value="rented">Rented</option>
+                <option value="maintenance">Cleaning</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Ảnh sản phẩm</label>
+            <div class="image-upload-wrapper">
+              <label
+                for="edit-product-image"
+                class="upload-dropzone"
+                id="edit-dropzone"
+              >
+                <input
+                  type="file"
+                  id="edit-product-image"
+                  class="product-image-input"
+                  accept="image/*"
+                  name="image"
+                  data-preview="edit-product-image-preview"
+                  style="display: none"
+                />
+                <div class="upload-placeholder" id="edit-upload-placeholder">
+                  <svg
+                    class="upload-icon"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    width="36"
+                    height="36"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                    <circle cx="8.5" cy="8.5" r="1.5" />
+                    <polyline points="21 15 16 10 5 21" />
+                  </svg>
+                  <span class="upload-text">Tải ảnh sản phẩm</span>
+                  <span class="upload-subtext"
+                    >Hỗ trợ JPG, PNG, WEBP. Tối đa 5MB</span
+                  >
+                </div>
+                <div
+                  class="upload-preview-container"
+                  id="edit-preview-container"
+                  style="display: none"
+                >
+                  <img
+                    id="edit-product-image-preview"
+                    class="upload-preview-img"
+                    src=""
+                    alt="Xem trước ảnh sản phẩm"
+                  />
+                  <div class="upload-preview-overlay">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      width="22"
+                      height="22"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      style="margin-bottom: 4px"
+                    >
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                      <polyline points="17 8 12 3 7 8" />
+                      <line x1="12" y1="3" x2="12" y2="15" />
+                    </svg>
+                    <span>Thay đổi ảnh sản phẩm</span>
+                  </div>
+                </div>
+              </label>
+            </div>
+          </div>
+          <div class="modal-actions">
+            <button
+              type="button"
+              class="btn-modal-cancel"
+              onclick="closeModal('modal-product-edit')"
+            >
+              Hủy bỏ
+            </button>
+            <button type="submit" class="btn-modal-confirm">Cập nhật</button>
+          </div>
+        </form>
+      </div>
     </div>
 
     <div id="modal-product-delete" class="modal">
-        <div class="modal-content modal-sm">
-            <div class="modal-header">
-                <h3 class="modal-title" style="color: #ba1a1a;">Xác nhận xóa</h3>
-                <button class="modal-close" onclick="closeModal('modal-product-delete')">&times;</button>
-            </div>
-            <div style="font-family: 'Inter', sans-serif; font-size: 14px; color: #1c1b1b; line-height: 1.6; margin-bottom: 20px;">
-                Bạn có chắc chắn muốn xóa sản phẩm <span id="delete-product-name" style="font-weight: bold;"></span>? Hành động này sẽ không thể khôi phục lại.
-            </div>
-            <input type="hidden" id="delete-product-id"/>
-            <div class="modal-actions">
-                <button type="button" class="btn-modal-cancel" onclick="closeModal('modal-product-delete')">Hủy</button>
-                <button type="button" class="btn-modal-delete" onclick="confirmProductDelete()">Xác nhận xóa</button>
-            </div>
+      <div class="modal-content modal-sm">
+        <div class="modal-header">
+          <h3 class="modal-title" style="color: #ba1a1a">Xác nhận xóa</h3>
+          <button
+            class="modal-close"
+            onclick="closeModal('modal-product-delete')"
+          >
+            &times;
+          </button>
         </div>
+        <div
+          style="
+            font-family: &quot;Be Vietnam Pro&quot;, sans-serif;
+            font-size: 14px;
+            color: #1c1b1b;
+            line-height: 1.6;
+            margin-bottom: 20px;
+          "
+        >
+          Bạn có chắc chắn muốn xóa sản phẩm
+          <span id="delete-product-name" style="font-weight: bold"></span>? Hành
+          động này sẽ không thể khôi phục lại.
+        </div>
+        <input type="hidden" id="delete-product-id" />
+        <div class="modal-actions">
+          <button
+            type="button"
+            class="btn-modal-cancel"
+            onclick="closeModal('modal-product-delete')"
+          >
+            Hủy
+          </button>
+          <button
+            type="button"
+            class="btn-modal-delete"
+            onclick="confirmProductDelete()"
+          >
+            Xác nhận xóa
+          </button>
+        </div>
+      </div>
     </div>
 
     <script src="/public/js/apiClient.js"></script>
     <script src="/public/js/layouts/navbar.js"></script>
     <script src="/public/js/admin/products.js"></script>
-</body>
+  </body>
 </html>

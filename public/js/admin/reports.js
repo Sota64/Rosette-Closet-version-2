@@ -200,7 +200,7 @@ function renderTabContent() {
         return `
             <tr>
                 <td style="font-weight: 500;">${escapeHtml(periodName)}</td>
-                <td class="text-center" style="font-family: monospace;">${item.count}</td>
+                <td class="text-center" style="font-family: 'Be Vietnam Pro', sans-serif;">${item.count}</td>
                 <td class="text-right" style="color: #735c00; font-weight: 600;">${formatCurrency(item.totalRevenue)}</td>
                 <td class="text-right">${formatCurrency(item.avgOrder)}</td>
                 <td class="text-right" style="color: #047857; font-weight: 500;">${formatCurrency(item.maxOrder)}</td>
@@ -255,7 +255,7 @@ function renderChart(data) {
     svg.innerHTML = ""; // Clear existing
 
     if (data.length === 0) {
-        svg.innerHTML = `<text x="300" y="100" text-anchor="middle" fill="#7f7663" font-family="Outfit" font-size="12">Không có dữ liệu biểu diễn</text>`;
+        svg.innerHTML = `<text x="300" y="100" text-anchor="middle" fill="#7f7663" font-family="Be Vietnam Pro" font-size="12">Không có dữ liệu biểu diễn</text>`;
         return;
     }
 

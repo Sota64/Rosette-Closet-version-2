@@ -97,7 +97,7 @@ function initUsersPage() {
     // Bind click outside to close modals
     window.addEventListener("click", (event) => {
         if (event.target.classList.contains("modal")) {
-            event.target.style.display = "none";
+            closeModal(event.target.id);
         }
     });
 
@@ -229,9 +229,21 @@ function openModal(id) {
     }
 }
 
+function resetModalFields(modal) {
+    modal.querySelectorAll("form").forEach((form) => form.reset());
+    modal.querySelectorAll('input[type="hidden"]').forEach((input) => {
+        input.value = "";
+    });
+}
+
 function closeModal(id) {
     const modal = document.getElementById(id);
     if (modal) {
+        resetModalFields(modal);
+        if (id === "modal-user-delete") {
+            const deleteName = document.getElementById("delete-user-name");
+            if (deleteName) deleteName.textContent = "";
+        }
         modal.style.display = "none";
     }
 }

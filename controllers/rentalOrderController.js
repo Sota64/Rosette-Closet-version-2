@@ -229,7 +229,11 @@ const getOrderById = async (req, res) => {
       return sendError(res, "Ban khong co quyen xem don thue nay", 403);
     }
 
-    return sendSuccess(res, "Lay chi tiet don thue thanh cong", order);
+    const payment = await Payment.findOne({ rentalOrder: order._id });
+    const orderObj = order.toObject();
+    orderObj.payment = payment;
+
+    return sendSuccess(res, "Lay chi tiet don thue thanh cong", orderObj);
   } catch (error) {
     return sendError(res, error.message);
   }
