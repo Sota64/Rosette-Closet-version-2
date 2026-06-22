@@ -308,3 +308,264 @@ select {
     width: 128px;
   }
 }
+
+/* Make order cards interactive */
+.order-card {
+  cursor: pointer;
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.order-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.08);
+}
+
+/* Modal overlay */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  outline: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Modal Content Container */
+.modal-content {
+  position: relative;
+  width: min(640px, 90%);
+  max-height: 90vh;
+  overflow-y: auto;
+  border: 1px solid rgba(115, 92, 0, 0.18);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.modal-title {
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.modal-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--text-light);
+  font-size: 20px;
+  line-height: 1;
+  transition: background var(--transition), color var(--transition);
+}
+
+.modal-close:hover {
+  background: rgba(0, 0, 0, 0.1);
+  color: var(--text);
+}
+
+.modal-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Modal detail blocks */
+.detail-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.detail-section-title {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--primary);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  border-bottom: 1px solid rgba(115, 92, 0, 0.1);
+  padding-bottom: 6px;
+  margin-bottom: 6px;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.detail-item span {
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.detail-item strong {
+  font-size: 14px;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.detail-item.full {
+  grid-column: 1 / -1;
+}
+
+/* Products in detail modal */
+.modal-product-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modal-product-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 0;
+  border-bottom: 1px dashed rgba(0, 0, 0, 0.06);
+}
+
+.modal-product-item:last-child {
+  border-bottom: 0;
+}
+
+.modal-product-thumb {
+  width: 56px;
+  height: 72px;
+  border-radius: 4px;
+  overflow: hidden;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.modal-product-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.modal-product-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.modal-product-meta {
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.modal-product-price {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.modal-product-price strong {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.modal-product-price span {
+  font-size: 11px;
+  color: var(--text-light);
+}
+
+/* Cost Summary inside Modal */
+.modal-cost-summary {
+  background: rgba(115, 92, 0, 0.05);
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.modal-cost-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13.5px;
+  color: var(--text-light);
+}
+
+.modal-cost-row.total {
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  padding-top: 10px;
+  margin-top: 4px;
+  font-weight: 700;
+  color: var(--primary);
+  font-size: 16px;
+}
+
+/* Bank Details inside Modal */
+.modal-bank-box {
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  background: rgba(212, 175, 55, 0.05);
+  border-radius: 8px;
+  padding: 16px;
+  font-size: 13px;
+}
+
+.modal-bank-title {
+  color: var(--primary);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.modal-bank-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.modal-bank-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-bank-item span {
+  font-size: 11px;
+  color: var(--text-light);
+}
+
+.modal-bank-item strong {
+  font-size: 13px;
+}
+

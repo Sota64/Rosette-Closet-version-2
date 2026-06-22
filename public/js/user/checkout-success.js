@@ -41,37 +41,6 @@ function getPaymentMethodLabel(method = "") {
   return map[method] || "Đang cập nhật";
 }
 
-function showCopyToast() {
-  let toast = document.getElementById("toast-copy-notification");
-  if (!toast) {
-    toast = document.createElement("div");
-    toast.id = "toast-copy-notification";
-    toast.className = "toast-copy";
-    toast.innerHTML = `
-      <span class="material-symbols-outlined">check_circle</span>
-      <span>Đã sao chép vào bộ nhớ tạm!</span>
-    `;
-    document.body.appendChild(toast);
-  }
-
-  toast.classList.add("show");
-  setTimeout(() => {
-    toast.classList.remove("show");
-  }, 2000);
-}
-
-function copyText(elementId) {
-  const text = document.getElementById(elementId)?.innerText;
-  if (!text) return;
-
-  navigator.clipboard.writeText(text)
-    .then(() => {
-      showCopyToast();
-    })
-    .catch((err) => {
-      console.error("Lỗi sao chép:", err);
-    });
-}
 
 async function loadSuccessDetails() {
   const params = new URLSearchParams(window.location.search);
@@ -102,17 +71,6 @@ async function loadSuccessDetails() {
     const method = payment?.method || "bank_transfer";
     document.getElementById("order-payment-method").textContent = getPaymentMethodLabel(method);
 
-    if (method === "bank_transfer") {
-      const bankTransferBox = document.getElementById("bank-transfer-box");
-      const bankMemo = document.getElementById("bank-memo");
-      
-      if (bankMemo) {
-        bankMemo.textContent = `RC ${code}`;
-      }
-      if (bankTransferBox) {
-        bankTransferBox.hidden = false;
-      }
-    }
   } catch (error) {
     console.error("Error loading success details:", error);
     alert("Không thể tải thông tin chi tiết đơn hàng: " + error.message);
@@ -128,5 +86,3 @@ document.addEventListener("DOMContentLoaded", async () => {
   await loadSuccessDetails();
 });
 
-// Expose copyText to HTML window context
-window.copyText = copyText;
