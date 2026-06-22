@@ -42,11 +42,17 @@ a {
   text-decoration: none;
 }
 
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
 button {
   border: 0;
   background: transparent;
   cursor: pointer;
-  font: inherit;
 }
 
 ul {
@@ -432,6 +438,53 @@ img {
   color: var(--primary);
 }
 
+.product-date-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.product-date-card {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+  background: var(--surface-container-highest);
+  color: var(--on-surface-variant);
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.product-date-card input {
+  width: 100%;
+  max-width: 220px;
+  border: 1px solid var(--outline-variant);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.78);
+  color: var(--primary);
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.4;
+  padding: 12px 14px;
+  text-align: center;
+  outline: none;
+}
+
+.product-date-card input:focus {
+  border-color: var(--primary);
+  outline: 3px solid rgba(212, 175, 55, 0.18);
+}
+
+.product-date-card small {
+  color: rgba(31, 27, 19, 0.6);
+  font-size: 14px;
+}
+
 .cta-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -744,6 +797,7 @@ img {
 
   .cta-grid,
   .product-specs,
+  .product-date-grid,
   .similar-grid,
   .footer-grid {
     grid-template-columns: 1fr;

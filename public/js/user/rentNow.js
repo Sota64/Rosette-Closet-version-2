@@ -432,13 +432,18 @@ function bindDateInputs() {
   const startInput = document.getElementById("rental-start-date");
   const returnInput = document.getElementById("rental-return-date");
   const today = getTodayInputValue();
+  const params = new URLSearchParams(window.location.search);
+  const startDateParam = params.get("startDate");
+  const returnDateParam = params.get("returnDate");
 
   if (!startInput || !returnInput) return;
 
   startInput.min = today;
-  startInput.value = today;
-  returnInput.min = addDays(today, 1);
-  returnInput.value = addDays(today, 3);
+  startInput.value = startDateParam && startDateParam >= today ? startDateParam : today;
+  returnInput.min = addDays(startInput.value, 1);
+  returnInput.value = returnDateParam && returnDateParam > startInput.value
+    ? returnDateParam
+    : addDays(startInput.value, 3);
 
   startInput.addEventListener("change", () => {
     const minReturnDate = addDays(startInput.value, 1);

@@ -32,6 +32,19 @@ function formatCurrency(value = 0) {
   return Number(value || 0).toLocaleString("vi-VN") + "đ";
 }
 
+function getTodayInputValue() {
+  const today = new Date();
+  today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
+  return today.toISOString().slice(0, 10);
+}
+
+function addDays(dateValue, days) {
+  const date = new Date(dateValue);
+  date.setDate(date.getDate() + days);
+  date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
+  return date.toISOString().slice(0, 10);
+}
+
 function getProductImage(product) {
   return product?.images?.[0] || "/public/images/img1.png";
 }
@@ -150,7 +163,81 @@ function renderSizes(product) {
     sizeOptions.querySelectorAll("button").forEach((item) => {
       item.classList.toggle("selected", item === button);
     });
+
+    updateRentNowLink(product);
   });
+}
+
+function getSelectedSize() {
+  const selectedSizeBtn = document.querySelector("#product-size-options button.selected");
+  return selectedSizeBtn?.textContent?.trim() || "";
+}
+
+function buildRentNowUrl(product) {
+  const params = new URLSearchParams({
+    id: product._id
+  });
+  const selectedSize = getSelectedSize();
+  const startDate = document.getElementById("product-rental-start-date")?.value;
+  const returnDate = document.getElementById("product-rental-return-date")?.value;
+
+  if (selectedSize && selectedSize !== "Đang cập nhật") {
+    params.set("size", selectedSize);
+  }
+
+  if (startDate) {
+    params.set("startDate", startDate);
+  }
+
+  if (returnDate) {
+    params.set("returnDate", returnDate);
+  }
+
+  return `/views/user/rentNow.html?${params.toString()}`;
+}
+
+function updateRentNowLink(product) {
+  const rentNowLink = document.getElementById("rent-now-link");
+  if (rentNowLink) {
+    rentNowLink.href = buildRentNowUrl(product);
+  }
+}
+
+function updateRentalDateSelection(product) {
+  updateRentNowLink(product);
+}
+
+function bindRentDatePicker(product) {
+  const startInput = document.getElementById("product-rental-start-date");
+  const returnInput = document.getElementById("product-rental-return-date");
+  if (!startInput || !returnInput) return;
+
+  const today = getTodayInputValue();
+  startInput.min = today;
+  startInput.value = startInput.value || today;
+  returnInput.min = addDays(startInput.value, 1);
+  returnInput.value = returnInput.value || addDays(startInput.value, 3);
+
+  startInput.addEventListener("change", () => {
+    const minReturnDate = addDays(startInput.value, 1);
+    returnInput.min = minReturnDate;
+
+    if (!returnInput.value || returnInput.value <= startInput.value) {
+      returnInput.value = addDays(startInput.value, 3);
+    }
+
+    updateRentalDateSelection(product);
+  });
+
+  returnInput.addEventListener("change", () => {
+    if (returnInput.value <= startInput.value) {
+      returnInput.value = addDays(startInput.value, 1);
+    }
+
+    updateRentalDateSelection(product);
+  });
+
+  updateRentalDateSelection(product);
 }
 
 function renderSimilarProducts(products = []) {
@@ -302,7 +389,7 @@ function renderProductDetail(data) {
 
   const rentNowLink = document.getElementById("rent-now-link");
   if (rentNowLink) {
-    rentNowLink.href = `/views/user/rentNow.html?id=${encodeURIComponent(product._id)}`;
+    rentNowLink.href = buildRentNowUrl(product);
   }
 
   const cartBtn = document.querySelector(".cart-button");
@@ -314,6 +401,8 @@ function renderProductDetail(data) {
 
   renderGallery(product);
   renderSizes(product);
+  updateRentNowLink(product);
+  bindRentDatePicker(product);
   renderSimilarProducts(data.similarProducts || []);
 
   document.getElementById("product-detail-message").hidden = true;

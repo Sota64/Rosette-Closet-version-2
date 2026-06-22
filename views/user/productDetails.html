@@ -34,7 +34,7 @@
       <section class="product-hero" id="product-detail-content" hidden>
         <div class="gallery">
           <div class="main-image">
-            <img id="product-main-image" src="/public/images/img1.png" alt="Ảnh sản phẩm" />
+            <img id="product-main-image" src="" alt="Ảnh sản phẩm" />
           </div>
 
           <div class="thumbnail-grid" id="product-thumbnail-grid"></div>
@@ -78,13 +78,18 @@
 
           <div class="option-block">
             <span class="option-label">Thời gian thuê</span>
-            <button class="date-button" type="button">
-              <span class="date-left">
-                <span class="material-symbols-outlined">calendar_today</span>
-                <span>Chọn ngày nhận và trả sản phẩm</span>
-              </span>
-              <span class="material-symbols-outlined">expand_more</span>
-            </button>
+            <div class="product-date-grid">
+              <label class="product-date-card">
+                Ngày nhận sản phẩm
+                <input id="product-rental-start-date" type="date" />
+                <small>Dự kiến giao trong ngày nhận</small>
+              </label>
+              <label class="product-date-card">
+                Ngày trả sản phẩm
+                <input id="product-rental-return-date" type="date" />
+                <small>Thời hạn thuê được tính theo ngày</small>
+              </label>
+            </div>
           </div>
 
           <div class="cta-grid">
