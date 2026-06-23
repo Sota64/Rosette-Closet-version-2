@@ -143,6 +143,47 @@ const buildProductAnswer = (products = [], question = "") => {
   ].join("\n");
 };
 
+const buildProductContext = (products = []) => {
+  if (!products.length) {
+    return "Khong tim thay san pham phu hop trong database.";
+  }
+
+  return products.map((product, index) => {
+    const categoryName = product.category?.name || "Chua phan loai";
+    const sizes = product.sizes?.length ? product.sizes.join(", ") : "Dang cap nhat";
+    const link = `/views/user/productDetails.html?id=${product._id}`;
+
+    return [
+      `San pham ${index + 1}:`,
+      `- Ten: ${product.name}`,
+      `- Ma: ${product.code || product._id}`,
+      `- Mo ta: ${product.description || "Chua co mo ta"}`,
+      `- Gia thue moi ngay: ${formatCurrency(product.rentalPrice)}`,
+      `- Tien coc moi ngay: ${formatCurrency(product.deposit)}`,
+      `- Size: ${sizes}`,
+      `- Mau: ${product.color}`,
+      `- Danh muc: ${categoryName}`,
+      `- Trang thai: ${getStatusLabel(product.status)}`,
+      `- Link chi tiet: ${link}`
+    ].join("\n");
+  }).join("\n\n");
+};
+
+const buildProductPrompt = (question = "", products = []) => {
+  return [
+    "Ban la Rosette Assistant cua website thue vay Rosette Closet.",
+    "Hay tra loi bang tieng Viet tu nhien, than thien, ngan gon vua du.",
+    "Chi duoc dua tren du lieu san pham trong CONTEXT ben duoi; khong bia them san pham, gia, size hay trang thai.",
+    "Neu khong co san pham phu hop, hay noi ro la chua tim thay va goi y nguoi dung hoi them ve mau, size, danh muc hoac khoang gia.",
+    "Khi gioi thieu san pham, nen neu ten, gia thue/ngay, tien coc/ngay, size, mau, trang thai va link chi tiet neu co.",
+    "",
+    `CAU HOI CUA KHACH: ${question}`,
+    "",
+    "CONTEXT SAN PHAM TU DATABASE:",
+    buildProductContext(products)
+  ].join("\n");
+};
+
 const scoreProduct = (product, tokens = [], requestedSizes = [], maxPrice = null) => {
   const searchableText = normalizeText([
     product.name,
@@ -238,6 +279,18 @@ const askExternalChatbot = async (question = "") => {
     "Mình đã nhận phản hồi nhưng chưa đọc được nội dung trả lời.";
 };
 
+const askExternalChatbotWithProducts = async (question = "", products = []) => {
+  if (typeof fetch !== "function") {
+    return buildProductAnswer(products, question);
+  }
+
+  try {
+    return await askExternalChatbot(buildProductPrompt(question, products));
+  } catch (error) {
+    return buildProductAnswer(products, question);
+  }
+};
+
 const chatWithBot = async (req, res) => {
   try {
     const question = String(req.body.question || "").trim();
@@ -248,8 +301,9 @@ const chatWithBot = async (req, res) => {
 
     if (isProductQuestion(question)) {
       const products = await findMatchingProducts(question);
+      const answer = await askExternalChatbotWithProducts(question, products);
       return sendSuccess(res, "Tim san pham thanh cong", {
-        answer: buildProductAnswer(products, question),
+        answer,
         products
       });
     }
