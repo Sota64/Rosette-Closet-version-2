@@ -18,6 +18,10 @@ const canMoveOrderStatus = (currentStatus, nextStatus) => {
   return currentStatus === nextStatus || getNextOrderStatus(currentStatus) === nextStatus;
 };
 
+const canEditOrderDetails = (status) => {
+  return status === "pending";
+};
+
 const escapeRegex = (value) => {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 };
@@ -308,6 +312,17 @@ const updateOrder = async (req, res) => {
       if (!existingOrder) {
         return sendError(res, "Khong tim thay don thue", 404);
       }
+    }
+
+    if (!existingOrder) {
+      existingOrder = await RentalOrder.findById(req.params.id);
+      if (!existingOrder) {
+        return sendError(res, "Khong tim thay don thue", 404);
+      }
+    }
+
+    if (!canEditOrderDetails(existingOrder.status)) {
+      return sendError(res, "Don hang da duoc xac nhan nen khong the chinh sua", 400);
     }
 
     if (payload.status !== undefined && !canMoveOrderStatus(existingOrder.status, payload.status)) {

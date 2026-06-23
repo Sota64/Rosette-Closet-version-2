@@ -210,6 +210,13 @@ function renderOrdersTable(orderList) {
 
         const statusMeta = getStatusMeta(order.status);
         const statusSelectHtml = renderOrderStatusSelect(order._id, order.status);
+        const editButtonHtml = canEditOrderDetails(order.status)
+            ? `
+                <button class="action-btn-icon" title="Sửa đơn hàng" onclick="openOrderEditModal('${order._id}')">
+                    <span class="material-symbols-outlined">edit</span>
+                </button>
+            `
+            : "";
 
         return `
             <tr>
@@ -245,9 +252,7 @@ function renderOrdersTable(orderList) {
                         <button class="action-btn-icon" title="Xem chi tiết" onclick="openOrderDetailModal('${order._id}')">
                             <span class="material-symbols-outlined">visibility</span>
                         </button>
-                        <button class="action-btn-icon" title="Sửa đơn hàng" onclick="openOrderEditModal('${order._id}')">
-                            <span class="material-symbols-outlined">edit</span>
-                        </button>
+                        ${editButtonHtml}
                         <button class="action-btn-icon btn-delete" title="Xóa đơn hàng" onclick="openOrderDeleteModal('${order._id}')">
                             <span class="material-symbols-outlined">delete</span>
                         </button>
@@ -281,6 +286,10 @@ function renderOrderStatusSelect(orderId, status) {
             `).join("")}
         </select>
     `;
+}
+
+function canEditOrderDetails(status) {
+    return status === "pending";
 }
 
 function renderStatusOptions(status) {
@@ -662,6 +671,11 @@ async function openOrderDetailModal(id) {
 async function openOrderEditModal(id) {
     try {
         const order = await getOrder(id);
+
+        if (!canEditOrderDetails(order.status)) {
+            showToast("Đơn hàng đã được xác nhận nên không thể chỉnh sửa.", "error");
+            return;
+        }
 
         document.getElementById("edit-order-id").value = order._id;
         document.getElementById("edit-order-user").value = order.user?._id || "";
