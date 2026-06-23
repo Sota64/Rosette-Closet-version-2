@@ -374,6 +374,14 @@ a {
   font-family: 'Be Vietnam Pro', sans-serif;
 }
 
+.product-top h3 a,
+.product-top h3 a:visited,
+.product-top h3 a:hover,
+.product-top h3 a:focus {
+  color: var(--text);
+  text-decoration: none;
+}
+
 .price {
   color: var(--gold-dark);
   font-weight: 700;
@@ -402,10 +410,22 @@ a {
   display: grid;
   place-items: center;
   color: var(--text);
+  text-decoration: none;
+}
+
+.preview-btn:visited,
+.preview-btn:hover,
+.preview-btn:focus {
+  color: var(--text);
+  text-decoration: none;
 }
 
 .preview-btn:hover {
   background: rgba(0,0,0,0.03);
+}
+
+.preview-btn .material-symbols-outlined {
+  color: currentColor;
 }
 
 

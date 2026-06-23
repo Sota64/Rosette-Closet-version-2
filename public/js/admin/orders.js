@@ -629,10 +629,18 @@ function showToast(message, type = 'success') {
 
 async function getOrder(id) {
     const cached = orders.find((order) => order._id === id);
-    if (cached) return cached;
+    if (cached?.payment) return cached;
 
     const response = await apiFetch(`/api/orders/${id}`);
     return parseApiResponse(response);
+}
+
+function getPaymentMethodLabel(method = "") {
+    const map = {
+        vnpay: "Thanh toán qua VNPAY",
+        cash_on_delivery: "Thanh toán khi nhận hàng"
+    };
+    return map[method] || "Chưa cập nhật";
 }
 
 function formatDateToYYYYMMDD(dateStr) {
@@ -669,6 +677,7 @@ async function openOrderDetailModal(id) {
         document.getElementById("detail-order-phone").textContent = order.user?.phone || "Không có SĐT";
         document.getElementById("detail-order-address").textContent = order.user?.address || "Chưa cập nhật";
         document.getElementById("detail-order-dates").textContent = `${start} - ${end}`;
+        document.getElementById("detail-order-payment-method").textContent = getPaymentMethodLabel(order.payment?.method);
 
         // Load items list
         let rentalSum = 0;

@@ -299,7 +299,19 @@
   position: relative;
   display: grid;
   place-items: center;
+  color: var(--text, #1c1c1c);
   text-decoration: none;
+}
+
+.cart-btn-container:visited,
+.cart-btn-container:hover,
+.cart-btn-container:focus {
+  color: var(--text, #1c1c1c);
+  text-decoration: none;
+}
+
+.cart-btn-container .material-symbols-outlined {
+  color: currentColor;
 }
 
 .cart-badge {
