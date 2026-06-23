@@ -95,19 +95,19 @@
                 <div class="filter-left">
                     <div class="filter-group">
                         <label class="filter-label">Vai Trò:</label>
-                        <select class="filter-select">
-                            <option>Tất cả</option>
-                            <option>Admin</option>
-                            <option>Khách hàng</option>
+                        <select class="filter-select" data-user-filter="role">
+                            <option value="all">Tất cả</option>
+                            <option value="admin">Admin</option>
+                            <option value="customer">Khách hàng</option>
                         </select>
                     </div>
                     <div class="filter-divider"></div>
                     <div class="filter-group">
                         <label class="filter-label">Trạng Thái:</label>
-                        <select class="filter-select">
-                            <option>Tất cả</option>
-                            <option>Đang hoạt động</option>
-                            <option>Ngừng hoạt động</option>
+                        <select class="filter-select" data-user-filter="status">
+                            <option value="all">Tất cả</option>
+                            <option value="true">Đang hoạt động</option>
+                            <option value="false">Ngừng hoạt động</option>
                         </select>
                     </div>
                 </div>

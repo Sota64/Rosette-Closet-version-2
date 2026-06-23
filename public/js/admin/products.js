@@ -323,24 +323,42 @@ function renderPagination() {
 
     if (!paginationButtons) return;
 
-    const pages = [];
     const maxPage = Math.max(pageState.totalPages, 1);
-    const from = Math.max(1, pageState.page - 1);
-    const to = Math.min(maxPage, pageState.page + 1);
+    const pages = getVisiblePaginationPages(pageState.page, maxPage);
+
+    paginationButtons.innerHTML = `
+        <button class="pagination-btn-nav" ${pageState.page <= 1 ? "disabled" : ""} onclick="goToProductPage(${pageState.page - 1})" aria-label="Trang trước">
+            <span class="material-symbols-outlined">chevron_left</span>
+        </button>
+        ${pages.map((page) => page === "..."
+            ? '<span class="pagination-ellipsis">...</span>'
+            : `<button class="pagination-btn-num ${page === pageState.page ? "pagination-active" : ""}" onclick="goToProductPage(${page})" ${page === pageState.page ? 'aria-current="page"' : ""}>${page}</button>`
+        ).join("")}
+        <button class="pagination-btn-nav" ${pageState.page >= maxPage ? "disabled" : ""} onclick="goToProductPage(${pageState.page + 1})" aria-label="Trang sau">
+            <span class="material-symbols-outlined">chevron_right</span>
+        </button>
+    `;
+}
+
+function getVisiblePaginationPages(currentPage, totalPages) {
+    if (totalPages <= 5) {
+        return Array.from({ length: totalPages }, (_, index) => index + 1);
+    }
+
+    const pages = [1];
+    const from = Math.max(2, currentPage - 1);
+    const to = Math.min(totalPages - 1, currentPage + 1);
+
+    if (from > 2) pages.push("...");
 
     for (let page = from; page <= to; page += 1) {
         pages.push(page);
     }
 
-    paginationButtons.innerHTML = `
-        <button class="pagination-btn-nav" ${pageState.page <= 1 ? "disabled" : ""} onclick="goToProductPage(${pageState.page - 1})">
-            <span class="material-symbols-outlined">chevron_left</span>
-        </button>
-        ${pages.map((page) => `<button class="pagination-btn-num ${page === pageState.page ? "pagination-active" : ""}" onclick="goToProductPage(${page})">${page}</button>`).join("")}
-        <button class="pagination-btn-nav" ${pageState.page >= maxPage ? "disabled" : ""} onclick="goToProductPage(${pageState.page + 1})">
-            <span class="material-symbols-outlined">chevron_right</span>
-        </button>
-    `;
+    if (to < totalPages - 1) pages.push("...");
+    pages.push(totalPages);
+
+    return pages;
 }
 
 function goToProductPage(page) {

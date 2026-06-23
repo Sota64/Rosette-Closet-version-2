@@ -462,7 +462,7 @@ async function openOrderDetailModal(orderId) {
 
 function getPaymentMethodLabel(method = "") {
   const map = {
-    bank_transfer: "Chuyển khoản ngân hàng",
+    vnpay: "Thanh toán qua VNPAY",
     cash_on_delivery: "Thanh toán khi nhận hàng"
   };
   return map[method] || "Đang cập nhật";

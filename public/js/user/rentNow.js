@@ -536,7 +536,7 @@ function buildOrderPayload() {
   const products = rentNowState.products;
   const startDate = document.getElementById("rental-start-date")?.value;
   const returnDate = document.getElementById("rental-return-date")?.value;
-  const paymentMethod = document.querySelector('input[name="payment"]:checked')?.value || "bank_transfer";
+  const paymentMethod = document.querySelector('input[name="payment"]:checked')?.value || "vnpay";
 
   if (!products || products.length === 0) {
     throw new Error("Không tìm thấy sản phẩm để đặt thuê.");
@@ -622,12 +622,33 @@ async function submitRentalOrder(event) {
     });
     const data = await parseApiResponse(response, "Không thể tạo đơn thuê");
     const order = data.order || data;
+    const paymentMethod = document.querySelector('input[name="payment"]:checked')?.value || "vnpay";
 
     // Clear cart if successfully checked out from cart
     const params = new URLSearchParams(window.location.search);
     if (params.get("from") === "cart") {
       localStorage.removeItem("rosette_cart");
       document.dispatchEvent(new CustomEvent("rosette:cart-updated"));
+    }
+
+    if (paymentMethod === "vnpay") {
+      setFeedback("Đang chuyển sang cổng thanh toán VNPAY...", "success");
+      const paymentResponse = await fetch("/api/payments/vnpay/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        credentials: "include",
+        body: JSON.stringify({ orderId: order._id })
+      });
+      const paymentData = await parseApiResponse(paymentResponse, "Không thể tạo thanh toán VNPAY");
+
+      if (!paymentData.paymentUrl) {
+        throw new Error("Không nhận được URL thanh toán VNPAY.");
+      }
+
+      window.location.href = paymentData.paymentUrl;
+      return;
     }
 
     setFeedback("Đặt thuê thành công! Đang chuyển hướng...", "success");

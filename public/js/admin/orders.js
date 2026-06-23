@@ -95,6 +95,19 @@ function initOrdersPage() {
         }
     });
 
+    const searchInput = document.querySelector(".search-input");
+    if (searchInput) {
+        let searchTimer;
+        searchInput.addEventListener("input", (event) => {
+            clearTimeout(searchTimer);
+            searchTimer = setTimeout(() => {
+                ordersPagination.search = event.target.value.trim();
+                ordersPagination.page = 1;
+                loadOrders();
+            }, 300);
+        });
+    }
+
     // Load related resources
     loadUsersAndProducts();
 
@@ -109,22 +122,46 @@ function initOrdersPage() {
 
 let orders = [];
 let ordersPagination = {
-    total: 0
+    page: 1,
+    limit: 10,
+    total: 0,
+    totalPages: 1,
+    search: ""
 };
 const ORDER_STATUS_FLOW = ["pending", "approved", "delivering", "renting", "returned", "completed"];
 
+function buildOrderListUrl() {
+    const params = new URLSearchParams({
+        page: String(ordersPagination.page),
+        limit: String(ordersPagination.limit)
+    });
+
+    if (ordersPagination.search) {
+        params.set("search", ordersPagination.search);
+    }
+
+    return `/api/orders?${params.toString()}`;
+}
+
 async function loadOrders() {
     try {
-        const response = await apiFetch("/api/orders");
+        const response = await apiFetch(buildOrderListUrl());
         if (response.status === 401) {
             window.location.href = "/views/login.html";
             return;
         }
         const data = await parseApiResponse(response);
         orders = Array.isArray(data) ? data : data.orders || [];
-        ordersPagination = Array.isArray(data) ? { total: orders.length } : data.pagination || { total: orders.length };
+        const pagination = Array.isArray(data) ? { total: orders.length } : data.pagination || { total: orders.length };
+        ordersPagination = {
+            ...ordersPagination,
+            page: pagination.page || ordersPagination.page,
+            limit: pagination.limit || ordersPagination.limit,
+            total: pagination.total || 0,
+            totalPages: pagination.totalPages || 1
+        };
         renderOrdersTable(orders);
-        updatePaginationText(orders.length, ordersPagination.total);
+        renderOrdersPagination();
         renderOrderStats(Array.isArray(data) ? null : data.stats);
     } catch (error) {
         console.error("Không thể tải danh sách đơn hàng:", error);
@@ -830,12 +867,62 @@ async function handleOrderEdit(event) {
     }
 }
 
-function updatePaginationText(count, total = count) {
+function renderOrdersPagination() {
     const textEl = document.querySelector(".pagination-text");
+    const buttonsEl = document.querySelector(".pagination-buttons");
+    const total = ordersPagination.total;
+    const currentPage = ordersPagination.page;
+    const totalPages = Math.max(ordersPagination.totalPages, 1);
+    const start = total === 0 ? 0 : (currentPage - 1) * ordersPagination.limit + 1;
+    const end = Math.min(currentPage * ordersPagination.limit, total);
+
     if (textEl) {
-        const start = total === 0 ? 0 : 1;
-        textEl.textContent = `Đang hiển thị ${start} đến ${count} trong số ${total} đơn thuê`;
+        textEl.textContent = `Đang hiển thị ${start} đến ${end} trong số ${total} đơn thuê`;
     }
+
+    if (!buttonsEl) return;
+
+    const pages = getVisiblePaginationPages(currentPage, totalPages);
+    buttonsEl.innerHTML = `
+        <button class="pagination-btn-nav" ${currentPage <= 1 ? "disabled" : ""} onclick="goToOrderPage(${currentPage - 1})" aria-label="Trang trước">
+            <span class="material-symbols-outlined">chevron_left</span>
+        </button>
+        ${pages.map((page) => page === "..."
+            ? '<span class="pagination-ellipsis">...</span>'
+            : `<button class="pagination-btn-num ${page === currentPage ? "pagination-active" : ""}" onclick="goToOrderPage(${page})" ${page === currentPage ? 'aria-current="page"' : ""}>${page}</button>`
+        ).join("")}
+        <button class="pagination-btn-nav" ${currentPage >= totalPages ? "disabled" : ""} onclick="goToOrderPage(${currentPage + 1})" aria-label="Trang sau">
+            <span class="material-symbols-outlined">chevron_right</span>
+        </button>
+    `;
+}
+
+function getVisiblePaginationPages(currentPage, totalPages) {
+    if (totalPages <= 5) {
+        return Array.from({ length: totalPages }, (_, index) => index + 1);
+    }
+
+    const pages = [1];
+    const from = Math.max(2, currentPage - 1);
+    const to = Math.min(totalPages - 1, currentPage + 1);
+
+    if (from > 2) pages.push("...");
+
+    for (let page = from; page <= to; page += 1) {
+        pages.push(page);
+    }
+
+    if (to < totalPages - 1) pages.push("...");
+    pages.push(totalPages);
+
+    return pages;
+}
+
+function goToOrderPage(page) {
+    const totalPages = Math.max(ordersPagination.totalPages, 1);
+    if (page < 1 || page > totalPages || page === ordersPagination.page) return;
+    ordersPagination.page = page;
+    loadOrders();
 }
 
 function formatCurrency(value) {

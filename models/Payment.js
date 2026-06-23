@@ -14,13 +14,38 @@ const paymentSchema = new mongoose.Schema(
     },
     method: {
       type: String,
-      enum: ["bank_transfer", "cash_on_delivery"],
+      enum: ["vnpay", "cash_on_delivery"],
       required: true
     },
     status: {
       type: String,
       enum: ["pending", "paid", "failed", "refunded"],
       default: "pending"
+    },
+    txnRef: {
+      type: String,
+      trim: true,
+      index: true
+    },
+    transactionNo: {
+      type: String,
+      trim: true
+    },
+    bankCode: {
+      type: String,
+      trim: true
+    },
+    responseCode: {
+      type: String,
+      trim: true
+    },
+    payDate: {
+      type: String,
+      trim: true
+    },
+    secureHash: {
+      type: String,
+      trim: true
     }
   },
   {
@@ -29,4 +54,3 @@ const paymentSchema = new mongoose.Schema(
 );
 
 module.exports = mongoose.model("Payment", paymentSchema);
-

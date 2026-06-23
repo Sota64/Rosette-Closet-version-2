@@ -1,6 +1,9 @@
 const express = require("express");
 const path = require("path");
 const dotenv = require("dotenv");
+
+dotenv.config({ path: path.join(__dirname, ".env") });
+
 const connectDB = require("./config/db");
 const productRoutes = require("./routes/productRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
@@ -10,12 +13,11 @@ const rentalOrderRoutes = require("./routes/rentalOrderRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const homepageRoutes = require("./routes/homepageRoutes");
 const chatbotRoutes = require("./routes/chatbotRoutes");
+const paymentRoutes = require("./routes/paymentRoutes");
 const cookieParser = require("./middleware/cookieParser");
 
-dotenv.config();
-
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3636;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -36,6 +38,7 @@ app.use("/api/orders", rentalOrderRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/homepage", homepageRoutes);
 app.use("/api/chatbot", chatbotRoutes);
+app.use("/api/payments", paymentRoutes);
 
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "views", "user", "homepage.html"));

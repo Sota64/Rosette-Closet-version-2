@@ -52,19 +52,30 @@ function initUsersPage() {
         navLinks[3].classList.add('active');
     }
 
-    // Search filter logic
     const searchInput = document.querySelector('.search-input');
     if (searchInput) {
+        let searchTimer;
         searchInput.addEventListener('input', (e) => {
-            const val = e.target.value.toLowerCase();
-            const filtered = users.filter(user => 
-                user.fullName.toLowerCase().includes(val) || 
-                user.email.toLowerCase().includes(val) || 
-                user.phone.toLowerCase().includes(val)
-            );
-            renderUsersTable(filtered);
+            clearTimeout(searchTimer);
+            searchTimer = setTimeout(() => {
+                usersPagination.search = e.target.value.trim();
+                usersPagination.page = 1;
+                loadUsers();
+            }, 300);
         });
     }
+
+    document.querySelector('[data-user-filter="role"]')?.addEventListener("change", (event) => {
+        usersPagination.role = event.target.value;
+        usersPagination.page = 1;
+        loadUsers();
+    });
+
+    document.querySelector('[data-user-filter="status"]')?.addEventListener("change", (event) => {
+        usersPagination.isActive = event.target.value;
+        usersPagination.page = 1;
+        loadUsers();
+    });
 
     // Simple micro-interactions for button clicks
     document.querySelectorAll('button, .btn, .nav-item, .pagination-btn-num, .pagination-btn-nav').forEach(el => {
@@ -108,7 +119,13 @@ function initUsersPage() {
 
 let users = [];
 let usersPagination = {
-    total: 0
+    page: 1,
+    limit: 10,
+    total: 0,
+    totalPages: 1,
+    search: "",
+    role: "all",
+    isActive: "all"
 };
 const USER_ADDRESS_API_URL = "https://provinces.open-api.vn/api/?depth=3";
 const USER_ADDRESS_CACHE_KEY = "rosette_vietnam_address_data";
@@ -350,16 +367,23 @@ async function initUserAddressSelectors() {
 
 async function loadUsers() {
     try {
-        const response = await apiFetch("/api/users");
+        const response = await apiFetch(buildUserListUrl());
         if (response.status === 401) {
             window.location.href = "/views/login.html";
             return;
         }
         const data = await parseApiResponse(response);
         users = Array.isArray(data) ? data : data.users || [];
-        usersPagination = Array.isArray(data) ? { total: users.length } : data.pagination || { total: users.length };
+        const pagination = Array.isArray(data) ? { total: users.length } : data.pagination || { total: users.length };
+        usersPagination = {
+            ...usersPagination,
+            page: pagination.page || usersPagination.page,
+            limit: pagination.limit || usersPagination.limit,
+            total: pagination.total || 0,
+            totalPages: pagination.totalPages || 1
+        };
         renderUsersTable(users);
-        updatePaginationText(users.length, usersPagination.total);
+        renderUsersPagination();
         renderUserStats(Array.isArray(data) ? null : data.stats);
     } catch (error) {
         console.error("Không thể tải danh sách người dùng:", error);
@@ -368,6 +392,27 @@ async function loadUsers() {
             tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding: 28px; color: #ba1a1a;">Không thể tải dữ liệu: ${escapeHtml(error.message)}</td></tr>`;
         }
     }
+}
+
+function buildUserListUrl() {
+    const params = new URLSearchParams({
+        page: String(usersPagination.page),
+        limit: String(usersPagination.limit)
+    });
+
+    if (usersPagination.search) {
+        params.set("search", usersPagination.search);
+    }
+
+    if (usersPagination.role && usersPagination.role !== "all") {
+        params.set("role", usersPagination.role);
+    }
+
+    if (usersPagination.isActive && usersPagination.isActive !== "all") {
+        params.set("isActive", usersPagination.isActive);
+    }
+
+    return `/api/users?${params.toString()}`;
 }
 
 function renderUserStats(stats) {
@@ -686,12 +731,62 @@ async function handleUserEdit(event) {
     }
 }
 
-function updatePaginationText(count, total = count) {
+function renderUsersPagination() {
     const textEl = document.querySelector(".pagination-text");
+    const buttonsEl = document.querySelector(".pagination-buttons");
+    const total = usersPagination.total;
+    const currentPage = usersPagination.page;
+    const totalPages = Math.max(usersPagination.totalPages, 1);
+    const start = total === 0 ? 0 : (currentPage - 1) * usersPagination.limit + 1;
+    const end = Math.min(currentPage * usersPagination.limit, total);
+
     if (textEl) {
-        const start = total === 0 ? 0 : 1;
-        textEl.textContent = `Đang hiển thị ${start} đến ${count} trong số ${total} người dùng`;
+        textEl.textContent = `Đang hiển thị ${start} đến ${end} trong số ${total} người dùng`;
     }
+
+    if (!buttonsEl) return;
+
+    const pages = getVisiblePaginationPages(currentPage, totalPages);
+    buttonsEl.innerHTML = `
+        <button class="pagination-btn-nav" ${currentPage <= 1 ? "disabled" : ""} onclick="goToUserPage(${currentPage - 1})" aria-label="Trang trước">
+            <span class="material-symbols-outlined">chevron_left</span>
+        </button>
+        ${pages.map((page) => page === "..."
+            ? '<span class="pagination-ellipsis">...</span>'
+            : `<button class="pagination-btn-num ${page === currentPage ? "pagination-active" : ""}" onclick="goToUserPage(${page})" ${page === currentPage ? 'aria-current="page"' : ""}>${page}</button>`
+        ).join("")}
+        <button class="pagination-btn-nav" ${currentPage >= totalPages ? "disabled" : ""} onclick="goToUserPage(${currentPage + 1})" aria-label="Trang sau">
+            <span class="material-symbols-outlined">chevron_right</span>
+        </button>
+    `;
+}
+
+function getVisiblePaginationPages(currentPage, totalPages) {
+    if (totalPages <= 5) {
+        return Array.from({ length: totalPages }, (_, index) => index + 1);
+    }
+
+    const pages = [1];
+    const from = Math.max(2, currentPage - 1);
+    const to = Math.min(totalPages - 1, currentPage + 1);
+
+    if (from > 2) pages.push("...");
+
+    for (let page = from; page <= to; page += 1) {
+        pages.push(page);
+    }
+
+    if (to < totalPages - 1) pages.push("...");
+    pages.push(totalPages);
+
+    return pages;
+}
+
+function goToUserPage(page) {
+    const totalPages = Math.max(usersPagination.totalPages, 1);
+    if (page < 1 || page > totalPages || page === usersPagination.page) return;
+    usersPagination.page = page;
+    loadUsers();
 }
 
 function escapeHtml(str) {

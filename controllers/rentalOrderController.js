@@ -6,7 +6,7 @@ const mongoose = require("mongoose");
 const { sendSuccess, sendError } = require("../middleware/response");
 
 const orderStatuses = ["pending", "approved", "delivering", "renting", "returned", "completed", "cancelled"];
-const paymentMethods = ["bank_transfer", "cash_on_delivery"];
+const paymentMethods = ["vnpay", "cash_on_delivery"];
 const forwardOrderStatusFlow = ["pending", "approved", "delivering", "renting", "returned", "completed"];
 
 const getNextOrderStatus = (status) => {
