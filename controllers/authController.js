@@ -44,7 +44,7 @@ const register = async (req, res) => {
       email,
       password,
       phone,
-      address
+      address: address || "Chưa cập nhật"
     });
 
     issueAuthCookies(res, user);

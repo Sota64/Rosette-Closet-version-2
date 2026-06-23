@@ -50,18 +50,18 @@
           </div>
 
           <div class="form-group">
-            <label for="address">Địa chỉ</label>
-            <div class="input-wrapper">
-              <input id="address" name="address" type="text" placeholder="Địa chỉ nhận váy" required />
-              <span class="material-symbols-outlined">home</span>
-            </div>
-          </div>
-
-          <div class="form-group">
             <label for="password">Mật Khẩu</label>
             <div class="input-wrapper">
               <input id="password" name="password" type="password" placeholder="••••••••" required />
               <span class="material-symbols-outlined">lock</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="confirm-password">Xác nhận mật khẩu</label>
+            <div class="input-wrapper">
+              <input id="confirm-password" name="confirm-password" type="password" placeholder="••••••••" required />
+              <span class="material-symbols-outlined">lock_reset</span>
             </div>
           </div>
 
@@ -155,18 +155,25 @@
       event.preventDefault();
 
       const submitButton = signupForm.querySelector(".submit-button");
-      submitButton.disabled = true;
-      submitButton.textContent = "Đang tạo tài khoản...";
+      const password = document.getElementById("password").value;
+      const confirmPassword = document.getElementById("confirm-password").value;
+
+      if (password !== confirmPassword) {
+        showToast("Mật khẩu xác nhận không khớp.");
+        return;
+      }
 
       const payload = {
         fullName: document.getElementById("full-name").value.trim(),
         email: document.getElementById("email").value.trim(),
         phone: document.getElementById("phone").value.trim(),
-        address: document.getElementById("address").value.trim(),
-        password: document.getElementById("password").value
+        password
       };
 
       try {
+        submitButton.disabled = true;
+        submitButton.textContent = "Đang tạo tài khoản...";
+
         const response = await apiFetch("/api/auth/register", {
           method: "POST",
           body: JSON.stringify(payload)
