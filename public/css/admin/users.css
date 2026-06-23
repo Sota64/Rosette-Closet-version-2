@@ -361,9 +361,11 @@ a {
 
 .page-title {
     font-family: 'Be Vietnam Pro', sans-serif;
-    font-size: 24px; /* headline-md */
-    font-weight: 500;
-    color: #735c00;
+    font-size: 40px;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    font-weight: 600;
+    color: #1b1c1c;
 }
 
 .page-subtitle {
