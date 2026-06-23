@@ -7,6 +7,7 @@ const rentNowState = {
 const ADDRESS_API_URL = "https://provinces.open-api.vn/api/?depth=3";
 const ADDRESS_CACHE_KEY = "rosette_vietnam_address_data";
 const ADDRESS_CACHE_MAX_AGE = 7 * 24 * 60 * 60 * 1000;
+const CHECKOUT_CART_KEYS = "rosette_checkout_cart_keys";
 const FALLBACK_ADDRESS_DATA = [
   {
     name: "Thành phố Hà Nội",
@@ -79,6 +80,48 @@ function formatCurrency(value = 0) {
   return Number(value || 0).toLocaleString("vi-VN") + "đ";
 }
 
+function getCartItemKey(item) {
+  return `${item._id}::${item.size || ""}`;
+}
+
+function getCheckoutCartKeys() {
+  try {
+    const keys = JSON.parse(localStorage.getItem(CHECKOUT_CART_KEYS) || "[]");
+    return Array.isArray(keys) ? keys : [];
+  } catch (error) {
+    return [];
+  }
+}
+
+function getSelectedCartItemsForCheckout() {
+  const cart = JSON.parse(localStorage.getItem("rosette_cart") || "[]");
+  const selectedKeys = getCheckoutCartKeys();
+
+  if (!cart || cart.length === 0) return [];
+  if (!selectedKeys.length) return cart;
+
+  const keySet = new Set(selectedKeys);
+  return cart.filter((item) => keySet.has(getCartItemKey(item)));
+}
+
+function removeCheckedOutCartItems() {
+  const selectedKeys = getCheckoutCartKeys();
+  const cart = JSON.parse(localStorage.getItem("rosette_cart") || "[]");
+
+  if (!Array.isArray(cart) || cart.length === 0) return;
+
+  if (!selectedKeys.length) {
+    localStorage.removeItem("rosette_cart");
+  } else {
+    const selectedKeySet = new Set(selectedKeys);
+    const remainingCart = cart.filter((item) => !selectedKeySet.has(getCartItemKey(item)));
+    localStorage.setItem("rosette_cart", JSON.stringify(remainingCart));
+  }
+
+  localStorage.removeItem(CHECKOUT_CART_KEYS);
+  document.dispatchEvent(new CustomEvent("rosette:cart-updated"));
+}
+
 function getTodayInputValue() {
   const today = new Date();
   today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
@@ -110,6 +153,16 @@ function getProductImage(product) {
 
 function getCategoryName(product) {
   return product?.category?.name || "Bộ sưu tập";
+}
+
+function getAvailableProductSizes(product) {
+  const availability = product?.sizeAvailability?.length
+    ? product.sizeAvailability
+    : (product?.sizes || []).map((size) => ({ size, status: "available" }));
+
+  return availability
+    .filter((item) => item.status === "available")
+    .map((item) => item.size);
 }
 
 async function parseApiResponse(response, fallbackMessage) {
@@ -156,6 +209,10 @@ async function fetchCurrentUser() {
   const data = await parseApiResponse(response, "Vui lòng đăng nhập để đặt thuê sản phẩm");
 
   return data.user;
+}
+
+function redirectToLogin(returnUrl = window.location.href) {
+  window.location.href = `/views/login.html?redirect=${encodeURIComponent(returnUrl)}`;
 }
 
 function setValue(id, value) {
@@ -386,8 +443,8 @@ function renderProductsList() {
         <div>
           <h4 style="font-size: 15px; font-weight: 600; color: var(--primary); margin: 0 0 4px 0;">${escapeHtml(item.name)}</h4>
           <p style="font-size: 13px; color: var(--on-surface-variant); margin: 0 0 2px 0;">Phân loại: ${escapeHtml(item.category || getCategoryName(item))}</p>
-          <p style="font-size: 13px; color: var(--on-surface-variant); margin: 0 0 4px 0;">Size: ${escapeHtml(item.size || "Mặc định")} | SL: ${item.quantity || 1}</p>
-          <strong style="font-size: 14px; font-weight: 600; color: var(--on-surface);">${formatCurrency(item.rentalPrice)}</strong>
+          <p style="font-size: 13px; color: var(--on-surface-variant); margin: 0 0 4px 0;">Size: ${escapeHtml(item.size || "Mặc định")}</p>
+          <strong style="font-size: 14px; font-weight: 600; color: var(--on-surface);">${formatCurrency(item.rentalPrice)} / ngày</strong>
         </div>
       </div>
     `;
@@ -400,8 +457,12 @@ function updateOrderSummary() {
 
   rentNowState.rentalDays = getRentalDays();
 
-  const rentalTotal = products.reduce((sum, item) => sum + Number(item.rentalPrice || 0) * (Number(item.quantity) || 1), 0);
-  const depositTotal = products.reduce((sum, item) => sum + Number(item.deposit || 0) * (Number(item.quantity) || 1), 0);
+  const rentalTotal = products.reduce((sum, item) => (
+    sum + Number(item.rentalPrice || 0) * rentNowState.rentalDays
+  ), 0);
+  const depositTotal = products.reduce((sum, item) => (
+    sum + Number(item.deposit || 0) * rentNowState.rentalDays
+  ), 0);
   const total = rentalTotal + depositTotal;
 
   setText("rental-days-label", `Phí thuê (${rentNowState.rentalDays} ngày)`);
@@ -412,10 +473,65 @@ function updateOrderSummary() {
 
 function setFeedback(message, type = "") {
   const feedback = document.getElementById("checkout-feedback");
-  if (!feedback) return;
+  if (feedback) {
+    feedback.textContent = "";
+    feedback.className = "checkout-feedback";
+    feedback.hidden = true;
+  }
 
-  feedback.textContent = message;
-  feedback.className = `checkout-feedback ${type}`.trim();
+  if (message) {
+    showToast(message, type === "error" ? "error" : "success");
+  }
+}
+
+function showToast(message, type = "success") {
+  let container = document.getElementById("toast-container");
+  if (!container) {
+    container = document.createElement("div");
+    container.id = "toast-container";
+    container.style.cssText = `
+      position: fixed;
+      top: 24px;
+      right: 24px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    `;
+    document.body.appendChild(container);
+  }
+
+  const toast = document.createElement("div");
+  const accent = type === "error" ? "#ba1a1a" : "#1b806a";
+  toast.style.cssText = `
+    min-width: 260px;
+    max-width: 360px;
+    border-left: 4px solid ${accent};
+    border-radius: 8px;
+    background: rgba(31, 27, 19, 0.95);
+    color: #ffffff;
+    padding: 14px 18px;
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+    transform: translateY(-16px);
+    opacity: 0;
+    transition: all 0.25s ease;
+  `;
+  toast.textContent = message;
+  container.appendChild(toast);
+
+  requestAnimationFrame(() => {
+    toast.style.transform = "translateY(0)";
+    toast.style.opacity = "1";
+  });
+
+  setTimeout(() => {
+    toast.style.transform = "translateY(-16px)";
+    toast.style.opacity = "0";
+    setTimeout(() => toast.remove(), 250);
+  }, 3000);
 }
 
 function bindPaymentOptions() {
@@ -432,13 +548,18 @@ function bindDateInputs() {
   const startInput = document.getElementById("rental-start-date");
   const returnInput = document.getElementById("rental-return-date");
   const today = getTodayInputValue();
+  const params = new URLSearchParams(window.location.search);
+  const startDateParam = params.get("startDate");
+  const returnDateParam = params.get("returnDate");
 
   if (!startInput || !returnInput) return;
 
   startInput.min = today;
-  startInput.value = today;
-  returnInput.min = addDays(today, 1);
-  returnInput.value = addDays(today, 3);
+  startInput.value = startDateParam && startDateParam >= today ? startDateParam : today;
+  returnInput.min = addDays(startInput.value, 1);
+  returnInput.value = returnDateParam && returnDateParam > startInput.value
+    ? returnDateParam
+    : addDays(startInput.value, 3);
 
   startInput.addEventListener("change", () => {
     const minReturnDate = addDays(startInput.value, 1);
@@ -458,7 +579,7 @@ function buildOrderPayload() {
   const products = rentNowState.products;
   const startDate = document.getElementById("rental-start-date")?.value;
   const returnDate = document.getElementById("rental-return-date")?.value;
-  const paymentMethod = document.querySelector('input[name="payment"]:checked')?.value || "bank_transfer";
+  const paymentMethod = document.querySelector('input[name="payment"]:checked')?.value || "vnpay";
 
   if (!products || products.length === 0) {
     throw new Error("Không tìm thấy sản phẩm để đặt thuê.");
@@ -474,12 +595,16 @@ function buildOrderPayload() {
 
   const items = products.map(item => ({
     product: item._id,
-    quantity: Number(item.quantity) || 1,
+    size: item.size,
+    quantity: 1,
     rentalPrice: Number(item.rentalPrice || 0),
     deposit: Number(item.deposit || 0)
   }));
 
-  const totalAmount = items.reduce((sum, item) => sum + (item.rentalPrice + item.deposit) * item.quantity, 0);
+  const rentalDays = getRentalDays();
+  const totalAmount = items.reduce((sum, item) => (
+    sum + ((item.rentalPrice + item.deposit) * rentalDays)
+  ), 0);
 
   return {
     startDate,
@@ -530,22 +655,47 @@ async function submitRentalOrder(event) {
       throw new Error(profileResult.message || "Không thể cập nhật thông tin nhận hàng.");
     }
 
+    const orderPayload = buildOrderPayload();
+    const paymentMethod = document.querySelector('input[name="payment"]:checked')?.value || "vnpay";
+    const params = new URLSearchParams(window.location.search);
+
+    if (paymentMethod === "vnpay") {
+      setFeedback("Đang chuyển sang cổng thanh toán VNPAY...", "success");
+      const paymentResponse = await fetch("/api/payments/vnpay/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          ...orderPayload,
+          orderSource: params.get("from") === "cart" ? "cart" : "direct"
+        })
+      });
+      const paymentData = await parseApiResponse(paymentResponse, "Không thể tạo thanh toán VNPAY");
+
+      if (!paymentData.paymentUrl) {
+        throw new Error("Không nhận được URL thanh toán VNPAY.");
+      }
+
+      window.location.href = paymentData.paymentUrl;
+      return;
+    }
+
     const response = await fetch("/api/orders", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
       credentials: "include",
-      body: JSON.stringify(buildOrderPayload())
+      body: JSON.stringify(orderPayload)
     });
     const data = await parseApiResponse(response, "Không thể tạo đơn thuê");
     const order = data.order || data;
 
     // Clear cart if successfully checked out from cart
-    const params = new URLSearchParams(window.location.search);
     if (params.get("from") === "cart") {
-      localStorage.removeItem("rosette_cart");
-      document.dispatchEvent(new CustomEvent("rosette:cart-updated"));
+      removeCheckedOutCartItems();
     }
 
     setFeedback("Đặt thuê thành công! Đang chuyển hướng...", "success");
@@ -574,9 +724,9 @@ async function loadRentNowPage() {
     const isFromCart = params.get("from") === "cart";
 
     if (isFromCart) {
-      const cart = JSON.parse(localStorage.getItem("rosette_cart") || "[]");
+      const cart = getSelectedCartItemsForCheckout();
       if (!cart || cart.length === 0) {
-        throw new Error("Giỏ hàng của bạn đang trống.");
+        throw new Error("Bạn chưa chọn sản phẩm nào trong giỏ hàng để đặt thuê.");
       }
       rentNowState.products = cart;
       renderProductsList();
@@ -585,7 +735,15 @@ async function loadRentNowPage() {
     } else {
       const productId = await resolveProductId();
       const product = await fetchProduct(productId);
-      const size = params.get("size") || product.sizes?.[0] || "Đang cập nhật";
+      const availableSizes = getAvailableProductSizes(product);
+      const requestedSize = params.get("size");
+      const size = availableSizes.includes(requestedSize)
+        ? requestedSize
+        : availableSizes[0];
+
+      if (!size) {
+        throw new Error("Sản phẩm này hiện không còn size trống để thuê.");
+      }
 
       rentNowState.products = [{
         _id: product._id,
@@ -616,15 +774,7 @@ async function loadRentNowPage() {
       renderUser(user);
       if (message) message.hidden = true;
     } catch (authError) {
-      const button = document.getElementById("confirm-rental-button");
-      if (button) button.disabled = true;
-      if (message) {
-        message.innerHTML = `
-          ${escapeHtml(authError.message)}
-          <br>
-          <a href="/views/login.html">Đăng nhập để tiếp tục</a>
-        `;
-      }
+      redirectToLogin(window.location.href);
     }
   } catch (error) {
     if (message) {

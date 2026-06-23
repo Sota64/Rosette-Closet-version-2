@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="/public/css/layouts/navbar.css"/>
     <link rel="stylesheet" href="/public/css/layouts/footer.css"/>
     
-    <link rel="stylesheet" href="/public/css/admin/users.css"/>
+    <link rel="stylesheet" href="/public/css/admin/users.css?v=1.0.3"/>
 </head>
 <body>
 
@@ -23,14 +23,6 @@
             </div>
             
             <div class="top-bar-right">
-                <button class="top-bar-btn" title="Thông báo">
-                    <span class="material-symbols-outlined">notifications</span>
-                    <span class="notification-badge"></span>
-                </button>
-                <button class="top-bar-btn" title="Hướng dẫn">
-                    <span class="material-symbols-outlined">help_outline</span>
-                </button>
-                <div class="divider"></div>
                 <div class="navbar-auth" data-navbar-auth></div>
             </div>
         </header>
@@ -103,19 +95,19 @@
                 <div class="filter-left">
                     <div class="filter-group">
                         <label class="filter-label">Vai Trò:</label>
-                        <select class="filter-select">
-                            <option>Tất cả</option>
-                            <option>Admin</option>
-                            <option>Khách hàng</option>
+                        <select class="filter-select" data-user-filter="role">
+                            <option value="all">Tất cả</option>
+                            <option value="admin">Admin</option>
+                            <option value="customer">Khách hàng</option>
                         </select>
                     </div>
                     <div class="filter-divider"></div>
                     <div class="filter-group">
                         <label class="filter-label">Trạng Thái:</label>
-                        <select class="filter-select">
-                            <option>Tất cả</option>
-                            <option>Đang hoạt động</option>
-                            <option>Ngừng hoạt động</option>
+                        <select class="filter-select" data-user-filter="status">
+                            <option value="all">Tất cả</option>
+                            <option value="true">Đang hoạt động</option>
+                            <option value="false">Ngừng hoạt động</option>
                         </select>
                     </div>
                 </div>
@@ -158,19 +150,8 @@
                 </div>
 
                 <div class="pagination">
-                    <p class="pagination-text">Đang hiển thị 1 đến 4 trong số 12,842 người dùng</p>
+                    <p class="pagination-text">Đang tải phân trang...</p>
                     <div class="pagination-buttons">
-                        <button class="pagination-btn-nav">
-                            <span class="material-symbols-outlined">chevron_left</span>
-                        </button>
-                        <button class="pagination-btn-num pagination-active">1</button>
-                        <button class="pagination-btn-num">2</button>
-                        <button class="pagination-btn-num">3</button>
-                        <span class="pagination-ellipsis">...</span>
-                        <button class="pagination-btn-num">320</button>
-                        <button class="pagination-btn-nav">
-                            <span class="material-symbols-outlined">chevron_right</span>
-                        </button>
                     </div>
                 </div>
             </div>
@@ -215,7 +196,27 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label">Địa chỉ</label>
-                    <input type="text" class="form-input" required placeholder="Nhập địa chỉ..." name="address"/>
+                    <input type="text" id="add-user-street" class="form-input" required placeholder="Số nhà, tên đường..." name="street"/>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Tỉnh / Thành phố</label>
+                        <select id="add-user-province" class="form-select" required name="province">
+                            <option value="">Chọn tỉnh / thành phố</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Quận / Huyện</label>
+                        <select id="add-user-district" class="form-select" required name="district" disabled>
+                            <option value="">Chọn quận / huyện</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Phường / Xã</label>
+                    <select id="add-user-ward" class="form-select" required name="ward" disabled>
+                        <option value="">Chọn phường / xã</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Trạng thái hoạt động</label>
@@ -305,7 +306,27 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label">Địa chỉ</label>
-                    <input type="text" id="edit-user-address" class="form-input" required placeholder="Nhập địa chỉ..." name="address"/>
+                    <input type="text" id="edit-user-street" class="form-input" required placeholder="Số nhà, tên đường..." name="street"/>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Tỉnh / Thành phố</label>
+                        <select id="edit-user-province" class="form-select" required name="province">
+                            <option value="">Chọn tỉnh / thành phố</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Quận / Huyện</label>
+                        <select id="edit-user-district" class="form-select" required name="district" disabled>
+                            <option value="">Chọn quận / huyện</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Phường / Xã</label>
+                    <select id="edit-user-ward" class="form-select" required name="ward" disabled>
+                        <option value="">Chọn phường / xã</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Trạng thái hoạt động</label>

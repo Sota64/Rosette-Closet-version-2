@@ -31,6 +31,15 @@
         <!-- Left Side: Cart Items List -->
         <div class="cart-main">
           <div class="glass-card cart-items-card">
+            <div class="cart-selection-bar">
+              <label class="cart-select-control" for="cart-select-all">
+                <input id="cart-select-all" type="checkbox" />
+                <span class="cart-checkbox-visual" aria-hidden="true"></span>
+                <span>Chọn tất cả</span>
+              </label>
+              <span id="cart-selected-count">0 sản phẩm được chọn</span>
+            </div>
+
             <div id="cart-items-list">
               <!-- Dynamically populated -->
             </div>

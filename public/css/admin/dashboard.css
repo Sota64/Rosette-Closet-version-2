@@ -273,7 +273,7 @@ html.dark #main-sidebar {
     border-bottom: 1px solid #d0c5af; /* outline-variant */
     box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     align-items: center;
     padding: 1rem 32px;
 }
@@ -774,32 +774,55 @@ html.dark .top-bar {
 }
 
 .insight-banner {
-    margin-top: auto;
-    padding: 1rem;
-    background-color: rgba(115, 92, 0, 0.05); /* primary/5 */
-    border-radius: 0.25rem; /* rounded-lg in config is 0.25rem */
-    border: 1px solid rgba(115, 92, 0, 0.2); /* primary/20 */
+    padding: 24px;
+    background: linear-gradient(135deg, rgba(115, 92, 0, 0.06) 0%, rgba(212, 175, 55, 0.02) 100%);
+    border-radius: 12px;
+    border: 1px solid rgba(115, 92, 0, 0.15);
+    box-shadow: 0 4px 20px -2px rgba(115, 92, 0, 0.04);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 .insight-header {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 0.5rem;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.insight-icon {
+    font-size: 20px !important;
+    color: #735c00;
+    background-color: rgba(115, 92, 0, 0.1);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
 }
 
 .insight-title {
     font-family: 'Be Vietnam Pro', sans-serif;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 600;
     color: #735c00;
+    letter-spacing: 0.02em;
 }
 
 .insight-content {
     font-family: 'Be Vietnam Pro', sans-serif;
-    font-size: 14px;
+    font-size: 13.5px;
     color: #4d4635; /* on-surface-variant */
     line-height: 1.625;
+    padding: 16px 20px;
+    background-color: rgba(255, 255, 255, 0.65);
+    border-left: 3px solid #735c00;
+    border-radius: 4px 8px 8px 4px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+    flex: 1;
 }
 
 /* --- Footer --- */

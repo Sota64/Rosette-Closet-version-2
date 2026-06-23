@@ -32,6 +32,24 @@ function formatCurrency(value = 0) {
   return Number(value || 0).toLocaleString("vi-VN") + "đ";
 }
 
+function formatDate(value) {
+  if (!value) return "";
+  return new Date(value).toLocaleDateString("vi-VN");
+}
+
+function getTodayInputValue() {
+  const today = new Date();
+  today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
+  return today.toISOString().slice(0, 10);
+}
+
+function addDays(dateValue, days) {
+  const date = new Date(dateValue);
+  date.setDate(date.getDate() + days);
+  date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
+  return date.toISOString().slice(0, 10);
+}
+
 function getProductImage(product) {
   return product?.images?.[0] || "/public/images/img1.png";
 }
@@ -68,6 +86,22 @@ async function parseApiResponse(response, fallbackMessage) {
   }
 
   return result.data;
+}
+
+async function isUserAuthenticated() {
+  try {
+    const response = await fetch("/api/auth/me", {
+      credentials: "include"
+    });
+    const result = await response.json();
+    return response.ok && result.success && Boolean(result.data?.user);
+  } catch (error) {
+    return false;
+  }
+}
+
+function redirectToLogin(returnUrl = window.location.href) {
+  window.location.href = `/views/login.html?redirect=${encodeURIComponent(returnUrl)}`;
 }
 
 async function resolveProductId() {
@@ -134,23 +168,159 @@ function renderGallery(product) {
 }
 
 function renderSizes(product) {
-  const sizes = product.sizes?.length ? product.sizes : ["Đang cập nhật"];
+  const sizeAvailability = product.sizeAvailability?.length
+    ? product.sizeAvailability
+    : (product.sizes || []).map((size) => ({ size, status: "available" }));
+  const sizes = sizeAvailability.length ? sizeAvailability : [{ size: "Đang cập nhật", status: "unavailable" }];
   const sizeOptions = document.getElementById("product-size-options");
 
   if (!sizeOptions) return;
 
-  sizeOptions.innerHTML = sizes.map((size, index) => `
-    <button class="${index === 0 ? "selected" : ""}" type="button">${escapeHtml(size)}</button>
-  `).join("");
+  const firstAvailableIndex = sizes.findIndex((item) => item.status === "available");
+
+  sizeOptions.innerHTML = sizes.map((item, index) => {
+    const isRented = item.status === "rented";
+    const isSelected = index === firstAvailableIndex;
+
+    return `
+      <button
+        class="${isSelected ? "selected" : ""} ${isRented ? "rented" : ""}"
+        type="button"
+        ${isRented ? "disabled" : ""}
+        title="${isRented ? "Size này đang được thuê" : "Chọn size " + escapeHtml(item.size)}"
+      >
+        <span>${escapeHtml(item.size)}</span>
+        ${isRented ? '<small>Đang thuê</small>' : ""}
+      </button>
+    `;
+  }).join("");
 
   sizeOptions.addEventListener("click", (event) => {
     const button = event.target.closest("button");
-    if (!button) return;
+    if (!button || button.disabled) return;
 
     sizeOptions.querySelectorAll("button").forEach((item) => {
       item.classList.toggle("selected", item === button);
     });
+
+    updateRentNowLink(product);
   });
+}
+
+function getSelectedSize() {
+  const selectedSizeBtn = document.querySelector("#product-size-options button.selected");
+  return selectedSizeBtn?.querySelector("span")?.textContent?.trim() || "";
+}
+
+function canRentProduct(product) {
+  const selectedSize = getSelectedSize();
+  return product.status !== "rented" && Boolean(selectedSize);
+}
+
+function buildRentNowUrl(product) {
+  const params = new URLSearchParams({
+    id: product._id
+  });
+  const selectedSize = getSelectedSize();
+  const startDate = document.getElementById("product-rental-start-date")?.value;
+  const returnDate = document.getElementById("product-rental-return-date")?.value;
+
+  if (selectedSize && selectedSize !== "Đang cập nhật") {
+    params.set("size", selectedSize);
+  }
+
+  if (startDate) {
+    params.set("startDate", startDate);
+  }
+
+  if (returnDate) {
+    params.set("returnDate", returnDate);
+  }
+
+  return `/views/user/rentNow.html?${params.toString()}`;
+}
+
+function updateRentNowLink(product) {
+  const rentNowLink = document.getElementById("rent-now-link");
+  if (rentNowLink) {
+    rentNowLink.href = buildRentNowUrl(product);
+    rentNowLink.setAttribute("aria-disabled", String(!canRentProduct(product)));
+  }
+}
+
+function bindRentNowLink(product) {
+  const rentNowLink = document.getElementById("rent-now-link");
+  if (!rentNowLink) return;
+
+  const newRentNowLink = rentNowLink.cloneNode(true);
+  rentNowLink.parentNode.replaceChild(newRentNowLink, rentNowLink);
+  newRentNowLink.addEventListener("click", async (event) => {
+    if (!canRentProduct(product)) {
+      event.preventDefault();
+      showToast("Sản phẩm đang được thuê.");
+      return;
+    }
+
+    newRentNowLink.href = buildRentNowUrl(product);
+    event.preventDefault();
+    if (!(await isUserAuthenticated())) {
+      redirectToLogin(newRentNowLink.href);
+      return;
+    }
+
+  });
+}
+
+function bindSimilarRentNowAuthGuard() {
+  document.addEventListener("click", async (event) => {
+    const link = event.target.closest(".rent-now-link");
+    if (!link) return;
+
+    event.preventDefault();
+    if (!(await isUserAuthenticated())) {
+      redirectToLogin(link.href);
+      return;
+    }
+
+    window.location.href = link.href;
+  });
+}
+
+function updateRentalDateSelection(product) {
+  updateRentNowLink(product);
+}
+
+function bindRentDatePicker(product) {
+  const startInput = document.getElementById("product-rental-start-date");
+  const returnInput = document.getElementById("product-rental-return-date");
+  if (!startInput || !returnInput) return;
+
+  const today = getTodayInputValue();
+  startInput.min = today;
+  startInput.value = startInput.value || today;
+  returnInput.min = addDays(startInput.value, 1);
+  returnInput.value = returnInput.value || addDays(startInput.value, 3);
+
+  startInput.addEventListener("change", () => {
+    const minReturnDate = addDays(startInput.value, 1);
+    returnInput.min = minReturnDate;
+
+    if (!returnInput.value || returnInput.value <= startInput.value) {
+      returnInput.value = addDays(startInput.value, 3);
+    }
+
+    updateRentalDateSelection(product);
+  });
+
+  returnInput.addEventListener("change", () => {
+    if (returnInput.value <= startInput.value) {
+      returnInput.value = addDays(startInput.value, 1);
+    }
+
+    updateRentalDateSelection(product);
+  });
+
+  updateRentalDateSelection(product);
 }
 
 function renderSimilarProducts(products = []) {
@@ -168,14 +338,70 @@ function renderSimilarProducts(products = []) {
 
   grid.innerHTML = products.map((product) => `
     <article class="similar-card">
-      <a class="similar-image" href="${getProductDetailUrl(product._id)}">
-        <img src="${escapeHtml(getProductImage(product))}" alt="${escapeHtml(product.name)}" />
-        <span>Xem nhanh</span>
-      </a>
-      <h3>${escapeHtml(product.name)}</h3>
-      <p>${formatCurrency(product.rentalPrice)}</p>
+      <div class="similar-image">
+        <a href="${getProductDetailUrl(product._id)}">
+          <img src="${escapeHtml(getProductImage(product))}" alt="${escapeHtml(product.name)}" />
+        </a>
+      </div>
+      <div class="similar-info">
+        <p>${escapeHtml(getCategoryName(product))}</p>
+        <h3><a href="${getProductDetailUrl(product._id)}">${escapeHtml(product.name)}</a></h3>
+        <div class="similar-bottom">
+          <span>${formatCurrency(product.rentalPrice)}</span>
+          <a class="rent-now-link" href="/views/user/rentNow.html?id=${encodeURIComponent(product._id)}">
+            <button type="button">Thuê ngay</button>
+          </a>
+        </div>
+      </div>
     </article>
   `).join("");
+}
+
+function renderStars(rating = 0) {
+  const normalizedRating = Math.max(0, Math.min(5, Math.round(Number(rating || 0))));
+  return Array.from({ length: 5 }, (_, index) => (
+    `<span class="${index < normalizedRating ? "filled" : ""}">★</span>`
+  )).join("");
+}
+
+function renderProductReviews(reviews = [], summary = {}) {
+  const list = document.getElementById("product-reviews-list");
+  const summaryText = document.getElementById("product-review-summary");
+  const average = document.getElementById("product-review-average");
+
+  if (!list || !summaryText || !average) return;
+
+  const totalReviews = Number(summary.totalReviews || reviews.length || 0);
+  const averageRating = Number(summary.averageRating || 0).toFixed(1);
+
+  summaryText.textContent = totalReviews
+    ? `${totalReviews} đánh giá từ khách hàng đã thuê sản phẩm này.`
+    : "Chưa có đánh giá nào.";
+  average.textContent = averageRating;
+
+  if (!reviews.length) {
+    list.innerHTML = '<p class="reviews-empty">Sản phẩm này chưa có đánh giá.</p>';
+    return;
+  }
+
+  list.innerHTML = reviews.map((review) => {
+    const reviewer = review.user?.fullName || "Khách hàng";
+    const date = review.createdAt ? formatDate(review.createdAt) : "";
+    return `
+      <article class="review-item">
+        <div class="review-item-header">
+          <div>
+            <strong>${escapeHtml(reviewer)}</strong>
+            <span>${escapeHtml(date)}</span>
+          </div>
+          <div class="review-stars" aria-label="${Number(review.rating || 0)} sao">
+            ${renderStars(review.rating)}
+          </div>
+        </div>
+        <p>${escapeHtml(review.comment || "Khách hàng chưa để lại nhận xét.")}</p>
+      </article>
+    `;
+  }).join("");
 }
 
 function showToast(message) {
@@ -185,7 +411,7 @@ function showToast(message) {
     toastContainer.id = "toast-container";
     toastContainer.style.cssText = `
       position: fixed;
-      bottom: 24px;
+      top: 24px;
       right: 24px;
       z-index: 9999;
       display: flex;
@@ -209,7 +435,7 @@ function showToast(message) {
     display: flex;
     align-items: center;
     gap: 12px;
-    transform: translateY(20px);
+    transform: translateY(-20px);
     opacity: 0;
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   `;
@@ -236,11 +462,11 @@ function showToast(message) {
 
 function addToCart(product) {
   const selectedSizeBtn = document.querySelector("#product-size-options button.selected");
-  if (!selectedSizeBtn) {
-    showToast("Vui lòng chọn kích cỡ trang phục!");
+  if (!selectedSizeBtn || selectedSizeBtn.disabled) {
+    showToast("Vui lòng chọn kích cỡ còn trống!");
     return;
   }
-  const size = selectedSizeBtn.textContent;
+  const size = selectedSizeBtn.querySelector("span")?.textContent?.trim();
 
   let cart = [];
   try {
@@ -252,7 +478,8 @@ function addToCart(product) {
   const existingIndex = cart.findIndex(item => item._id === product._id && item.size === size);
 
   if (existingIndex > -1) {
-    cart[existingIndex].quantity = (cart[existingIndex].quantity || 1) + 1;
+    showToast(`${product.name} (Size ${size}) đã có trong giỏ hàng!`);
+    return;
   } else {
     cart.push({
       _id: product._id,
@@ -300,11 +527,6 @@ function renderProductDetail(data) {
     categoryLink.textContent = categoryName;
   }
 
-  const rentNowLink = document.getElementById("rent-now-link");
-  if (rentNowLink) {
-    rentNowLink.href = `/views/user/rentNow.html?id=${encodeURIComponent(product._id)}`;
-  }
-
   const cartBtn = document.querySelector(".cart-button");
   if (cartBtn) {
     const newCartBtn = cartBtn.cloneNode(true);
@@ -314,7 +536,11 @@ function renderProductDetail(data) {
 
   renderGallery(product);
   renderSizes(product);
+  bindRentNowLink(product);
+  updateRentNowLink(product);
+  bindRentDatePicker(product);
   renderSimilarProducts(data.similarProducts || []);
+  renderProductReviews(data.reviews || [], reviewSummary);
 
   document.getElementById("product-detail-message").hidden = true;
   document.getElementById("product-detail-content").hidden = false;
@@ -343,5 +569,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     loadLayout("footer-placeholder", "/views/layouts/footer.html")
   ]);
 
+  bindSimilarRentNowAuthGuard();
   loadProductDetail();
 });

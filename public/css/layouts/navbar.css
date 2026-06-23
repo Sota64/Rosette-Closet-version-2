@@ -8,6 +8,13 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.4);
 }
 
+.navbar a,
+.navbar a:hover,
+.navbar a:focus,
+.navbar a:visited {
+  text-decoration: none;
+}
+
 .navbar .container {
   width: min(1120px, calc(100% - 48px));
   margin: 0 auto;
@@ -299,7 +306,19 @@
   position: relative;
   display: grid;
   place-items: center;
+  color: var(--text, #1c1c1c);
   text-decoration: none;
+}
+
+.cart-btn-container:visited,
+.cart-btn-container:hover,
+.cart-btn-container:focus {
+  color: var(--text, #1c1c1c);
+  text-decoration: none;
+}
+
+.cart-btn-container .material-symbols-outlined {
+  color: currentColor;
 }
 
 .cart-badge {

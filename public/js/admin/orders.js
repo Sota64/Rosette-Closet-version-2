@@ -95,8 +95,26 @@ function initOrdersPage() {
         }
     });
 
+    const searchInput = document.querySelector(".search-input");
+    if (searchInput) {
+        let searchTimer;
+        searchInput.addEventListener("input", (event) => {
+            clearTimeout(searchTimer);
+            searchTimer = setTimeout(() => {
+                ordersPagination.search = event.target.value.trim();
+                ordersPagination.page = 1;
+                loadOrders();
+            }, 300);
+        });
+    }
+
     // Load related resources
     loadUsersAndProducts();
+
+    ["add", "edit"].forEach((prefix) => {
+        document.getElementById(`${prefix}-order-start-date`)?.addEventListener("change", () => calculateTotalOrderAmount(prefix));
+        document.getElementById(`${prefix}-order-return-date`)?.addEventListener("change", () => calculateTotalOrderAmount(prefix));
+    });
 
     // Load orders
     loadOrders();
@@ -104,21 +122,46 @@ function initOrdersPage() {
 
 let orders = [];
 let ordersPagination = {
-    total: 0
+    page: 1,
+    limit: 10,
+    total: 0,
+    totalPages: 1,
+    search: ""
 };
+const ORDER_STATUS_FLOW = ["pending", "approved", "delivering", "renting", "returned", "completed"];
+
+function buildOrderListUrl() {
+    const params = new URLSearchParams({
+        page: String(ordersPagination.page),
+        limit: String(ordersPagination.limit)
+    });
+
+    if (ordersPagination.search) {
+        params.set("search", ordersPagination.search);
+    }
+
+    return `/api/orders?${params.toString()}`;
+}
 
 async function loadOrders() {
     try {
-        const response = await apiFetch("/api/orders");
+        const response = await apiFetch(buildOrderListUrl());
         if (response.status === 401) {
             window.location.href = "/views/login.html";
             return;
         }
         const data = await parseApiResponse(response);
         orders = Array.isArray(data) ? data : data.orders || [];
-        ordersPagination = Array.isArray(data) ? { total: orders.length } : data.pagination || { total: orders.length };
+        const pagination = Array.isArray(data) ? { total: orders.length } : data.pagination || { total: orders.length };
+        ordersPagination = {
+            ...ordersPagination,
+            page: pagination.page || ordersPagination.page,
+            limit: pagination.limit || ordersPagination.limit,
+            total: pagination.total || 0,
+            totalPages: pagination.totalPages || 1
+        };
         renderOrdersTable(orders);
-        updatePaginationText(orders.length, ordersPagination.total);
+        renderOrdersPagination();
         renderOrderStats(Array.isArray(data) ? null : data.stats);
     } catch (error) {
         console.error("Không thể tải danh sách đơn hàng:", error);
@@ -175,11 +218,15 @@ function renderOrdersTable(orderList) {
         const end = new Date(order.returnDate).toLocaleDateString("vi-VN", {
             day: '2-digit', month: '2-digit', year: 'numeric'
         });
+        const rentalDays = getRentalDays(
+            formatDateToYYYYMMDD(order.startDate),
+            formatDateToYYYYMMDD(order.returnDate)
+        );
 
         // Compute total deposit
         let totalDeposit = 0;
         if (order.items && order.items.length > 0) {
-            totalDeposit = order.items.reduce((sum, item) => sum + (item.deposit || 0) * (item.quantity || 1), 0);
+            totalDeposit = order.items.reduce((sum, item) => sum + (item.deposit || 0) * rentalDays, 0);
         }
 
         // Generate product names summary
@@ -189,7 +236,6 @@ function renderOrdersTable(orderList) {
                 return `
                     <div class="product-detail-cell" style="margin-bottom: 4px;">
                         <span style="font-weight: 500;">${escapeHtml(productName)}</span>
-                        <div class="product-spec" style="font-size: 11px; color: #7a7979;">Số lượng: ${item.quantity || 1}</div>
                     </div>
                 `;
             }).join("")
@@ -200,6 +246,14 @@ function renderOrdersTable(orderList) {
             : "KH";
 
         const statusMeta = getStatusMeta(order.status);
+        const statusSelectHtml = renderOrderStatusSelect(order._id, order.status);
+        const editButtonHtml = canEditOrderDetails(order.status)
+            ? `
+                <button class="action-btn-icon" title="Sửa đơn hàng" onclick="openOrderEditModal('${order._id}')">
+                    <span class="material-symbols-outlined">edit</span>
+                </button>
+            `
+            : "";
 
         return `
             <tr>
@@ -228,16 +282,14 @@ function renderOrdersTable(orderList) {
                     ${formatCurrency(order.totalAmount)}
                 </td>
                 <td>
-                    <span class="status-badge ${statusMeta.class}">${statusMeta.label}</span>
+                    ${statusSelectHtml || `<span class="status-badge ${statusMeta.class}">${statusMeta.label}</span>`}
                 </td>
                 <td>
                     <div class="action-buttons">
                         <button class="action-btn-icon" title="Xem chi tiết" onclick="openOrderDetailModal('${order._id}')">
                             <span class="material-symbols-outlined">visibility</span>
                         </button>
-                        <button class="action-btn-icon" title="Sửa đơn hàng" onclick="openOrderEditModal('${order._id}')">
-                            <span class="material-symbols-outlined">edit</span>
-                        </button>
+                        ${editButtonHtml}
                         <button class="action-btn-icon btn-delete" title="Xóa đơn hàng" onclick="openOrderDeleteModal('${order._id}')">
                             <span class="material-symbols-outlined">delete</span>
                         </button>
@@ -246,6 +298,71 @@ function renderOrdersTable(orderList) {
             </tr>
         `;
     }).join("");
+}
+
+function getNextOrderStatus(status) {
+    const currentIndex = ORDER_STATUS_FLOW.indexOf(status);
+    return currentIndex >= 0 ? ORDER_STATUS_FLOW[currentIndex + 1] : null;
+}
+
+function renderOrderStatusSelect(orderId, status) {
+    if (status === "completed" || status === "cancelled") {
+        const statusMeta = getStatusMeta(status);
+        return `<span class="status-badge ${statusMeta.class}">${statusMeta.label}</span>`;
+    }
+
+    const nextStatus = getNextOrderStatus(status);
+    const statusOptions = [status, nextStatus].filter(Boolean);
+
+    return `
+        <select class="order-status-select ${getStatusMeta(status).class}" data-order-id="${escapeHtml(orderId)}" data-current-status="${escapeHtml(status)}" onchange="handleOrderStatusSelectChange(this)">
+            ${statusOptions.map((optionStatus) => `
+                <option value="${optionStatus}" ${optionStatus === status ? "selected" : ""}>
+                    ${escapeHtml(getStatusMeta(optionStatus).label)}
+                </option>
+            `).join("")}
+        </select>
+    `;
+}
+
+function canEditOrderDetails(status) {
+    return status === "pending";
+}
+
+function renderStatusOptions(status) {
+    const nextStatus = getNextOrderStatus(status);
+    return [status, nextStatus].filter(Boolean).map((optionStatus) => `
+        <option value="${optionStatus}" ${optionStatus === status ? "selected" : ""}>
+            ${escapeHtml(getStatusMeta(optionStatus).label)}
+        </option>
+    `).join("");
+}
+
+async function handleOrderStatusSelectChange(selectEl) {
+    const orderId = selectEl.dataset.orderId;
+    const currentStatus = selectEl.dataset.currentStatus;
+    const nextStatus = selectEl.value;
+
+    if (!orderId || nextStatus === currentStatus) return;
+
+    selectEl.disabled = true;
+
+    try {
+        const response = await apiFetch(`/api/orders/${orderId}/status`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ status: nextStatus })
+        });
+        await parseApiResponse(response);
+        await loadOrders();
+        showToast("Cập nhật trạng thái đơn hàng thành công!", "success");
+    } catch (error) {
+        selectEl.value = currentStatus;
+        selectEl.disabled = false;
+        showToast(error.message, "error");
+    }
 }
 
 function getStatusMeta(status) {
@@ -305,13 +422,13 @@ function populateUserDropdowns() {
     });
 }
 
-function createOrderItemRow(containerId, productVal='', qtyVal=1, priceVal='', depositVal='') {
+function createOrderItemRow(containerId, productVal='', priceVal='', depositVal='') {
     const container = document.getElementById(containerId);
     if (!container) return;
 
     const row = document.createElement("div");
     row.className = "form-row order-item-row";
-    row.style.gridTemplateColumns = "2.5fr 1fr 1.5fr 1.5fr auto";
+    row.style.gridTemplateColumns = "2.5fr 1.5fr 1.5fr auto";
     row.style.alignItems = "end";
     row.style.gap = "10px";
     row.style.marginBottom = "10px";
@@ -327,10 +444,6 @@ function createOrderItemRow(containerId, productVal='', qtyVal=1, priceVal='', d
                 <option value="">Chọn sản phẩm</option>
                 ${productOptions}
             </select>
-        </div>
-        <div class="form-group" style="margin-bottom: 0;">
-            <label class="form-label" style="font-size:9px;">SL</label>
-            <input type="number" class="form-input item-quantity" required min="1" value="${qtyVal}"/>
         </div>
         <div class="form-group" style="margin-bottom: 0;">
             <label class="form-label" style="font-size:9px;">Giá thuê (VNĐ)</label>
@@ -352,7 +465,6 @@ function createOrderItemRow(containerId, productVal='', qtyVal=1, priceVal='', d
     }
 
     const prefix = containerId.split('-')[0];
-    row.querySelector(".item-quantity").addEventListener("input", () => calculateTotalOrderAmount(prefix));
     row.querySelector(".item-price").addEventListener("input", () => calculateTotalOrderAmount(prefix));
     row.querySelector(".item-deposit").addEventListener("input", () => calculateTotalOrderAmount(prefix));
     
@@ -378,19 +490,31 @@ function calculateTotalOrderAmount(prefix) {
     const container = document.getElementById(`${prefix}-order-items-container`);
     if (!container) return;
 
+    const startDate = document.getElementById(`${prefix}-order-start-date`)?.value;
+    const returnDate = document.getElementById(`${prefix}-order-return-date`)?.value;
+    const rentalDays = getRentalDays(startDate, returnDate);
     let total = 0;
     const rows = container.querySelectorAll(".order-item-row");
     rows.forEach(row => {
-        const qty = parseInt(row.querySelector(".item-quantity").value) || 0;
+        const qty = 1;
         const price = parseFloat(row.querySelector(".item-price").value) || 0;
         const deposit = parseFloat(row.querySelector(".item-deposit").value) || 0;
-        total += (price + deposit) * qty;
+        total += ((price + deposit) * rentalDays) * qty;
     });
 
     const displayEl = document.getElementById(`${prefix}-order-total-display`);
     if (displayEl) {
         displayEl.textContent = formatCurrency(total);
     }
+}
+
+function getRentalDays(startDate, returnDate) {
+    if (!startDate || !returnDate) return 1;
+
+    const diffMs = new Date(returnDate).getTime() - new Date(startDate).getTime();
+    const diffDays = Math.ceil(diffMs / (24 * 60 * 60 * 1000));
+
+    return Math.max(diffDays, 1);
 }
 
 function resetModalFields(modal) {
@@ -505,10 +629,18 @@ function showToast(message, type = 'success') {
 
 async function getOrder(id) {
     const cached = orders.find((order) => order._id === id);
-    if (cached) return cached;
+    if (cached?.payment) return cached;
 
     const response = await apiFetch(`/api/orders/${id}`);
     return parseApiResponse(response);
+}
+
+function getPaymentMethodLabel(method = "") {
+    const map = {
+        vnpay: "Thanh toán qua VNPAY",
+        cash_on_delivery: "Thanh toán khi nhận hàng"
+    };
+    return map[method] || "Chưa cập nhật";
 }
 
 function formatDateToYYYYMMDD(dateStr) {
@@ -530,6 +662,10 @@ async function openOrderDetailModal(id) {
             day: '2-digit', month: '2-digit', year: 'numeric'
         });
         const statusMeta = getStatusMeta(order.status);
+        const rentalDays = getRentalDays(
+            formatDateToYYYYMMDD(order.startDate),
+            formatDateToYYYYMMDD(order.returnDate)
+        );
 
         document.getElementById("detail-order-id").textContent = `#${order._id.toUpperCase()}`;
         
@@ -541,6 +677,7 @@ async function openOrderDetailModal(id) {
         document.getElementById("detail-order-phone").textContent = order.user?.phone || "Không có SĐT";
         document.getElementById("detail-order-address").textContent = order.user?.address || "Chưa cập nhật";
         document.getElementById("detail-order-dates").textContent = `${start} - ${end}`;
+        document.getElementById("detail-order-payment-method").textContent = getPaymentMethodLabel(order.payment?.method);
 
         // Load items list
         let rentalSum = 0;
@@ -548,8 +685,8 @@ async function openOrderDetailModal(id) {
         const itemsListEl = document.getElementById("detail-order-items-list");
         itemsListEl.innerHTML = order.items.map(item => {
             const productTitle = item.product?.name || "Sản phẩm đã xóa";
-            const itemRent = (item.rentalPrice || 0) * (item.quantity || 1);
-            const itemDep = (item.deposit || 0) * (item.quantity || 1);
+            const itemRent = (item.rentalPrice || 0) * rentalDays;
+            const itemDep = (item.deposit || 0) * rentalDays;
             rentalSum += itemRent;
             depositSum += itemDep;
 
@@ -557,7 +694,7 @@ async function openOrderDetailModal(id) {
                 <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #efeded; font-size: 13px;">
                     <div>
                         <div style="font-weight: 500;">${escapeHtml(productTitle)}</div>
-                        <div style="font-size: 11px; color: #7a7979;">Đơn giá thuê: ${formatCurrency(item.rentalPrice)} | Cọc: ${formatCurrency(item.deposit)} | SL: ${item.quantity}</div>
+                        <div style="font-size: 11px; color: #7a7979;">Đơn giá thuê/ngày: ${formatCurrency(item.rentalPrice)} | Cọc/ngày: ${formatCurrency(item.deposit)} | ${rentalDays} ngày</div>
                     </div>
                     <div style="text-align: right; font-weight: 500;">
                         <div>Thuê: ${formatCurrency(itemRent)}</div>
@@ -581,9 +718,19 @@ async function openOrderEditModal(id) {
     try {
         const order = await getOrder(id);
 
+        if (!canEditOrderDetails(order.status)) {
+            showToast("Đơn hàng đã được xác nhận nên không thể chỉnh sửa.", "error");
+            return;
+        }
+
         document.getElementById("edit-order-id").value = order._id;
         document.getElementById("edit-order-user").value = order.user?._id || "";
-        document.getElementById("edit-order-status").value = order.status;
+        const editStatusSelect = document.getElementById("edit-order-status");
+        if (editStatusSelect) {
+            editStatusSelect.innerHTML = renderStatusOptions(order.status);
+            editStatusSelect.value = order.status;
+            editStatusSelect.disabled = order.status === "completed" || order.status === "cancelled";
+        }
         document.getElementById("edit-order-start-date").value = formatDateToYYYYMMDD(order.startDate);
         document.getElementById("edit-order-return-date").value = formatDateToYYYYMMDD(order.returnDate);
 
@@ -593,7 +740,7 @@ async function openOrderEditModal(id) {
         
         if (order.items && order.items.length > 0) {
             order.items.forEach(item => {
-                createOrderItemRow("edit-order-items-container", item.product?._id || item.product, item.quantity, item.rentalPrice, item.deposit);
+                createOrderItemRow("edit-order-items-container", item.product?._id || item.product, item.rentalPrice, item.deposit);
             });
         } else {
             createOrderItemRow("edit-order-items-container");
@@ -637,14 +784,13 @@ function collectOrderItemsPayload(containerId) {
     const rows = container.querySelectorAll(".order-item-row");
     rows.forEach(row => {
         const productVal = row.querySelector(".item-product").value;
-        const qtyVal = parseInt(row.querySelector(".item-quantity").value) || 1;
         const priceVal = parseFloat(row.querySelector(".item-price").value) || 0;
         const depositVal = parseFloat(row.querySelector(".item-deposit").value) || 0;
 
         if (productVal) {
             items.push({
                 product: productVal,
-                quantity: qtyVal,
+                quantity: 1,
                 rentalPrice: priceVal,
                 deposit: depositVal
             });
@@ -730,12 +876,62 @@ async function handleOrderEdit(event) {
     }
 }
 
-function updatePaginationText(count, total = count) {
+function renderOrdersPagination() {
     const textEl = document.querySelector(".pagination-text");
+    const buttonsEl = document.querySelector(".pagination-buttons");
+    const total = ordersPagination.total;
+    const currentPage = ordersPagination.page;
+    const totalPages = Math.max(ordersPagination.totalPages, 1);
+    const start = total === 0 ? 0 : (currentPage - 1) * ordersPagination.limit + 1;
+    const end = Math.min(currentPage * ordersPagination.limit, total);
+
     if (textEl) {
-        const start = total === 0 ? 0 : 1;
-        textEl.textContent = `Đang hiển thị ${start} đến ${count} trong số ${total} đơn thuê`;
+        textEl.textContent = `Đang hiển thị ${start} đến ${end} trong số ${total} đơn thuê`;
     }
+
+    if (!buttonsEl) return;
+
+    const pages = getVisiblePaginationPages(currentPage, totalPages);
+    buttonsEl.innerHTML = `
+        <button class="pagination-btn-nav" ${currentPage <= 1 ? "disabled" : ""} onclick="goToOrderPage(${currentPage - 1})" aria-label="Trang trước">
+            <span class="material-symbols-outlined">chevron_left</span>
+        </button>
+        ${pages.map((page) => page === "..."
+            ? '<span class="pagination-ellipsis">...</span>'
+            : `<button class="pagination-btn-num ${page === currentPage ? "pagination-active" : ""}" onclick="goToOrderPage(${page})" ${page === currentPage ? 'aria-current="page"' : ""}>${page}</button>`
+        ).join("")}
+        <button class="pagination-btn-nav" ${currentPage >= totalPages ? "disabled" : ""} onclick="goToOrderPage(${currentPage + 1})" aria-label="Trang sau">
+            <span class="material-symbols-outlined">chevron_right</span>
+        </button>
+    `;
+}
+
+function getVisiblePaginationPages(currentPage, totalPages) {
+    if (totalPages <= 5) {
+        return Array.from({ length: totalPages }, (_, index) => index + 1);
+    }
+
+    const pages = [1];
+    const from = Math.max(2, currentPage - 1);
+    const to = Math.min(totalPages - 1, currentPage + 1);
+
+    if (from > 2) pages.push("...");
+
+    for (let page = from; page <= to; page += 1) {
+        pages.push(page);
+    }
+
+    if (to < totalPages - 1) pages.push("...");
+    pages.push(totalPages);
+
+    return pages;
+}
+
+function goToOrderPage(page) {
+    const totalPages = Math.max(ordersPagination.totalPages, 1);
+    if (page < 1 || page > totalPages || page === ordersPagination.page) return;
+    ordersPagination.page = page;
+    loadOrders();
 }
 
 function formatCurrency(value) {

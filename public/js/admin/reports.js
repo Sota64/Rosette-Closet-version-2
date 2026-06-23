@@ -15,6 +15,8 @@ let activeTab = 'day'; // 'day', 'month', 'year'
 let filterStart = null;
 let filterEnd = null;
 
+let chartInstance = null;
+
 async function loadLayout(placeholderId, url) {
     try {
         const response = await fetch(url);
@@ -249,151 +251,129 @@ function clearDateFilter() {
 }
 
 function renderChart(data) {
-    const svg = document.getElementById("revenue-trend-chart");
-    if (!svg) return;
+    const canvas = document.getElementById("revenue-trend-chart");
+    if (!canvas) return;
 
-    svg.innerHTML = ""; // Clear existing
+    if (chartInstance) {
+        chartInstance.destroy();
+    }
 
     if (data.length === 0) {
-        svg.innerHTML = `<text x="300" y="100" text-anchor="middle" fill="#7f7663" font-family="Be Vietnam Pro" font-size="12">Không có dữ liệu biểu diễn</text>`;
+        const ctx = canvas.getContext("2d");
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.font = "14px 'Be Vietnam Pro'";
+        ctx.fillStyle = "#7f7663";
+        ctx.textAlign = "center";
+        ctx.fillText("Không có dữ liệu biểu diễn", canvas.width / 2, canvas.height / 2);
         return;
     }
 
-    // Grid coordinates: viewBox="0 0 600 200"
-    const width = 600;
-    const height = 200;
-    const paddingLeft = 60;
-    const paddingRight = 40;
-    const paddingTop = 20;
-    const paddingBottom = 40;
-
-    const plotWidth = width - paddingLeft - paddingRight;
-    const plotHeight = height - paddingTop - paddingBottom;
-
-    // Find min and max revenue
-    const revenues = data.map(d => d.totalRevenue);
-    const maxRev = Math.max(...revenues, 1000000); // at least 1M limit
-    const minRev = 0; // standard floor
-
-    // Defs for gradient
-    const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
-    defs.innerHTML = `
-        <linearGradient id="chartGradient" x1="0%" x2="0%" y1="0%" y2="100%">
-            <stop offset="0%" style="stop-color:#735c00;stop-opacity:0.25"></stop>
-            <stop offset="100%" style="stop-color:#735c00;stop-opacity:0"></stop>
-        </linearGradient>
-    `;
-    svg.appendChild(defs);
-
-    // Draw background grid lines (horizontal)
-    const gridCount = 4;
-    for (let i = 0; i <= gridCount; i++) {
-        const yVal = minRev + (maxRev - minRev) * (i / gridCount);
-        const yPos = height - paddingBottom - (yVal / maxRev) * plotHeight;
-
-        // Grid line
-        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-        line.setAttribute("x1", paddingLeft);
-        line.setAttribute("y1", yPos);
-        line.setAttribute("x2", width - paddingRight);
-        line.setAttribute("y2", yPos);
-        line.setAttribute("class", "chart-grid-line");
-        svg.appendChild(line);
-
-        // Grid label (Y Axis)
-        const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-        text.setAttribute("x", paddingLeft - 10);
-        text.setAttribute("y", yPos + 3);
-        text.setAttribute("text-anchor", "end");
-        text.setAttribute("class", "chart-axis-text");
-        text.textContent = formatCompactCurrency(yVal);
-        svg.appendChild(text);
-    }
-
-    // Map data points
-    const points = data.map((d, index) => {
-        const xPos = paddingLeft + (index / Math.max(data.length - 1, 1)) * plotWidth;
-        const yPos = height - paddingBottom - (d.totalRevenue / maxRev) * plotHeight;
-        return { x: xPos, y: yPos, label: d._id, value: d.totalRevenue };
-    });
-
-    // Draw area path (gradient fill)
-    if (points.length > 0) {
-        const areaPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
-        let dArea = `M ${points[0].x} ${height - paddingBottom} `;
-        points.forEach(p => {
-            dArea += `L ${p.x} ${p.y} `;
-        });
-        dArea += `L ${points[points.length - 1].x} ${height - paddingBottom} Z`;
-        areaPath.setAttribute("d", dArea);
-        areaPath.setAttribute("class", "chart-trend-area");
-        svg.appendChild(areaPath);
-    }
-
-    // Draw trend line
-    if (points.length > 0) {
-        const linePath = document.createElementNS("http://www.w3.org/2000/svg", "path");
-        let dLine = `M ${points[0].x} ${points[0].y} `;
-        for (let i = 1; i < points.length; i++) {
-            dLine += `L ${points[i].x} ${points[i].y} `;
-        }
-        linePath.setAttribute("d", dLine);
-        linePath.setAttribute("class", "chart-trend-line");
-        svg.appendChild(linePath);
-    }
-
-    // Draw X Axis Labels & Dots
-    const labelSpacing = Math.ceil(data.length / 6); // Max 6 labels on X axis
-    points.forEach((p, index) => {
-        // Draw dot
-        const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-        circle.setAttribute("cx", p.x);
-        circle.setAttribute("cy", p.y);
-        circle.setAttribute("r", "4");
-        circle.setAttribute("class", "chart-data-dot");
-        
-        // Dynamic tooltip title on hover
-        const title = document.createElementNS("http://www.w3.org/2000/svg", "title");
-        let displayLabel = p.label;
+    // Prepare labels and values
+    const labels = data.map(d => {
         if (activeTab === 'day') {
-            displayLabel = new Date(p.label).toLocaleDateString("vi-VN", { day: '2-digit', month: '2-digit' });
+            return new Date(d._id).toLocaleDateString("vi-VN", { day: '2-digit', month: '2-digit', year: 'numeric' });
         } else if (activeTab === 'month') {
-            const parts = p.label.split("-");
-            displayLabel = `${parts[1]}/${parts[0].slice(-2)}`;
+            const parts = d._id.split("-");
+            return `${parts[1]}/${parts[0]}`;
         }
-        title.textContent = `${displayLabel}: ${formatCurrency(p.value)}`;
-        circle.appendChild(title);
-        
-        svg.appendChild(circle);
-
-        // X Axis labels
-        if (index % labelSpacing === 0 || index === points.length - 1) {
-            let labelText = p.label;
-            if (activeTab === 'day') {
-                labelText = new Date(p.label).toLocaleDateString("vi-VN", { day: '2-digit', month: '2-digit' });
-            } else if (activeTab === 'month') {
-                const parts = p.label.split("-");
-                labelText = `${parts[1]}/${parts[0].slice(-2)}`;
-            }
-
-            const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-            text.setAttribute("x", p.x);
-            text.setAttribute("y", height - paddingBottom + 20);
-            text.setAttribute("text-anchor", "middle");
-            text.setAttribute("class", "chart-axis-text");
-            text.textContent = labelText;
-            svg.appendChild(text);
-        }
+        return d._id;
     });
 
-    // Draw main X axis line
-    const xAxis = document.createElementNS("http://www.w3.org/2000/svg", "line");
-    xAxis.setAttribute("x1", paddingLeft);
-    xAxis.setAttribute("y1", height - paddingBottom);
-    xAxis.setAttribute("x2", width - paddingRight);
-    xAxis.setAttribute("y2", height - paddingBottom);
-    xAxis.setAttribute("class", "chart-axis-line");
-    svg.appendChild(xAxis);
+    const revenues = data.map(d => d.totalRevenue);
+
+    const ctx = canvas.getContext("2d");
+
+    // Create a smooth gradient
+    const gradient = ctx.createLinearGradient(0, 0, 0, 320);
+    gradient.addColorStop(0, "rgba(115, 92, 0, 0.4)");
+    gradient.addColorStop(1, "rgba(115, 92, 0, 0.0)");
+
+    chartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Doanh thu',
+                data: revenues,
+                borderColor: '#735c00',
+                backgroundColor: gradient,
+                borderWidth: 2,
+                pointBackgroundColor: '#fff',
+                pointBorderColor: '#735c00',
+                pointBorderWidth: 2,
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                fill: true,
+                tension: 0.4 // Smooth curves
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: '#fff',
+                    titleColor: '#1d1912',
+                    bodyColor: '#1d1912',
+                    borderColor: '#f2eae0',
+                    borderWidth: 1,
+                    padding: 12,
+                    displayColors: false,
+                    callbacks: {
+                        label: function(context) {
+                            let value = context.parsed.y;
+                            return "Doanh thu: " + new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    grid: {
+                        display: false,
+                        drawBorder: false
+                    },
+                    ticks: {
+                        font: {
+                            family: "'Be Vietnam Pro', sans-serif",
+                            size: 11
+                        },
+                        color: '#7f7663'
+                    }
+                },
+                y: {
+                    grid: {
+                        color: '#f2eae0',
+                        drawBorder: false,
+                        borderDash: [5, 5]
+                    },
+                    ticks: {
+                        font: {
+                            family: "'Be Vietnam Pro', sans-serif",
+                            size: 11
+                        },
+                        color: '#7f7663',
+                        callback: function(value) {
+                            if (value >= 1000000) {
+                                return (value / 1000000) + 'Tr';
+                            } else if (value >= 1000) {
+                                return (value / 1000) + 'k';
+                            }
+                            return value;
+                        }
+                    },
+                    beginAtZero: true
+                }
+            },
+            interaction: {
+                intersect: false,
+                mode: 'index',
+            },
+        }
+    });
 }
 
 function exportReportData() {

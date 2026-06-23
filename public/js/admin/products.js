@@ -49,13 +49,25 @@ function getCategoryName(product) {
 
 function getStatusMeta(status) {
     const map = {
-        available: { className: "badge-available", label: "Available" },
-        rented: { className: "badge-rented", label: "Rented" },
-        maintenance: { className: "badge-cleaning", label: "Cleaning" },
-        outofstock: { className: "badge-outofstock", label: "Out of Stock" }
+        available: { className: "badge-available", label: "Sẵn sàng" },
+        rented: { className: "badge-rented", label: "Đang thuê" },
+        maintenance: { className: "badge-cleaning", label: "Đang vệ sinh" },
+        outofstock: { className: "badge-outofstock", label: "Hết hàng" }
     };
 
     return map[status] || map.available;
+}
+
+function getSizeAvailability(product) {
+    if (Array.isArray(product.sizeAvailability) && product.sizeAvailability.length) {
+        return product.sizeAvailability;
+    }
+
+    const rentedSizes = product.rentedSizes || [];
+    return (product.sizes || []).map((size) => ({
+        size,
+        status: rentedSizes.includes(size) ? "rented" : "available"
+    }));
 }
 
 function buildProductFormData(form) {
@@ -69,7 +81,9 @@ function buildProductFormData(form) {
     productFormData.append("color", formData.get("color")?.trim() || "");
     productFormData.append("rentalPrice", formData.get("rentalPrice") || 0);
     productFormData.append("deposit", formData.get("deposit") || 0);
-    productFormData.append("status", formData.get("status") || "available");
+    if (formData.has("status")) {
+        productFormData.append("status", formData.get("status") || "available");
+    }
 
     form.querySelectorAll('input[name="sizes"]:checked').forEach((checkbox) => {
         productFormData.append("sizes", checkbox.value);
@@ -181,7 +195,7 @@ function renderCategoryOptions() {
 async function loadProducts() {
     const tbody = document.querySelector(".products-table tbody");
     if (tbody) {
-        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding: 28px;">Đang tải sản phẩm...</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 28px;">Đang tải sản phẩm...</td></tr>';
     }
 
     try {
@@ -198,7 +212,7 @@ async function loadProducts() {
         renderStats(data.stats);
     } catch (error) {
         if (tbody) {
-            tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding: 28px;">${escapeHtml(error.message)}</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding: 28px;">${escapeHtml(error.message)}</td></tr>`;
         }
     }
 }
@@ -237,17 +251,26 @@ function renderProductsTable() {
     if (!tbody) return;
 
     if (!pageState.products.length) {
-        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding: 28px;">Chưa có sản phẩm phù hợp.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 28px;">Chưa có sản phẩm phù hợp.</td></tr>';
         return;
     }
 
     tbody.innerHTML = "";
 
     pageState.products.forEach((product) => {
-        const status = getStatusMeta(product.status);
         const sizeTags = ["XS", "S", "M", "L", "XL", "XXL"].map((size) => {
-            const isActive = product.sizes?.includes(size);
-            return `<span class="size-tag ${isActive ? "size-active" : ""}">${size}</span>`;
+            const sizeInfo = getSizeAvailability(product).find((item) => item.size === size);
+            if (!sizeInfo) {
+                return `<span class="size-tag">${size}</span>`;
+            }
+
+            const isRented = sizeInfo.status === "rented";
+            return `
+                <span class="size-tag ${isRented ? "size-rented" : "size-active"}" title="${isRented ? "Đang được thuê" : "Sẵn sàng"}">
+                    ${size}
+                    <small>${isRented ? "Đang thuê" : "Sẵn sàng"}</small>
+                </span>
+            `;
         }).join("");
         const tr = document.createElement("tr");
 
@@ -272,12 +295,6 @@ function renderProductsTable() {
             </td>
             <td><span class="price-text">${formatCurrency(product.rentalPrice)}</span></td>
             <td><span class="price-text" style="font-weight: normal; color: #5f5e5e;">${formatCurrency(product.deposit)}</span></td>
-            <td>
-                <span class="status-badge ${status.className}">
-                    <span class="badge-dot ${product.status === "maintenance" ? "badge-pulse" : ""}"></span>
-                    ${status.label}
-                </span>
-            </td>
             <td>
                 <div class="action-buttons">
                     <button class="action-btn-icon" title="Xem chi tiết" onclick="openDetailModal('${product._id}')">
@@ -308,24 +325,42 @@ function renderPagination() {
 
     if (!paginationButtons) return;
 
-    const pages = [];
     const maxPage = Math.max(pageState.totalPages, 1);
-    const from = Math.max(1, pageState.page - 1);
-    const to = Math.min(maxPage, pageState.page + 1);
+    const pages = getVisiblePaginationPages(pageState.page, maxPage);
+
+    paginationButtons.innerHTML = `
+        <button class="pagination-btn-nav" ${pageState.page <= 1 ? "disabled" : ""} onclick="goToProductPage(${pageState.page - 1})" aria-label="Trang trước">
+            <span class="material-symbols-outlined">chevron_left</span>
+        </button>
+        ${pages.map((page) => page === "..."
+            ? '<span class="pagination-ellipsis">...</span>'
+            : `<button class="pagination-btn-num ${page === pageState.page ? "pagination-active" : ""}" onclick="goToProductPage(${page})" ${page === pageState.page ? 'aria-current="page"' : ""}>${page}</button>`
+        ).join("")}
+        <button class="pagination-btn-nav" ${pageState.page >= maxPage ? "disabled" : ""} onclick="goToProductPage(${pageState.page + 1})" aria-label="Trang sau">
+            <span class="material-symbols-outlined">chevron_right</span>
+        </button>
+    `;
+}
+
+function getVisiblePaginationPages(currentPage, totalPages) {
+    if (totalPages <= 5) {
+        return Array.from({ length: totalPages }, (_, index) => index + 1);
+    }
+
+    const pages = [1];
+    const from = Math.max(2, currentPage - 1);
+    const to = Math.min(totalPages - 1, currentPage + 1);
+
+    if (from > 2) pages.push("...");
 
     for (let page = from; page <= to; page += 1) {
         pages.push(page);
     }
 
-    paginationButtons.innerHTML = `
-        <button class="pagination-btn-nav" ${pageState.page <= 1 ? "disabled" : ""} onclick="goToProductPage(${pageState.page - 1})">
-            <span class="material-symbols-outlined">chevron_left</span>
-        </button>
-        ${pages.map((page) => `<button class="pagination-btn-num ${page === pageState.page ? "pagination-active" : ""}" onclick="goToProductPage(${page})">${page}</button>`).join("")}
-        <button class="pagination-btn-nav" ${pageState.page >= maxPage ? "disabled" : ""} onclick="goToProductPage(${pageState.page + 1})">
-            <span class="material-symbols-outlined">chevron_right</span>
-        </button>
-    `;
+    if (to < totalPages - 1) pages.push("...");
+    pages.push(totalPages);
+
+    return pages;
 }
 
 function goToProductPage(page) {
@@ -479,7 +514,6 @@ async function getProduct(id) {
 async function openDetailModal(id) {
     try {
         const product = await getProduct(id);
-        const status = getStatusMeta(product.status);
 
         document.getElementById("detail-product-img").src = getProductImage(product);
         document.getElementById("detail-product-name").textContent = product.name;
@@ -489,7 +523,6 @@ async function openDetailModal(id) {
         document.getElementById("detail-product-sizes").textContent = product.sizes?.join(", ") || "Trống";
         document.getElementById("detail-product-price").textContent = formatCurrency(product.rentalPrice);
         document.getElementById("detail-product-deposit").textContent = formatCurrency(product.deposit);
-        document.getElementById("detail-product-status").textContent = status.label;
         document.getElementById("detail-product-description").textContent = product.description;
 
         openModal("modal-product-detail");
@@ -510,7 +543,6 @@ async function openEditModal(id) {
         document.getElementById("edit-product-color").value = product.color;
         document.getElementById("edit-product-price").value = product.rentalPrice;
         document.getElementById("edit-product-deposit").value = product.deposit;
-        document.getElementById("edit-product-status").value = product.status;
         document.getElementById("edit-product-image").value = "";
         setImagePreview("edit-product-image-preview", getProductImage(product));
 
@@ -697,10 +729,10 @@ function bindFilters() {
     if (selects[1]) {
         selects[1].innerHTML = `
             <option value="all">Trạng thái</option>
-            <option value="available">Available</option>
-            <option value="rented">Rented</option>
-            <option value="maintenance">Cleaning</option>
-            <option value="outofstock">Out of Stock</option>
+            <option value="available">Sẵn sàng</option>
+            <option value="rented">Đang thuê</option>
+            <option value="maintenance">Đang vệ sinh</option>
+            <option value="outofstock">Hết hàng</option>
         `;
         selects[1].addEventListener("change", () => {
             pageState.status = selects[1].value || "all";

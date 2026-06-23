@@ -52,19 +52,30 @@ function initUsersPage() {
         navLinks[3].classList.add('active');
     }
 
-    // Search filter logic
     const searchInput = document.querySelector('.search-input');
     if (searchInput) {
+        let searchTimer;
         searchInput.addEventListener('input', (e) => {
-            const val = e.target.value.toLowerCase();
-            const filtered = users.filter(user => 
-                user.fullName.toLowerCase().includes(val) || 
-                user.email.toLowerCase().includes(val) || 
-                user.phone.toLowerCase().includes(val)
-            );
-            renderUsersTable(filtered);
+            clearTimeout(searchTimer);
+            searchTimer = setTimeout(() => {
+                usersPagination.search = e.target.value.trim();
+                usersPagination.page = 1;
+                loadUsers();
+            }, 300);
         });
     }
+
+    document.querySelector('[data-user-filter="role"]')?.addEventListener("change", (event) => {
+        usersPagination.role = event.target.value;
+        usersPagination.page = 1;
+        loadUsers();
+    });
+
+    document.querySelector('[data-user-filter="status"]')?.addEventListener("change", (event) => {
+        usersPagination.isActive = event.target.value;
+        usersPagination.page = 1;
+        loadUsers();
+    });
 
     // Simple micro-interactions for button clicks
     document.querySelectorAll('button, .btn, .nav-item, .pagination-btn-num, .pagination-btn-nav').forEach(el => {
@@ -90,6 +101,7 @@ function initUsersPage() {
     const addBtn = document.querySelector(".btn-add");
     if (addBtn) {
         addBtn.addEventListener("click", () => {
+            resetUserAddressFields("add");
             openModal("modal-user-add");
         });
     }
@@ -107,21 +119,271 @@ function initUsersPage() {
 
 let users = [];
 let usersPagination = {
-    total: 0
+    page: 1,
+    limit: 10,
+    total: 0,
+    totalPages: 1,
+    search: "",
+    role: "all",
+    isActive: "all"
 };
+const USER_ADDRESS_API_URL = "https://provinces.open-api.vn/api/?depth=3";
+const USER_ADDRESS_CACHE_KEY = "rosette_vietnam_address_data";
+const USER_ADDRESS_CACHE_MAX_AGE = 7 * 24 * 60 * 60 * 1000;
+const USER_FALLBACK_ADDRESS_DATA = [
+    {
+        name: "Thành phố Hà Nội",
+        districts: [
+            { name: "Quận Ba Đình", wards: [{ name: "Phường Phúc Xá" }, { name: "Phường Trúc Bạch" }, { name: "Phường Liễu Giai" }] },
+            { name: "Quận Hoàn Kiếm", wards: [{ name: "Phường Hàng Bạc" }, { name: "Phường Hàng Bài" }, { name: "Phường Tràng Tiền" }] },
+            { name: "Quận Cầu Giấy", wards: [{ name: "Phường Nghĩa Đô" }, { name: "Phường Quan Hoa" }, { name: "Phường Yên Hoà" }] }
+        ]
+    },
+    {
+        name: "Thành phố Hồ Chí Minh",
+        districts: [
+            { name: "Quận 1", wards: [{ name: "Phường Bến Nghé" }, { name: "Phường Bến Thành" }, { name: "Phường Đa Kao" }] },
+            { name: "Quận 3", wards: [{ name: "Phường 1" }, { name: "Phường 2" }, { name: "Phường 3" }] },
+            { name: "Thành phố Thủ Đức", wards: [{ name: "Phường Linh Trung" }, { name: "Phường Thảo Điền" }, { name: "Phường An Phú" }] }
+        ]
+    },
+    {
+        name: "Thành phố Đà Nẵng",
+        districts: [
+            { name: "Quận Hải Châu", wards: [{ name: "Phường Hải Châu I" }, { name: "Phường Hải Châu II" }] },
+            { name: "Quận Sơn Trà", wards: [{ name: "Phường An Hải Bắc" }, { name: "Phường Phước Mỹ" }] }
+        ]
+    }
+];
+let userAddressData = [];
+
+function normalizeAddressName(value = "") {
+    return String(value)
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/^(tinh|thanh pho|tp|quan|huyen|thi xa|phuong|xa|thi tran)\s+/i, "")
+        .replace(/\s+/g, " ")
+        .trim()
+        .toLowerCase();
+}
+
+function getCachedAddressData() {
+    try {
+        const cached = JSON.parse(localStorage.getItem(USER_ADDRESS_CACHE_KEY) || "null");
+        if (!cached?.data || !cached?.savedAt) return null;
+        if (Date.now() - cached.savedAt > USER_ADDRESS_CACHE_MAX_AGE) return null;
+        return cached.data;
+    } catch (error) {
+        return null;
+    }
+}
+
+function saveCachedAddressData(data) {
+    try {
+        localStorage.setItem(USER_ADDRESS_CACHE_KEY, JSON.stringify({
+            savedAt: Date.now(),
+            data
+        }));
+    } catch (error) {
+        console.warn("Không thể lưu cache địa chỉ:", error);
+    }
+}
+
+async function loadVietnamAddressData() {
+    const cached = getCachedAddressData();
+    if (cached) {
+        userAddressData = cached;
+        return cached;
+    }
+
+    try {
+        const response = await fetch(USER_ADDRESS_API_URL);
+        if (!response.ok) throw new Error("Không thể tải danh sách tỉnh thành");
+        const data = await response.json();
+        if (!Array.isArray(data) || data.length === 0) throw new Error("Dữ liệu tỉnh thành không hợp lệ");
+        userAddressData = data;
+        saveCachedAddressData(data);
+        return data;
+    } catch (error) {
+        console.warn("Đang dùng dữ liệu địa chỉ dự phòng:", error);
+        userAddressData = USER_FALLBACK_ADDRESS_DATA;
+        return USER_FALLBACK_ADDRESS_DATA;
+    }
+}
+
+function setSelectOptions(select, options, placeholder, selectedName = "") {
+    if (!select) return;
+
+    select.innerHTML = `<option value="">${placeholder}</option>`;
+    options.forEach((item) => {
+        const option = document.createElement("option");
+        option.value = item.name;
+        option.textContent = item.name;
+        select.appendChild(option);
+    });
+
+    if (selectedName) {
+        const selected = Array.from(select.options).find((option) => (
+            normalizeAddressName(option.value) === normalizeAddressName(selectedName)
+        ));
+
+        if (selected) {
+            select.value = selected.value;
+        } else {
+            const option = document.createElement("option");
+            option.value = selectedName;
+            option.textContent = selectedName;
+            select.appendChild(option);
+            select.value = selectedName;
+        }
+    }
+}
+
+function findProvince(name) {
+    const normalized = normalizeAddressName(name);
+    return userAddressData.find((province) => normalizeAddressName(province.name) === normalized);
+}
+
+function findDistrict(province, name) {
+    const normalized = normalizeAddressName(name);
+    return province?.districts?.find((district) => normalizeAddressName(district.name) === normalized);
+}
+
+function populateUserProvinceSelect(prefix, selectedProvince = "") {
+    setSelectOptions(
+        document.getElementById(`${prefix}-user-province`),
+        userAddressData,
+        "Chọn tỉnh / thành phố",
+        selectedProvince
+    );
+}
+
+function populateUserDistrictSelect(prefix, provinceName, selectedDistrict = "") {
+    const districtSelect = document.getElementById(`${prefix}-user-district`);
+    const province = findProvince(provinceName);
+    const districts = province?.districts || [];
+
+    setSelectOptions(districtSelect, districts, "Chọn quận / huyện", selectedDistrict);
+    if (districtSelect) districtSelect.disabled = districts.length === 0;
+}
+
+function populateUserWardSelect(prefix, provinceName, districtName, selectedWard = "") {
+    const wardSelect = document.getElementById(`${prefix}-user-ward`);
+    const province = findProvince(provinceName);
+    const district = findDistrict(province, districtName);
+    const wards = district?.wards || [];
+
+    setSelectOptions(wardSelect, wards, "Chọn phường / xã", selectedWard);
+    if (wardSelect) wardSelect.disabled = wards.length === 0;
+}
+
+function parseAddress(addressString = "") {
+    if (!addressString || addressString === "Chưa cập nhật") {
+        return { street: "", ward: "", district: "", province: "" };
+    }
+
+    const parts = addressString.split(",").map((part) => part.trim()).filter(Boolean);
+    const address = { street: "", ward: "", district: "", province: "" };
+
+    if (parts.length >= 4) {
+        address.province = parts[parts.length - 1];
+        address.district = parts[parts.length - 2];
+        address.ward = parts[parts.length - 3];
+        address.street = parts.slice(0, parts.length - 3).join(", ");
+    } else if (parts.length === 3) {
+        address.province = parts[2];
+        address.district = parts[1];
+        address.street = parts[0];
+    } else if (parts.length === 2) {
+        address.province = parts[1];
+        address.street = parts[0];
+    } else {
+        address.street = addressString;
+    }
+
+    return address;
+}
+
+function setSelectedUserAddress(prefix, address) {
+    populateUserProvinceSelect(prefix, address.province);
+    populateUserDistrictSelect(prefix, document.getElementById(`${prefix}-user-province`)?.value, address.district);
+    populateUserWardSelect(
+        prefix,
+        document.getElementById(`${prefix}-user-province`)?.value,
+        document.getElementById(`${prefix}-user-district`)?.value,
+        address.ward
+    );
+
+    const streetInput = document.getElementById(`${prefix}-user-street`);
+    if (streetInput) streetInput.value = address.street || "";
+}
+
+function resetUserAddressFields(prefix) {
+    setSelectedUserAddress(prefix, { street: "", ward: "", district: "", province: "" });
+    const districtSelect = document.getElementById(`${prefix}-user-district`);
+    const wardSelect = document.getElementById(`${prefix}-user-ward`);
+    if (districtSelect) districtSelect.disabled = true;
+    if (wardSelect) wardSelect.disabled = true;
+}
+
+function getUserAddressPayload(prefix) {
+    const street = document.getElementById(`${prefix}-user-street`)?.value.trim() || "";
+    const ward = document.getElementById(`${prefix}-user-ward`)?.value.trim() || "";
+    const district = document.getElementById(`${prefix}-user-district`)?.value.trim() || "";
+    const province = document.getElementById(`${prefix}-user-province`)?.value.trim() || "";
+
+    if (!street || !ward || !district || !province) {
+        throw new Error("Vui lòng chọn đầy đủ tỉnh/thành phố, quận/huyện, phường/xã và nhập địa chỉ chi tiết.");
+    }
+
+    return [street, ward, district, province].join(", ");
+}
+
+function bindUserAddressSelectors(prefix) {
+    const provinceSelect = document.getElementById(`${prefix}-user-province`);
+    const districtSelect = document.getElementById(`${prefix}-user-district`);
+    const wardSelect = document.getElementById(`${prefix}-user-ward`);
+
+    provinceSelect?.addEventListener("change", () => {
+        populateUserDistrictSelect(prefix, provinceSelect.value);
+        populateUserWardSelect(prefix, provinceSelect.value, "");
+    });
+
+    districtSelect?.addEventListener("change", () => {
+        populateUserWardSelect(prefix, provinceSelect?.value, districtSelect.value);
+    });
+
+    if (districtSelect) districtSelect.disabled = true;
+    if (wardSelect) wardSelect.disabled = true;
+}
+
+async function initUserAddressSelectors() {
+    await loadVietnamAddressData();
+    ["add", "edit"].forEach((prefix) => {
+        populateUserProvinceSelect(prefix);
+        bindUserAddressSelectors(prefix);
+    });
+}
 
 async function loadUsers() {
     try {
-        const response = await apiFetch("/api/users");
+        const response = await apiFetch(buildUserListUrl());
         if (response.status === 401) {
             window.location.href = "/views/login.html";
             return;
         }
         const data = await parseApiResponse(response);
         users = Array.isArray(data) ? data : data.users || [];
-        usersPagination = Array.isArray(data) ? { total: users.length } : data.pagination || { total: users.length };
+        const pagination = Array.isArray(data) ? { total: users.length } : data.pagination || { total: users.length };
+        usersPagination = {
+            ...usersPagination,
+            page: pagination.page || usersPagination.page,
+            limit: pagination.limit || usersPagination.limit,
+            total: pagination.total || 0,
+            totalPages: pagination.totalPages || 1
+        };
         renderUsersTable(users);
-        updatePaginationText(users.length, usersPagination.total);
+        renderUsersPagination();
         renderUserStats(Array.isArray(data) ? null : data.stats);
     } catch (error) {
         console.error("Không thể tải danh sách người dùng:", error);
@@ -130,6 +392,27 @@ async function loadUsers() {
             tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding: 28px; color: #ba1a1a;">Không thể tải dữ liệu: ${escapeHtml(error.message)}</td></tr>`;
         }
     }
+}
+
+function buildUserListUrl() {
+    const params = new URLSearchParams({
+        page: String(usersPagination.page),
+        limit: String(usersPagination.limit)
+    });
+
+    if (usersPagination.search) {
+        params.set("search", usersPagination.search);
+    }
+
+    if (usersPagination.role && usersPagination.role !== "all") {
+        params.set("role", usersPagination.role);
+    }
+
+    if (usersPagination.isActive && usersPagination.isActive !== "all") {
+        params.set("isActive", usersPagination.isActive);
+    }
+
+    return `/api/users?${params.toString()}`;
 }
 
 function renderUserStats(stats) {
@@ -197,12 +480,9 @@ function renderUsersTable(userList) {
                 </td>
                 <td class="user-created">${registeredDate}</td>
                 <td>
-                    <div class="status-wrapper">
-                        <div class="status-dot ${user.isActive ? 'active' : 'inactive'}"></div>
-                        <span class="status-text ${user.isActive ? 'active' : 'inactive'}">
-                            ${user.isActive ? 'Đang hoạt động' : 'Đã khóa'}
-                        </span>
-                    </div>
+                    <span class="status-badge ${user.isActive ? 'active' : 'inactive'}">
+                        ${user.isActive ? 'Đang hoạt động' : 'Đã khóa'}
+                    </span>
                 </td>
                 <td>
                     <div class="action-buttons">
@@ -343,7 +623,7 @@ async function openEditModal(id) {
         document.getElementById("edit-user-password").value = "";
         document.getElementById("edit-user-phone").value = user.phone;
         document.getElementById("edit-user-role").value = user.role;
-        document.getElementById("edit-user-address").value = user.address || "";
+        setSelectedUserAddress("edit", parseAddress(user.address || ""));
         document.getElementById("edit-user-status").value = String(user.isActive);
 
         openModal("modal-user-edit");
@@ -383,17 +663,17 @@ async function handleUserAdd(event) {
     const form = event.target;
     const formData = new FormData(form);
 
-    const payload = {
-        fullName: formData.get("fullName").trim(),
-        email: formData.get("email").trim(),
-        password: formData.get("password"),
-        phone: formData.get("phone").trim(),
-        address: formData.get("address").trim(),
-        role: formData.get("role"),
-        isActive: formData.get("isActive") === "true"
-    };
-
     try {
+        const payload = {
+            fullName: formData.get("fullName").trim(),
+            email: formData.get("email").trim(),
+            password: formData.get("password"),
+            phone: formData.get("phone").trim(),
+            address: getUserAddressPayload("add"),
+            role: formData.get("role"),
+            isActive: formData.get("isActive") === "true"
+        };
+
         const response = await apiFetch("/api/users", {
             method: "POST",
             headers: {
@@ -405,6 +685,7 @@ async function handleUserAdd(event) {
 
         closeModal("modal-user-add");
         form.reset();
+        resetUserAddressFields("add");
         await loadUsers();
         showToast("Thêm người dùng mới thành công!", "success");
     } catch (error) {
@@ -418,21 +699,21 @@ async function handleUserEdit(event) {
     const id = document.getElementById("edit-user-id").value;
     const formData = new FormData(form);
 
-    const payload = {
-        fullName: formData.get("fullName").trim(),
-        email: formData.get("email").trim(),
-        phone: formData.get("phone").trim(),
-        address: formData.get("address").trim(),
-        role: formData.get("role"),
-        isActive: formData.get("isActive") === "true"
-    };
-
-    const newPassword = formData.get("password");
-    if (newPassword && newPassword.trim() !== "") {
-        payload.password = newPassword;
-    }
-
     try {
+        const payload = {
+            fullName: formData.get("fullName").trim(),
+            email: formData.get("email").trim(),
+            phone: formData.get("phone").trim(),
+            address: getUserAddressPayload("edit"),
+            role: formData.get("role"),
+            isActive: formData.get("isActive") === "true"
+        };
+
+        const newPassword = formData.get("password");
+        if (newPassword && newPassword.trim() !== "") {
+            payload.password = newPassword;
+        }
+
         const response = await apiFetch(`/api/users/${id}`, {
             method: "PUT",
             headers: {
@@ -450,12 +731,62 @@ async function handleUserEdit(event) {
     }
 }
 
-function updatePaginationText(count, total = count) {
+function renderUsersPagination() {
     const textEl = document.querySelector(".pagination-text");
+    const buttonsEl = document.querySelector(".pagination-buttons");
+    const total = usersPagination.total;
+    const currentPage = usersPagination.page;
+    const totalPages = Math.max(usersPagination.totalPages, 1);
+    const start = total === 0 ? 0 : (currentPage - 1) * usersPagination.limit + 1;
+    const end = Math.min(currentPage * usersPagination.limit, total);
+
     if (textEl) {
-        const start = total === 0 ? 0 : 1;
-        textEl.textContent = `Đang hiển thị ${start} đến ${count} trong số ${total} người dùng`;
+        textEl.textContent = `Đang hiển thị ${start} đến ${end} trong số ${total} người dùng`;
     }
+
+    if (!buttonsEl) return;
+
+    const pages = getVisiblePaginationPages(currentPage, totalPages);
+    buttonsEl.innerHTML = `
+        <button class="pagination-btn-nav" ${currentPage <= 1 ? "disabled" : ""} onclick="goToUserPage(${currentPage - 1})" aria-label="Trang trước">
+            <span class="material-symbols-outlined">chevron_left</span>
+        </button>
+        ${pages.map((page) => page === "..."
+            ? '<span class="pagination-ellipsis">...</span>'
+            : `<button class="pagination-btn-num ${page === currentPage ? "pagination-active" : ""}" onclick="goToUserPage(${page})" ${page === currentPage ? 'aria-current="page"' : ""}>${page}</button>`
+        ).join("")}
+        <button class="pagination-btn-nav" ${currentPage >= totalPages ? "disabled" : ""} onclick="goToUserPage(${currentPage + 1})" aria-label="Trang sau">
+            <span class="material-symbols-outlined">chevron_right</span>
+        </button>
+    `;
+}
+
+function getVisiblePaginationPages(currentPage, totalPages) {
+    if (totalPages <= 5) {
+        return Array.from({ length: totalPages }, (_, index) => index + 1);
+    }
+
+    const pages = [1];
+    const from = Math.max(2, currentPage - 1);
+    const to = Math.min(totalPages - 1, currentPage + 1);
+
+    if (from > 2) pages.push("...");
+
+    for (let page = from; page <= to; page += 1) {
+        pages.push(page);
+    }
+
+    if (to < totalPages - 1) pages.push("...");
+    pages.push(totalPages);
+
+    return pages;
+}
+
+function goToUserPage(page) {
+    const totalPages = Math.max(usersPagination.totalPages, 1);
+    if (page < 1 || page > totalPages || page === usersPagination.page) return;
+    usersPagination.page = page;
+    loadUsers();
 }
 
 function escapeHtml(str) {
@@ -471,7 +802,8 @@ function escapeHtml(str) {
 document.addEventListener("DOMContentLoaded", async () => {
     const [sidebarLoaded] = await Promise.all([
         loadLayout("sidebar-placeholder", "../layouts/sidebar.html"),
-        loadLayout("footer-placeholder", "../layouts/footer.html")
+        loadLayout("footer-placeholder", "../layouts/footer.html"),
+        initUserAddressSelectors()
     ]);
 
     if (sidebarLoaded) {

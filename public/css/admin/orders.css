@@ -333,13 +333,17 @@ a {
 .canvas-container {
     padding: 32px;
     max-width: 1440px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
 }
 
 .page-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-    margin-bottom: 32px;
+    margin-bottom: 8px;
 }
 
 .page-title {
@@ -362,7 +366,7 @@ a {
     align-items: center;
     gap: 0.5rem;
     padding: 0.75rem 1.5rem;
-    border-radius: 0.125rem;
+    border-radius: 9999px;
     font-family: 'Be Vietnam Pro', sans-serif;
     font-size: 12px;
     font-weight: 600;
@@ -386,7 +390,6 @@ a {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 24px;
-    margin-bottom: 40px;
 }
 
 .kpi-card {
@@ -600,6 +603,12 @@ a {
     vertical-align: middle;
 }
 
+.orders-table th:nth-child(7),
+.orders-table td:nth-child(7) {
+    text-align: center;
+    white-space: nowrap;
+}
+
 .text-center {
     text-align: center;
 }
@@ -662,14 +671,41 @@ a {
 .status-badge {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
+    min-width: 112px;
+    min-height: 34px;
     padding: 4px 12px;
     font-size: 10px;
     font-family: 'Be Vietnam Pro', sans-serif;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.1em;
+    line-height: 1;
+    white-space: nowrap;
     border-radius: 9999px;
     border: 1px solid transparent;
+}
+
+.order-status-select {
+    width: 132px;
+    min-height: 34px;
+    border-radius: 9999px;
+    border: 1px solid transparent;
+    padding: 6px 28px 6px 14px;
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    line-height: 1;
+    text-transform: uppercase;
+    white-space: nowrap;
+    cursor: pointer;
+    outline: none;
+}
+
+.order-status-select:disabled {
+    cursor: wait;
+    opacity: 0.72;
 }
 
 .badge-processing {
@@ -738,6 +774,7 @@ a {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 16px;
     background-color: #fbf9f9;
     border-top: 1px solid #d0c5af;
 }
@@ -745,23 +782,31 @@ a {
 .pagination-text {
     font-size: 14px;
     color: #4d4635;
+    margin: 0;
+    line-height: 1.5;
 }
 
 .pagination-buttons {
     display: flex;
     align-items: center;
-    gap: 4px;
+    justify-content: flex-end;
+    gap: 6px;
+    flex-wrap: wrap;
 }
 
 .pagination-btn-nav {
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
     border: 1px solid #d0c5af;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: background-color 0.2s, border-color 0.2s, color 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
+    background: #fffdf9;
+    color: #735c00;
+    flex: 0 0 36px;
 }
 
 .pagination-btn-nav:hover:not(:disabled) {
@@ -774,14 +819,16 @@ a {
 }
 
 .pagination-btn-nav span {
-    font-size: 14px !important;
+    font-size: 18px !important;
 }
 
 .pagination-btn-num {
-    width: 32px;
-    height: 32px;
+    min-width: 36px;
+    height: 36px;
+    padding: 0 10px;
+    border-radius: 6px;
     font-size: 12px;
-    font-weight: bold;
+    font-weight: 700;
     cursor: pointer;
     transition: all 0.2s;
     border: 1px solid #d0c5af;
@@ -789,6 +836,7 @@ a {
     align-items: center;
     justify-content: center;
     background: transparent;
+    color: #4d4635;
 }
 
 .pagination-btn-num:hover:not(.pagination-active) {
@@ -801,9 +849,15 @@ a {
     border-color: #735c00;
 }
 
+.pagination-ellipsis {
+    min-width: 24px;
+    text-align: center;
+    font-size: 12px;
+    color: #5f5e5e;
+}
+
 /* Decorative Section */
 .trend-section {
-    margin-top: 48px;
     display: grid;
     grid-template-columns: 2fr 1fr;
     gap: 32px;

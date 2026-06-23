@@ -1,11 +1,26 @@
 const RentalOrder = require("../models/RentalOrder");
 const Product = require("../models/Product");
 const Payment = require("../models/Payment");
+const Review = require("../models/Review");
 const mongoose = require("mongoose");
 const { sendSuccess, sendError } = require("../middleware/response");
 
 const orderStatuses = ["pending", "approved", "delivering", "renting", "returned", "completed", "cancelled"];
-const paymentMethods = ["bank_transfer", "cash_on_delivery"];
+const paymentMethods = ["vnpay", "cash_on_delivery"];
+const forwardOrderStatusFlow = ["pending", "approved", "delivering", "renting", "returned", "completed"];
+
+const getNextOrderStatus = (status) => {
+  const currentIndex = forwardOrderStatusFlow.indexOf(status);
+  return currentIndex >= 0 ? forwardOrderStatusFlow[currentIndex + 1] : null;
+};
+
+const canMoveOrderStatus = (currentStatus, nextStatus) => {
+  return currentStatus === nextStatus || getNextOrderStatus(currentStatus) === nextStatus;
+};
+
+const canEditOrderDetails = (status) => {
+  return status === "pending";
+};
 
 const escapeRegex = (value) => {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -56,20 +71,30 @@ const buildOrderItems = async (items = []) => {
       throw new Error("San pham trong don thue khong ton tai");
     }
 
-    const quantity = Math.max(Number(item.quantity) || 1, 1);
-
     return {
       product: product._id,
-      quantity,
+      size: item.size,
+      quantity: 1,
       rentalPrice: item.rentalPrice !== undefined ? Number(item.rentalPrice) : product.rentalPrice,
       deposit: item.deposit !== undefined ? Number(item.deposit) : product.deposit
     };
   });
 };
 
-const calculateTotalAmount = (items) => {
+const calculateRentalDays = (startDate, returnDate) => {
+  const start = new Date(startDate);
+  const end = new Date(returnDate);
+  const diffMs = end.getTime() - start.getTime();
+  const diffDays = Math.ceil(diffMs / (24 * 60 * 60 * 1000));
+
+  return Math.max(diffDays, 1);
+};
+
+const calculateTotalAmount = (items, startDate, returnDate) => {
+  const rentalDays = calculateRentalDays(startDate, returnDate);
+
   return items.reduce((total, item) => {
-    return total + (item.rentalPrice + item.deposit) * item.quantity;
+    return total + ((item.rentalPrice + item.deposit) * rentalDays) * item.quantity;
   }, 0);
 };
 
@@ -86,7 +111,9 @@ const createOrder = async (req, res) => {
       ...req.body,
       user: req.user.role === "admin" && req.body.user ? req.body.user : req.user._id,
       items,
-      totalAmount: req.body.totalAmount !== undefined ? Number(req.body.totalAmount) : calculateTotalAmount(items)
+      totalAmount: req.body.totalAmount !== undefined
+        ? Number(req.body.totalAmount)
+        : calculateTotalAmount(items, req.body.startDate, req.body.returnDate)
     };
     const paymentMethod = req.body.paymentMethod;
 
@@ -231,6 +258,27 @@ const getOrderById = async (req, res) => {
 
     const payment = await Payment.findOne({ rentalOrder: order._id });
     const orderObj = order.toObject();
+    const productIds = orderObj.items
+      .map((item) => item.product?._id || item.product)
+      .filter(Boolean);
+    const reviews = isOwner && productIds.length
+      ? await Review.find({
+          user: req.user._id,
+          product: { $in: productIds }
+        })
+      : [];
+    const reviewMap = reviews.reduce((result, review) => {
+      result[review.product.toString()] = review.toObject();
+      return result;
+    }, {});
+
+    orderObj.items = orderObj.items.map((item) => {
+      const productId = item.product?._id?.toString() || item.product?.toString();
+      return {
+        ...item,
+        review: productId ? reviewMap[productId] || null : null
+      };
+    });
     orderObj.payment = payment;
 
     return sendSuccess(res, "Lay chi tiet don thue thanh cong", orderObj);
@@ -254,11 +302,45 @@ const updateOrder = async (req, res) => {
       }
     });
 
-    if (req.body.items !== undefined) {
-      payload.items = await buildOrderItems(req.body.items);
+    let existingOrder = null;
+    const needsExistingOrder = req.body.items !== undefined ||
+      (payload.status !== undefined) ||
+      (req.body.totalAmount === undefined && (req.body.startDate !== undefined || req.body.returnDate !== undefined));
+
+    if (needsExistingOrder) {
+      existingOrder = await RentalOrder.findById(req.params.id);
+      if (!existingOrder) {
+        return sendError(res, "Khong tim thay don thue", 404);
+      }
+    }
+
+    if (!existingOrder) {
+      existingOrder = await RentalOrder.findById(req.params.id);
+      if (!existingOrder) {
+        return sendError(res, "Khong tim thay don thue", 404);
+      }
+    }
+
+    if (!canEditOrderDetails(existingOrder.status)) {
+      return sendError(res, "Don hang da duoc xac nhan nen khong the chinh sua", 400);
+    }
+
+    if (payload.status !== undefined && !canMoveOrderStatus(existingOrder.status, payload.status)) {
+      return sendError(res, "Khong the quay lai hoac bo qua trang thai don thue", 400);
+    }
+
+    if (req.body.items !== undefined || (req.body.totalAmount === undefined && (req.body.startDate !== undefined || req.body.returnDate !== undefined))) {
+      if (req.body.items !== undefined) {
+        payload.items = await buildOrderItems(req.body.items);
+      }
+
       payload.totalAmount = req.body.totalAmount !== undefined
         ? Number(req.body.totalAmount)
-        : calculateTotalAmount(payload.items);
+        : calculateTotalAmount(
+          payload.items || existingOrder.items,
+          payload.startDate || existingOrder.startDate,
+          payload.returnDate || existingOrder.returnDate
+        );
     }
 
     if (payload.status && !orderStatuses.includes(payload.status)) {
@@ -296,8 +378,18 @@ const updateOrderStatus = async (req, res) => {
       return sendError(res, "Trang thai don thue khong hop le", 400);
     }
 
+    const currentOrder = await RentalOrder.findById(req.params.id);
+
+    if (!currentOrder) {
+      return sendError(res, "Khong tim thay don thue", 404);
+    }
+
+    if (!canMoveOrderStatus(currentOrder.status, status)) {
+      return sendError(res, "Khong the quay lai hoac bo qua trang thai don thue", 400);
+    }
+
     const order = await populateOrder(RentalOrder.findByIdAndUpdate(
-      req.params.id,
+      currentOrder._id,
       { status },
       {
         new: true,
@@ -310,6 +402,98 @@ const updateOrderStatus = async (req, res) => {
     }
 
     return sendSuccess(res, "Cap nhat trang thai don thue thanh cong", order);
+  } catch (error) {
+    return sendError(res, error.message, 400);
+  }
+};
+
+const cancelMyOrder = async (req, res) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return sendError(res, "ID don thue khong hop le", 400);
+    }
+
+    const order = await RentalOrder.findOne({
+      _id: req.params.id,
+      user: req.user._id
+    });
+
+    if (!order) {
+      return sendError(res, "Khong tim thay don thue", 404);
+    }
+
+    if (!["pending", "approved"].includes(order.status)) {
+      return sendError(res, "Chi co the huy don hang dang cho duyet hoac da duyet", 400);
+    }
+
+    order.status = "cancelled";
+    await order.save();
+    await order.populate("user", "fullName email phone address");
+    await order.populate("items.product", "name rentalPrice deposit status images code");
+
+    return sendSuccess(res, "Huy don hang thanh cong", order);
+  } catch (error) {
+    return sendError(res, error.message, 400);
+  }
+};
+
+const reviewCompletedOrderItem = async (req, res) => {
+  try {
+    const { product, rating, comment = "" } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return sendError(res, "ID don thue khong hop le", 400);
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(product)) {
+      return sendError(res, "ID san pham khong hop le", 400);
+    }
+
+    const normalizedRating = Number(rating);
+
+    if (!Number.isInteger(normalizedRating) || normalizedRating < 1 || normalizedRating > 5) {
+      return sendError(res, "Danh gia phai tu 1 den 5 sao", 400);
+    }
+
+    const order = await RentalOrder.findOne({
+      _id: req.params.id,
+      user: req.user._id
+    });
+
+    if (!order) {
+      return sendError(res, "Khong tim thay don thue", 404);
+    }
+
+    if (order.status !== "completed") {
+      return sendError(res, "Chi co the danh gia khi don hang da hoan thanh", 400);
+    }
+
+    const productInOrder = order.items.some((item) => item.product.toString() === product);
+
+    if (!productInOrder) {
+      return sendError(res, "San pham khong nam trong don hang nay", 400);
+    }
+
+    const review = await Review.findOneAndUpdate(
+      {
+        user: req.user._id,
+        product
+      },
+      {
+        user: req.user._id,
+        product,
+        rating: normalizedRating,
+        comment: String(comment).trim()
+      },
+      {
+        new: true,
+        upsert: true,
+        runValidators: true,
+        setDefaultsOnInsert: true
+      }
+    );
+
+    return sendSuccess(res, "Luu danh gia thanh cong", review);
   } catch (error) {
     return sendError(res, error.message, 400);
   }
@@ -428,6 +612,8 @@ module.exports = {
   getOrderById,
   updateOrder,
   updateOrderStatus,
+  cancelMyOrder,
+  reviewCompletedOrderItem,
   deleteOrder,
   getOrderReports
 };

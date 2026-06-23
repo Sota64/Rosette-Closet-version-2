@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="/public/css/layouts/navbar.css" />
     <link rel="stylesheet" href="/public/css/layouts/footer.css" />
 
-    <link rel="stylesheet" href="/public/css/admin/products.css" />
+    <link rel="stylesheet" href="/public/css/admin/products.css?v=1.0.2" />
   </head>
   <body>
     <div id="sidebar-placeholder"></div>
@@ -32,16 +32,6 @@
         </div>
 
         <div class="top-bar-right">
-          <div class="top-bar-icons">
-            <button class="top-bar-btn notification-btn" title="Thông báo">
-              <span class="material-symbols-outlined">notifications</span>
-              <span class="notification-badge"></span>
-            </button>
-            <button class="top-bar-btn" title="Cài đặt">
-              <span class="material-symbols-outlined">settings</span>
-            </button>
-          </div>
-          <div class="divider"></div>
           <div class="navbar-auth" data-navbar-auth></div>
         </div>
       </header>
@@ -124,9 +114,9 @@
           </select>
           <select class="filter-select">
             <option>Trạng thái</option>
-            <option>Available</option>
-            <option>Rented</option>
-            <option>Cleaning</option>
+            <option>Sẵn sàng</option>
+            <option>Đang thuê</option>
+            <option>Đang vệ sinh</option>
           </select>
           <select class="filter-select">
             <option>Giá thuê</option>
@@ -150,7 +140,6 @@
                   <th class="text-center">KÍCH CỠ</th>
                   <th>GIÁ THUÊ</th>
                   <th>TIỀN CỌC</th>
-                  <th>TRẠNG THÁI</th>
                   <th class="text-right">THAO TÁC</th>
                 </tr>
               </thead>
@@ -191,12 +180,6 @@
                       style="font-weight: normal; color: #5f5e5e"
                       >2.000.000đ</span
                     >
-                  </td>
-                  <td>
-                    <span class="status-badge badge-available">
-                      <span class="badge-dot"></span>
-                      Available
-                    </span>
                   </td>
                   <td>
                     <div class="action-buttons">
@@ -252,12 +235,6 @@
                     >
                   </td>
                   <td>
-                    <span class="status-badge badge-rented">
-                      <span class="badge-dot"></span>
-                      Rented
-                    </span>
-                  </td>
-                  <td>
                     <div class="action-buttons">
                       <button class="action-btn-icon" title="Xem chi tiết">
                         <span class="material-symbols-outlined"
@@ -309,12 +286,6 @@
                       style="font-weight: normal; color: #5f5e5e"
                       >5.000.000đ</span
                     >
-                  </td>
-                  <td>
-                    <span class="status-badge badge-cleaning">
-                      <span class="badge-dot badge-pulse"></span>
-                      Cleaning
-                    </span>
                   </td>
                   <td>
                     <div class="action-buttons">
@@ -370,12 +341,6 @@
                     >
                   </td>
                   <td>
-                    <span class="status-badge badge-outofstock">
-                      <span class="badge-dot"></span>
-                      Out of Stock
-                    </span>
-                  </td>
-                  <td>
                     <div class="action-buttons">
                       <button class="action-btn-icon" title="Xem chi tiết">
                         <span class="material-symbols-outlined"
@@ -397,20 +362,9 @@
 
           <div class="pagination">
             <p class="pagination-text">
-              Đang hiển thị 1 đến 4 trên 1,248 sản phẩm
+              Đang tải phân trang...
             </p>
             <div class="pagination-buttons">
-              <button class="pagination-btn-nav" disabled>
-                <span class="material-symbols-outlined">chevron_left</span>
-              </button>
-              <button class="pagination-btn-num pagination-active">1</button>
-              <button class="pagination-btn-num">2</button>
-              <button class="pagination-btn-num">3</button>
-              <span class="pagination-ellipsis">...</span>
-              <button class="pagination-btn-num">312</button>
-              <button class="pagination-btn-nav">
-                <span class="material-symbols-outlined">chevron_right</span>
-              </button>
             </div>
           </div>
         </div>
@@ -602,9 +556,9 @@
             <div class="form-group">
               <label class="form-label">Trạng thái</label>
               <select class="form-select" name="status">
-                <option value="available">Available</option>
-                <option value="rented">Rented</option>
-                <option value="maintenance">Cleaning</option>
+                <option value="available">Sẵn sàng</option>
+                <option value="rented">Đang thuê</option>
+                <option value="maintenance">Đang vệ sinh</option>
               </select>
             </div>
           </div>
@@ -757,9 +711,6 @@
           <span id="detail-product-deposit" class="detail-value"
             >2.000.000đ</span
           >
-
-          <span class="detail-label">Trạng thái:</span>
-          <span id="detail-product-status" class="detail-value">Available</span>
 
           <span class="detail-label">Mô tả sản phẩm:</span>
           <span id="detail-product-description" class="detail-value description"
@@ -921,20 +872,6 @@
                 placeholder="Ví dụ: 2000000"
                 name="deposit"
               />
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">Trạng thái</label>
-              <select
-                id="edit-product-status"
-                class="form-select"
-                name="status"
-              >
-                <option value="available">Available</option>
-                <option value="rented">Rented</option>
-                <option value="maintenance">Cleaning</option>
-              </select>
             </div>
           </div>
           <div class="form-group">

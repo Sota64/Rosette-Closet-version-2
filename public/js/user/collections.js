@@ -7,6 +7,8 @@ const collectionsState = {
   category: new URLSearchParams(window.location.search).get("category") || "all"
 };
 
+let collectionsCategories = [];
+
 async function loadLayout(placeholderId, url) {
   try {
     const response = await fetch(url);
@@ -37,6 +39,22 @@ function escapeHtml(value = "") {
 
 function formatCurrency(value = 0) {
   return Number(value || 0).toLocaleString("vi-VN") + "đ";
+}
+
+async function isUserAuthenticated() {
+  try {
+    const response = await fetch("/api/auth/me", {
+      credentials: "include"
+    });
+    const result = await response.json();
+    return response.ok && result.success && Boolean(result.data?.user);
+  } catch (error) {
+    return false;
+  }
+}
+
+function redirectToLogin(returnUrl = window.location.href) {
+  window.location.href = `/views/login.html?redirect=${encodeURIComponent(returnUrl)}`;
 }
 
 function getProductImage(product) {
@@ -73,6 +91,81 @@ function buildProductsUrl() {
   return `/api/products?${params.toString()}`;
 }
 
+function normalizeCategoryValue(value = "") {
+  return String(value)
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim()
+    .toLowerCase();
+}
+
+function setCollectionsHeading(title, description = "") {
+  const breadcrumb = document.getElementById("collections-breadcrumb-current");
+  const heading = document.getElementById("collections-heading-title");
+  const headingDescription = document.getElementById("collections-heading-description");
+
+  if (breadcrumb) breadcrumb.textContent = title;
+  if (heading) heading.textContent = title === "Bộ sưu tập" ? "Khám Phá Bộ Sưu Tập" : title;
+  if (headingDescription) {
+    headingDescription.textContent = description ||
+      (title === "Bộ sưu tập"
+        ? "Những thiết kế tinh tuyển cho khoảnh khắc toả sáng của bạn. Tận hưởng sự sang trọng và đẳng cấp trong từng đường nét cắt may."
+        : `Khám phá những thiết kế thuộc danh mục ${title}, được tuyển chọn để giúp bạn nổi bật trong từng khoảnh khắc.`);
+  }
+
+  document.title = title === "Bộ sưu tập"
+    ? "Bộ sưu tập | RosetteCloset"
+    : `${title} | RosetteCloset`;
+}
+
+function findSelectedCategory() {
+  if (!collectionsState.category || collectionsState.category === "all") return null;
+
+  const normalizedCategory = normalizeCategoryValue(collectionsState.category);
+  return collectionsCategories.find((category) => (
+    String(category._id) === collectionsState.category ||
+    normalizeCategoryValue(category.name) === normalizedCategory
+  ));
+}
+
+async function loadCollectionsCategories() {
+  if (!collectionsState.category || collectionsState.category === "all") {
+    setCollectionsHeading("Bộ sưu tập");
+    return;
+  }
+
+  try {
+    const response = await fetch("/api/categories");
+    const result = await response.json();
+
+    if (response.ok && result.success && Array.isArray(result.data)) {
+      collectionsCategories = result.data;
+    }
+  } catch (error) {
+    console.warn("Không thể tải danh mục để cập nhật heading:", error);
+  }
+
+  const selectedCategory = findSelectedCategory();
+  setCollectionsHeading(
+    selectedCategory?.name || collectionsState.category,
+    selectedCategory?.description
+  );
+}
+
+function updateHeadingFromProducts(products = []) {
+  if (!collectionsState.category || collectionsState.category === "all") {
+    setCollectionsHeading("Bộ sưu tập");
+    return;
+  }
+
+  const selectedCategory = findSelectedCategory();
+  const productCategory = products.find((product) => product.category?.name)?.category;
+  const categoryName = selectedCategory?.name || productCategory?.name || collectionsState.category;
+  const categoryDescription = selectedCategory?.description || productCategory?.description || "";
+
+  setCollectionsHeading(categoryName, categoryDescription);
+}
+
 async function parseApiResponse(response) {
   const result = await response.json();
 
@@ -98,22 +191,34 @@ function renderProducts(products = []) {
         <a href="${getProductDetailUrl(product)}">
           <img src="${escapeHtml(getProductImage(product))}" alt="${escapeHtml(product.name)}" />
         </a>
-        <button type="button" aria-label="Thêm ${escapeHtml(product.name)} vào yêu thích">
-          <span class="material-symbols-outlined">favorite</span>
-        </button>
       </div>
       <div class="product-info">
         <p>${escapeHtml(getCategoryName(product))}</p>
         <h3><a href="${getProductDetailUrl(product)}">${escapeHtml(product.name)}</a></h3>
         <div class="product-bottom">
           <span>${formatCurrency(product.rentalPrice)}</span>
-          <a href="${getRentNowUrl(product)}">
+          <a class="rent-now-link" href="${getRentNowUrl(product)}">
             <button type="button">Thuê ngay</button>
           </a>
         </div>
       </div>
     </article>
   `).join("");
+}
+
+function bindRentNowAuthGuard() {
+  document.addEventListener("click", async (event) => {
+    const link = event.target.closest(".rent-now-link");
+    if (!link) return;
+
+    event.preventDefault();
+    if (!(await isUserAuthenticated())) {
+      redirectToLogin(link.href);
+      return;
+    }
+
+    window.location.href = link.href;
+  });
 }
 
 function renderPagination() {
@@ -154,6 +259,7 @@ async function loadProducts() {
     collectionsState.totalPages = data.pagination?.totalPages || 1;
     collectionsState.page = data.pagination?.page || collectionsState.page;
 
+    updateHeadingFromProducts(products);
     renderProducts(products);
     renderPagination();
   } catch (error) {
@@ -205,8 +311,10 @@ function bindCollectionsControls() {
 document.addEventListener("DOMContentLoaded", async () => {
   await Promise.all([
     loadLayout("navbar-placeholder", "/views/layouts/navbar.html"),
-    loadLayout("footer-placeholder", "/views/layouts/footer.html")
+    loadLayout("footer-placeholder", "/views/layouts/footer.html"),
+    loadCollectionsCategories()
   ]);
   bindCollectionsControls();
+  bindRentNowAuthGuard();
   loadProducts();
 });

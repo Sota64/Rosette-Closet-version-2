@@ -30,6 +30,22 @@ function formatCurrency(value = 0) {
   return Number(value || 0).toLocaleString("vi-VN") + "đ";
 }
 
+async function isUserAuthenticated() {
+  try {
+    const response = await fetch("/api/auth/me", {
+      credentials: "include"
+    });
+    const result = await response.json();
+    return response.ok && result.success && Boolean(result.data?.user);
+  } catch (error) {
+    return false;
+  }
+}
+
+function redirectToLogin(returnUrl = window.location.href) {
+  window.location.href = `/views/login.html?redirect=${encodeURIComponent(returnUrl)}`;
+}
+
 function getProductImage(product) {
   return product?.images?.[0] || "/public/images/img1.png";
 }
@@ -127,7 +143,7 @@ function renderProducts(products = []) {
         <p>Size: ${escapeHtml(getProductSizes(product))} | Thuê 3 ngày</p>
 
         <div class="product-actions">
-          <a class="btn btn-gold full-width" href="${getRentNowUrl(product)}">Thuê ngay</a>
+          <a class="btn btn-gold full-width rent-now-link" href="${getRentNowUrl(product)}">Thuê ngay</a>
           <a class="preview-btn" href="${getProductDetailUrl(product)}" aria-label="Xem ${escapeHtml(product.name)}">
             <span class="material-symbols-outlined">visibility</span>
           </a>
@@ -135,6 +151,21 @@ function renderProducts(products = []) {
       </div>
     </article>
   `).join("");
+}
+
+function bindRentNowAuthGuard() {
+  document.addEventListener("click", async (event) => {
+    const link = event.target.closest(".rent-now-link");
+    if (!link) return;
+
+    event.preventDefault();
+    if (!(await isUserAuthenticated())) {
+      redirectToLogin(link.href);
+      return;
+    }
+
+    window.location.href = link.href;
+  });
 }
 
 async function loadHomepageData() {
@@ -164,4 +195,5 @@ document.addEventListener("DOMContentLoaded", async () => {
     loadLayout("footer-placeholder", "/views/layouts/footer.html")
   ]);
   loadHomepageData();
+  bindRentNowAuthGuard();
 });

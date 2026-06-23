@@ -1,10 +1,12 @@
 const Product = require("../models/Product");
 const Category = require("../models/Category");
 const Review = require("../models/Review");
+const RentalOrder = require("../models/RentalOrder");
 const mongoose = require("mongoose");
 const { sendSuccess, sendError } = require("../middleware/response");
 
 const allowedStatuses = ["available", "rented", "maintenance", "outofstock"];
+const activeRentalStatuses = ["pending", "approved", "delivering", "renting"];
 
 const escapeRegex = (value) => {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -165,6 +167,61 @@ const buildProductQuery = (query) => {
   return filter;
 };
 
+const getRentedSizesByProduct = async (productIds = []) => {
+  if (!productIds.length) return {};
+
+  const objectIds = productIds.map((id) => new mongoose.Types.ObjectId(id));
+  const rentedSizes = await RentalOrder.aggregate([
+    {
+      $match: {
+        status: { $in: activeRentalStatuses },
+        "items.product": { $in: objectIds }
+      }
+    },
+    { $unwind: "$items" },
+    {
+      $match: {
+        "items.product": { $in: objectIds },
+        "items.size": { $exists: true, $nin: [null, ""] }
+      }
+    },
+    {
+      $group: {
+        _id: "$items.product",
+        sizes: { $addToSet: "$items.size" }
+      }
+    }
+  ]);
+
+  return rentedSizes.reduce((result, item) => {
+    result[item._id.toString()] = item.sizes;
+    return result;
+  }, {});
+};
+
+const attachSizeAvailability = async (products) => {
+  const isArray = Array.isArray(products);
+  const productList = isArray ? products : [products].filter(Boolean);
+  const productIds = productList.map((product) => product._id.toString());
+  const rentedSizesByProduct = await getRentedSizesByProduct(productIds);
+
+  const result = productList.map((product) => {
+    const productObj = typeof product.toObject === "function" ? product.toObject() : product;
+    const rentedSizes = rentedSizesByProduct[productObj._id.toString()] || [];
+
+    return {
+      ...productObj,
+      rentedSizes,
+      sizeAvailability: (productObj.sizes || []).map((size) => ({
+        size,
+        status: rentedSizes.includes(size) ? "rented" : "available"
+      }))
+    };
+  });
+
+  return isArray ? result : result[0];
+};
+
 const getProducts = async (req, res) => {
   try {
     const page = Math.max(Number(req.query.page) || 1, 1);
@@ -234,9 +291,10 @@ const getProducts = async (req, res) => {
     stats.rentedPercent = stats.total > 0
       ? Number(((stats.rented / stats.total) * 100).toFixed(1))
       : 0;
+    const productsWithSizeAvailability = await attachSizeAvailability(products);
 
     return sendSuccess(res, "Lay danh sach san pham thanh cong", {
-      products,
+      products: productsWithSizeAvailability,
       pagination: {
         page,
         limit,
@@ -262,7 +320,9 @@ const getProductById = async (req, res) => {
       return sendError(res, "Khong tim thay san pham", 404);
     }
 
-    return sendSuccess(res, "Lay chi tiet san pham thanh cong", product);
+    const productWithSizeAvailability = await attachSizeAvailability(product);
+
+    return sendSuccess(res, "Lay chi tiet san pham thanh cong", productWithSizeAvailability);
   } catch (error) {
     return sendError(res, error.message);
   }
@@ -280,7 +340,7 @@ const getProductDetail = async (req, res) => {
       return sendError(res, "Khong tim thay san pham", 404);
     }
 
-    const [similarProducts, reviewStats] = await Promise.all([
+    const [similarProducts, reviewStats, reviews] = await Promise.all([
       Product.find({
         _id: { $ne: product._id },
         category: product.category?._id || product.category,
@@ -302,7 +362,10 @@ const getProductDetail = async (req, res) => {
             totalReviews: { $sum: 1 }
           }
         }
-      ])
+      ]),
+      Review.find({ product: product._id })
+        .populate("user", "fullName")
+        .sort("-createdAt")
     ]);
 
     const stats = reviewStats[0] || {
@@ -310,13 +373,16 @@ const getProductDetail = async (req, res) => {
       totalReviews: 0
     };
 
+    const productWithSizeAvailability = await attachSizeAvailability(product);
+
     return sendSuccess(res, "Lay chi tiet san pham thanh cong", {
-      product,
+      product: productWithSizeAvailability,
       similarProducts,
       reviewSummary: {
         averageRating: Number((stats.averageRating || 0).toFixed(1)),
         totalReviews: stats.totalReviews || 0
-      }
+      },
+      reviews
     });
   } catch (error) {
     return sendError(res, error.message);
@@ -328,8 +394,9 @@ const createProduct = async (req, res) => {
     const payload = await buildProductPayload(req.body, req.files);
     const product = await Product.create(payload);
     await product.populate("category", "name description");
+    const productWithSizeAvailability = await attachSizeAvailability(product);
 
-    return sendSuccess(res, "Tao san pham thanh cong", product, 201);
+    return sendSuccess(res, "Tao san pham thanh cong", productWithSizeAvailability, 201);
   } catch (error) {
     return sendError(res, error.message, 400);
   }
@@ -350,8 +417,9 @@ const updateProduct = async (req, res) => {
     if (!product) {
       return sendError(res, "Khong tim thay san pham", 404);
     }
+    const productWithSizeAvailability = await attachSizeAvailability(product);
 
-    return sendSuccess(res, "Cap nhat san pham thanh cong", product);
+    return sendSuccess(res, "Cap nhat san pham thanh cong", productWithSizeAvailability);
   } catch (error) {
     return sendError(res, error.message, 400);
   }

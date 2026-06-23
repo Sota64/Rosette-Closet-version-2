@@ -1,6 +1,6 @@
 const newArrivalsState = {
   page: 1,
-  limit: 8,
+  limit: 10,
   totalPages: 1,
   status: "all",
   sort: "-createdAt"
@@ -38,6 +38,22 @@ function formatCurrency(value = 0) {
   return Number(value || 0).toLocaleString("vi-VN") + "đ";
 }
 
+async function isUserAuthenticated() {
+  try {
+    const response = await fetch("/api/auth/me", {
+      credentials: "include"
+    });
+    const result = await response.json();
+    return response.ok && result.success && Boolean(result.data?.user);
+  } catch (error) {
+    return false;
+  }
+}
+
+function redirectToLogin(returnUrl = window.location.href) {
+  window.location.href = `/views/login.html?redirect=${encodeURIComponent(returnUrl)}`;
+}
+
 function getProductImage(product) {
   return product.images?.[0] || "/public/images/img1.png";
 }
@@ -56,9 +72,9 @@ function getRentNowUrl(product) {
 
 function buildProductsUrl() {
   const params = new URLSearchParams({
-    page: newArrivalsState.page,
+    page: 1,
     limit: newArrivalsState.limit,
-    sort: newArrivalsState.sort
+    sort: "-createdAt"
   });
 
   if (newArrivalsState.status !== "all") {
@@ -93,9 +109,6 @@ function renderProducts(products = []) {
         <a href="${getProductDetailUrl(product)}">
           <img src="${escapeHtml(getProductImage(product))}" alt="${escapeHtml(product.name)}" />
         </a>
-        <button type="button" aria-label="Thêm ${escapeHtml(product.name)} vào yêu thích">
-          <span class="material-symbols-outlined">favorite</span>
-        </button>
         <span class="product-badge">Mới</span>
       </div>
       <div class="product-info">
@@ -103,7 +116,7 @@ function renderProducts(products = []) {
         <h3><a href="${getProductDetailUrl(product)}">${escapeHtml(product.name)}</a></h3>
         <div class="product-bottom">
           <span>${formatCurrency(product.rentalPrice)}</span>
-          <a href="${getRentNowUrl(product)}">
+          <a class="rent-now-link" href="${getRentNowUrl(product)}">
             <button type="button">Thuê ngay</button>
           </a>
         </div>
@@ -112,26 +125,26 @@ function renderProducts(products = []) {
   `).join("");
 }
 
+function bindRentNowAuthGuard() {
+  document.addEventListener("click", async (event) => {
+    const link = event.target.closest(".rent-now-link");
+    if (!link) return;
+
+    event.preventDefault();
+    if (!(await isUserAuthenticated())) {
+      redirectToLogin(link.href);
+      return;
+    }
+
+    window.location.href = link.href;
+  });
+}
+
 function renderPagination() {
-  const pages = document.getElementById("new-arrivals-pages");
-  const prev = document.getElementById("new-arrivals-prev");
-  const next = document.getElementById("new-arrivals-next");
-  if (!pages || !prev || !next) return;
-
-  const totalPages = Math.max(newArrivalsState.totalPages, 1);
-  const from = Math.max(1, newArrivalsState.page - 1);
-  const to = Math.min(totalPages, newArrivalsState.page + 1);
-  const pageButtons = [];
-
-  for (let page = from; page <= to; page += 1) {
-    pageButtons.push(`
-      <button class="${page === newArrivalsState.page ? "current" : ""}" type="button" data-page="${page}">${page}</button>
-    `);
+  const pagination = document.querySelector(".pagination");
+  if (pagination) {
+    pagination.hidden = true;
   }
-
-  pages.innerHTML = pageButtons.join("");
-  prev.disabled = newArrivalsState.page <= 1;
-  next.disabled = newArrivalsState.page >= totalPages;
 }
 
 async function loadProducts() {
@@ -147,8 +160,8 @@ async function loadProducts() {
     const data = await parseApiResponse(response);
     const products = data.products || [];
 
-    newArrivalsState.totalPages = data.pagination?.totalPages || 1;
-    newArrivalsState.page = data.pagination?.page || newArrivalsState.page;
+    newArrivalsState.totalPages = 1;
+    newArrivalsState.page = 1;
 
     renderProducts(products);
     renderPagination();
@@ -172,7 +185,8 @@ function bindNewArrivalsControls() {
   });
 
   document.getElementById("new-arrivals-sort")?.addEventListener("change", (event) => {
-    newArrivalsState.sort = event.target.value;
+    event.target.value = "-createdAt";
+    newArrivalsState.sort = "-createdAt";
     newArrivalsState.page = 1;
     loadProducts();
   });
@@ -181,20 +195,15 @@ function bindNewArrivalsControls() {
     const page = Number(event.target.dataset.page);
     if (!page) return;
 
-    newArrivalsState.page = page;
-    loadProducts();
+    newArrivalsState.page = 1;
   });
 
   document.getElementById("new-arrivals-prev")?.addEventListener("click", () => {
-    if (newArrivalsState.page <= 1) return;
-    newArrivalsState.page -= 1;
-    loadProducts();
+    newArrivalsState.page = 1;
   });
 
   document.getElementById("new-arrivals-next")?.addEventListener("click", () => {
-    if (newArrivalsState.page >= newArrivalsState.totalPages) return;
-    newArrivalsState.page += 1;
-    loadProducts();
+    newArrivalsState.page = 1;
   });
 }
 
@@ -204,5 +213,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     loadLayout("footer-placeholder", "/views/layouts/footer.html")
   ]);
   bindNewArrivalsControls();
+  bindRentNowAuthGuard();
   loadProducts();
 });

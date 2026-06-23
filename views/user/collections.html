@@ -23,22 +23,20 @@
         <li><a href="/">Trang chủ</a></li>
         <li>
           <span class="material-symbols-outlined">chevron_right</span>
-          <span>Bộ sưu tập</span>
+          <span id="collections-breadcrumb-current">Bộ sưu tập</span>
         </li>
       </ol>
     </nav>
 
     <section class="page-heading">
-      <h1>Khám Phá Bộ Sưu Tập</h1>
-      <p>Những thiết kế tinh tuyển cho khoảnh khắc toả sáng của bạn. Tận hưởng sự sang trọng và đẳng cấp trong từng đường nét cắt may.</p>
+      <h1 id="collections-heading-title">Khám Phá Bộ Sưu Tập</h1>
+      <p id="collections-heading-description">Những thiết kế tinh tuyển cho khoảnh khắc toả sáng của bạn. Tận hưởng sự sang trọng và đẳng cấp trong từng đường nét cắt may.</p>
     </section>
 
     <section class="filter-bar" aria-label="Bộ lọc và sắp xếp">
       <div class="filter-group">
         <button class="current" type="button" data-filter-status="all">Tất cả</button>
         <button type="button" data-filter-status="available">Sẵn sàng</button>
-        <button type="button" data-filter-status="rented">Đang thuê</button>
-        <button type="button" data-filter-status="maintenance">Đang xử lý</button>
       </div>
 
       <div class="sort-group">
@@ -52,7 +50,7 @@
     </section>
 
     <section class="product-grid" id="collections-grid" aria-label="Danh sách sản phẩm">
-      <p class="collections-empty">Đang tải bộ sưu tập...</p>
+      <p class="collections-empty"></p>
     </section>
 
     <nav class="pagination" aria-label="Phân trang">

@@ -1,387 +1,658 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="vi">
-<head>
-    <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Quản lý đơn hàng | RosetteCloset Luxury Admin</title>
-    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-    <link rel="stylesheet" href="/public/css/layouts/navbar.css"/>
-    <link rel="stylesheet" href="/public/css/layouts/footer.css"/>
-    
-    <link rel="stylesheet" href="/public/css/admin/orders.css"/>
-</head>
-<body>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/public/css/layouts/navbar.css" />
+    <link rel="stylesheet" href="/public/css/layouts/footer.css" />
 
+    <link rel="stylesheet" href="/public/css/admin/orders.css?v=1.0.1" />
+  </head>
+  <body>
     <div id="sidebar-placeholder"></div>
 
     <main id="main-content">
-        <header class="top-bar">
-            <div class="search-wrapper">
-                <span class="material-symbols-outlined search-icon">search</span>
-                <input class="search-input" placeholder="Tìm kiếm đơn hàng, khách hàng..." type="text"/>
-            </div>
-            
-            <div class="top-bar-right">
-                <button class="top-bar-btn" title="Thông báo">
-                    <span class="material-symbols-outlined">notifications</span>
-                    <span class="notification-badge"></span>
-                </button>
-                <button class="top-bar-btn" title="Tin nhắn">
-                    <span class="material-symbols-outlined">mail</span>
-                </button>
-                <div class="divider"></div>
-                <div class="navbar-auth" data-navbar-auth></div>
-            </div>
-        </header>
-
-        <div class="canvas-container">
-            <div class="page-header">
-                <div>
-                    <h2 class="page-title">Quản lý đơn hàng</h2>
-                    <p class="page-subtitle">Theo dõi và vận hành các đơn thuê cao cấp từ khách hàng.</p>
-                </div>
-                <button class="btn btn-add">
-                    <span class="material-symbols-outlined text-sm">add</span>
-                    Tạo đơn hàng mới
-                </button>
-            </div>
-
-            <div class="kpi-grid">
-                <div class="kpi-card">
-                    <div class="kpi-header">
-                        <div class="kpi-icon-wrapper">
-                            <span class="material-symbols-outlined">list_alt</span>
-                        </div>
-                        <span class="kpi-trend trend-up">
-                            <span class="material-symbols-outlined">trending_up</span>
-                            +12% vs tháng trước
-                        </span>
-                    </div>
-                    <h4 class="kpi-title">Tổng đơn hàng</h4>
-                    <p class="kpi-value">1,284</p>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-header">
-                        <div class="kpi-icon-wrapper secondary">
-                            <span class="material-symbols-outlined">pending</span>
-                        </div>
-                        <span class="kpi-trend trend-neutral">8 đơn mới hôm nay</span>
-                    </div>
-                    <h4 class="kpi-title">Đang xử lý</h4>
-                    <p class="kpi-value">42</p>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-header">
-                        <div class="kpi-icon-wrapper tertiary">
-                            <span class="material-symbols-outlined">check_circle</span>
-                        </div>
-                        <span class="kpi-trend trend-neutral">98.2% tỷ lệ hoàn thành</span>
-                    </div>
-                    <h4 class="kpi-title">Đã hoàn thành</h4>
-                    <p class="kpi-value">1,120</p>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-header">
-                        <div class="kpi-icon-wrapper primary-container">
-                            <span class="material-symbols-outlined">payments</span>
-                        </div>
-                        <span class="kpi-trend trend-gold">Mục tiêu đạt 85%</span>
-                    </div>
-                    <h4 class="kpi-title">Doanh thu đơn thuê</h4>
-                    <p class="kpi-value">4.2 tỷ ₫</p>
-                </div>
-            </div>
-
-            <div class="table-card">
-                <div class="table-header-row">
-                    <div class="table-tabs">
-                        <button class="table-tab tab-active">Tất cả</button>
-                        <button class="table-tab">Đang xử lý</button>
-                        <button class="table-tab">Đã giao</button>
-                        <button class="table-tab">Hoàn thành</button>
-                    </div>
-                    <div class="table-actions-group">
-                        <button class="btn-action-outline" title="Lọc">
-                            <span class="material-symbols-outlined">filter_list</span>
-                        </button>
-                        <button class="btn-action-outline" title="Tải xuống">
-                            <span class="material-symbols-outlined">download</span>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="table-wrapper">
-                    <table class="orders-table">
-                        <thead>
-                            <tr>
-                                <th>Mã đơn hàng</th>
-                                <th>Khách hàng</th>
-                                <th>Sản phẩm</th>
-                                <th>Thời hạn thuê</th>
-                                <th class="text-right">Tiền đặt cọc</th>
-                                <th class="text-right">Tổng thanh toán</th>
-                                <th>Trạng thái</th>
-                                <th class="text-right">Hành động</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Dữ liệu đơn hàng sẽ được tải động từ JavaScript -->
-                            <tr>
-                                <td colspan="8" style="text-align: center; padding: 28px; color: #7a7979;">
-                                    Đang tải danh sách đơn thuê...
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="pagination">
-                    <p class="pagination-text">Hiển thị 4 trong số 1,284 đơn hàng</p>
-                    <div class="pagination-buttons">
-                        <button class="pagination-btn-nav" disabled>
-                            <span class="material-symbols-outlined">chevron_left</span>
-                        </button>
-                        <button class="pagination-btn-num pagination-active">1</button>
-                        <button class="pagination-btn-num">2</button>
-                        <button class="pagination-btn-num">3</button>
-                        <button class="pagination-btn-nav">
-                            <span class="material-symbols-outlined">chevron_right</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="trend-section">
-                <div class="trend-banner table-card">
-                    <img class="trend-img" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDt6swPDy-scfn1De_DNMRLK9TUfHYhBwsFsKs_xKTOEIV4JCgJL2kzbEXKOpiXWfw4JbsSwi1ZfsEeUSmDCPreE8ZcDUY-xap-5EhTRxq6Iy6fTiFnZryjAqaI4KbWgHzp46jKtarPnttSdy0STyeZj_geughgtHfV0FGLzDVHXDFmIjIVUoXAPcqPMymUJKcR-u_DOTzM9x_w4zfxGQ2CXREC9k3mzuTyiT2DWQxMBLFJepyKnaTTxr6nGX4ly0hNJwfXxteWcA" alt="Trend background"/>
-                    <div class="trend-gradient-overlay"></div>
-                    <div class="trend-banner-content">
-                        <h3>Xu hướng tháng này</h3>
-                        <p>Dòng sản phẩm Golden Ember đang dẫn đầu tỷ lệ đơn thuê trong tuần qua tại khu vực phía Nam.</p>
-                    </div>
-                </div>
-                <div class="ai-insights-card">
-                    <span class="material-symbols-outlined ai-icon">auto_awesome</span>
-                    <div class="ai-content">
-                        <h3 class="ai-title">AI Insights</h3>
-                        <p class="ai-desc">Dự kiến nhu cầu thuê sẽ tăng 25% vào tuần lễ Giáng sinh sắp tới.</p>
-                    </div>
-                    <a class="ai-link" href="#">Xem báo cáo chi tiết <span class="material-symbols-outlined">arrow_forward</span></a>
-                </div>
-            </div>
+      <header class="top-bar">
+        <div class="search-wrapper">
+          <span class="material-symbols-outlined search-icon">search</span>
+          <input
+            class="search-input"
+            placeholder="Tìm kiếm đơn hàng, khách hàng..."
+            type="text"
+          />
         </div>
 
+        <div class="top-bar-right">
+          <div class="navbar-auth" data-navbar-auth></div>
+        </div>
+      </header>
+
+      <div class="canvas-container">
+        <div class="page-header">
+          <div>
+            <h2 class="page-title">Quản lý đơn hàng</h2>
+            <p class="page-subtitle">
+              Theo dõi và vận hành các đơn thuê cao cấp từ khách hàng.
+            </p>
+          </div>
+        </div>
+
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <div class="kpi-icon-wrapper">
+                <span class="material-symbols-outlined">list_alt</span>
+              </div>
+              <span class="kpi-trend trend-up">
+                <span class="material-symbols-outlined">trending_up</span>
+                +12% vs tháng trước
+              </span>
+            </div>
+            <h4 class="kpi-title">Tổng đơn hàng</h4>
+            <p class="kpi-value">1,284</p>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <div class="kpi-icon-wrapper secondary">
+                <span class="material-symbols-outlined">pending</span>
+              </div>
+              <span class="kpi-trend trend-neutral">8 đơn mới hôm nay</span>
+            </div>
+            <h4 class="kpi-title">Đang xử lý</h4>
+            <p class="kpi-value">42</p>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <div class="kpi-icon-wrapper tertiary">
+                <span class="material-symbols-outlined">check_circle</span>
+              </div>
+              <span class="kpi-trend trend-neutral"
+                >98.2% tỷ lệ hoàn thành</span
+              >
+            </div>
+            <h4 class="kpi-title">Đã hoàn thành</h4>
+            <p class="kpi-value">1,120</p>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <div class="kpi-icon-wrapper primary-container">
+                <span class="material-symbols-outlined">payments</span>
+              </div>
+              <span class="kpi-trend trend-gold">Mục tiêu đạt 85%</span>
+            </div>
+            <h4 class="kpi-title">Doanh thu đơn thuê</h4>
+            <p class="kpi-value">4.2 tỷ ₫</p>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-header-row">
+            <div class="table-tabs">
+              <button class="table-tab tab-active">Tất cả</button>
+              <button class="table-tab">Đang xử lý</button>
+              <button class="table-tab">Đã giao</button>
+              <button class="table-tab">Hoàn thành</button>
+            </div>
+            <div class="table-actions-group">
+              <button class="btn-action-outline" title="Lọc">
+                <span class="material-symbols-outlined">filter_list</span>
+              </button>
+              <button class="btn-action-outline" title="Tải xuống">
+                <span class="material-symbols-outlined">download</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="table-wrapper">
+            <table class="orders-table">
+              <thead>
+                <tr>
+                  <th>Mã đơn hàng</th>
+                  <th>Khách hàng</th>
+                  <th>Sản phẩm</th>
+                  <th>Thời hạn thuê</th>
+                  <th class="text-right">Tiền đặt cọc</th>
+                  <th class="text-right">Tổng thanh toán</th>
+                  <th>Trạng thái</th>
+                  <th class="text-right">Hành động</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Dữ liệu đơn hàng sẽ được tải động từ JavaScript -->
+                <tr>
+                  <td
+                    colspan="8"
+                    style="text-align: center; padding: 28px; color: #7a7979"
+                  >
+                    Đang tải danh sách đơn thuê...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="pagination">
+            <p class="pagination-text">Đang tải phân trang...</p>
+            <div class="pagination-buttons">
+            </div>
+          </div>
+        </div>
+      </div>
     </main>
 
     <!-- Modal Tạo Đơn Hàng Mới -->
     <div id="modal-order-add" class="modal">
-        <div class="modal-content" style="max-width: 700px;">
-            <div class="modal-header">
-                <h3 class="modal-title">Tạo đơn hàng mới</h3>
-                <button class="modal-close" onclick="closeModal('modal-order-add')">&times;</button>
-            </div>
-            <form id="form-order-add" onsubmit="handleOrderAdd(event)">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Khách hàng</label>
-                        <select class="form-select user-select-dropdown" required name="user">
-                            <option value="">Chọn khách hàng</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Trạng thái</label>
-                        <select class="form-select" name="status">
-                            <option value="pending">Chờ duyệt</option>
-                            <option value="approved">Đã duyệt</option>
-                            <option value="delivering">Đang giao</option>
-                            <option value="renting">Đang thuê</option>
-                            <option value="returned">Đã trả</option>
-                            <option value="completed">Hoàn thành</option>
-                            <option value="cancelled">Đã hủy</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Ngày bắt đầu thuê</label>
-                        <input type="date" class="form-input" required name="startDate" id="add-order-start-date"/>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Ngày hẹn trả đồ</label>
-                        <input type="date" class="form-input" required name="returnDate" id="add-order-return-date"/>
-                    </div>
-                </div>
-
-                <div class="form-group" style="margin-top: 15px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                        <label class="form-label" style="margin-bottom: 0;">Danh sách sản phẩm thuê</label>
-                        <button type="button" class="btn btn-add" style="padding: 6px 12px; font-size: 10px;" onclick="createOrderItemRow('add-order-items-container')">
-                            <span class="material-symbols-outlined" style="font-size: 14px;">add</span> Thêm sản phẩm
-                        </button>
-                    </div>
-                    <div id="add-order-items-container" style="max-height: 250px; overflow-y: auto; border: 1px dashed #d0c5af; padding: 12px; border-radius: 8px; background-color: #faf9f6;">
-                        <!-- Các dòng sản phẩm thuê sẽ được thêm động vào đây -->
-                    </div>
-                </div>
-
-                <div style="border-top: 1px solid #d0c5af; padding-top: 15px; margin-top: 15px; display: flex; justify-content: space-between; align-items: center;">
-                    <span class="form-label" style="font-size: 13px; color: #1b1c1c; text-transform: none;">Tổng số tiền tạm tính (Giá thuê + Tiền cọc):</span>
-                    <span id="add-order-total-display" style="font-family: 'Be Vietnam Pro', sans-serif; font-size: 18px; font-weight: 600; color: #735c00;">0đ</span>
-                </div>
-
-                <div class="modal-actions">
-                    <button type="button" class="btn-modal-cancel" onclick="closeModal('modal-order-add')">Hủy bỏ</button>
-                    <button type="submit" class="btn-modal-confirm">Lưu đơn hàng</button>
-                </div>
-            </form>
+      <div class="modal-content" style="max-width: 700px">
+        <div class="modal-header">
+          <h3 class="modal-title">Tạo đơn hàng mới</h3>
+          <button class="modal-close" onclick="closeModal('modal-order-add')">
+            &times;
+          </button>
         </div>
+        <form id="form-order-add" onsubmit="handleOrderAdd(event)">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Khách hàng</label>
+              <select
+                class="form-select user-select-dropdown"
+                required
+                name="user"
+              >
+                <option value="">Chọn khách hàng</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Trạng thái</label>
+              <select class="form-select" name="status">
+                <option value="pending">Chờ duyệt</option>
+                <option value="approved">Đã duyệt</option>
+                <option value="delivering">Đang giao</option>
+                <option value="renting">Đang thuê</option>
+                <option value="returned">Đã trả</option>
+                <option value="completed">Hoàn thành</option>
+                <option value="cancelled">Đã hủy</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Ngày bắt đầu thuê</label>
+              <input
+                type="date"
+                class="form-input"
+                required
+                name="startDate"
+                id="add-order-start-date"
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Ngày hẹn trả đồ</label>
+              <input
+                type="date"
+                class="form-input"
+                required
+                name="returnDate"
+                id="add-order-return-date"
+              />
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-top: 15px">
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 10px;
+              "
+            >
+              <label class="form-label" style="margin-bottom: 0"
+                >Danh sách sản phẩm thuê</label
+              >
+              <button
+                type="button"
+                class="btn btn-add"
+                style="padding: 6px 12px; font-size: 10px"
+                onclick="createOrderItemRow('add-order-items-container')"
+              >
+                <span class="material-symbols-outlined" style="font-size: 14px"
+                  >add</span
+                >
+                Thêm sản phẩm
+              </button>
+            </div>
+            <div
+              id="add-order-items-container"
+              style="
+                max-height: 250px;
+                overflow-y: auto;
+                border: 1px dashed #d0c5af;
+                padding: 12px;
+                border-radius: 8px;
+                background-color: #faf9f6;
+              "
+            >
+              <!-- Các dòng sản phẩm thuê sẽ được thêm động vào đây -->
+            </div>
+          </div>
+
+          <div
+            style="
+              border-top: 1px solid #d0c5af;
+              padding-top: 15px;
+              margin-top: 15px;
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+            "
+          >
+            <span
+              class="form-label"
+              style="font-size: 13px; color: #1b1c1c; text-transform: none"
+              >Tổng số tiền tạm tính (Giá thuê + Tiền cọc):</span
+            >
+            <span
+              id="add-order-total-display"
+              style="
+                font-family: &quot;Be Vietnam Pro&quot;, sans-serif;
+                font-size: 18px;
+                font-weight: 600;
+                color: #735c00;
+              "
+              >0đ</span
+            >
+          </div>
+
+          <div class="modal-actions">
+            <button
+              type="button"
+              class="btn-modal-cancel"
+              onclick="closeModal('modal-order-add')"
+            >
+              Hủy bỏ
+            </button>
+            <button type="submit" class="btn-modal-confirm">
+              Lưu đơn hàng
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
 
     <!-- Modal Chi Tiết Đơn Hàng -->
     <div id="modal-order-detail" class="modal">
-        <div class="modal-content" style="max-width: 600px;">
-            <div class="modal-header">
-                <h3 class="modal-title">Chi tiết đơn hàng</h3>
-                <button class="modal-close" onclick="closeModal('modal-order-detail')">&times;</button>
-            </div>
-            <div style="border: 1px solid #d0c5af; border-radius: 8px; padding: 20px; background-color: #ffffff; margin-bottom: 20px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
-                <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed #d0c5af; padding-bottom: 12px; margin-bottom: 12px;">
-                    <div>
-                        <span style="font-family: 'Be Vietnam Pro', sans-serif; font-size: 12px; color: #7f7663; text-transform: uppercase; letter-spacing: 0.05em;">Mã đơn hàng</span>
-                        <h4 id="detail-order-id" style="font-family: 'Be Vietnam Pro', sans-serif; font-size: 16px; font-weight: 600; color: #1b1c1c; margin: 4px 0 0 0;"></h4>
-                    </div>
-                    <div style="text-align: right;">
-                        <span style="font-family: 'Be Vietnam Pro', sans-serif; font-size: 12px; color: #7f7663; text-transform: uppercase; letter-spacing: 0.05em;">Trạng thái</span>
-                        <div style="margin-top: 4px;"><span id="detail-order-status" class="status-badge"></span></div>
-                    </div>
-                </div>
-
-                <div class="detail-grid" style="grid-template-columns: 120px 1fr; gap: 10px 15px; border-bottom: 1px dashed #d0c5af; padding-bottom: 15px; margin-bottom: 15px;">
-                    <span class="detail-label">Khách hàng:</span>
-                    <span id="detail-order-customer" class="detail-value" style="font-weight: 600;"></span>
-
-                    <span class="detail-label">Số điện thoại:</span>
-                    <span id="detail-order-phone" class="detail-value"></span>
-
-                    <span class="detail-label">Địa chỉ giao đồ:</span>
-                    <span id="detail-order-address" class="detail-value"></span>
-
-                    <span class="detail-label">Thời hạn thuê:</span>
-                    <span id="detail-order-dates" class="detail-value"></span>
-                </div>
-
-                <span class="form-label" style="display: block; margin-bottom: 8px;">Danh sách sản phẩm</span>
-                <div id="detail-order-items-list" style="margin-bottom: 15px;">
-                    <!-- Động tải các dòng sản phẩm chi tiết -->
-                </div>
-
-                <div style="border-top: 1px dashed #d0c5af; padding-top: 15px; display: flex; flex-direction: column; gap: 6px;">
-                    <div style="display: flex; justify-content: space-between; font-size: 13px;">
-                        <span style="color: #5f5e5e;">Tổng tiền thuê:</span>
-                        <span id="detail-order-rental-total">0đ</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; font-size: 13px; border-bottom: 1px solid #efeded; padding-bottom: 6px;">
-                        <span style="color: #5f5e5e;">Tổng đặt cọc:</span>
-                        <span id="detail-order-deposit-total">0đ</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; font-size: 14px; font-weight: 600; margin-top: 4px;">
-                        <span style="color: #1b1c1c;">Tổng thanh toán:</span>
-                        <span id="detail-order-grand-total" style="color: #735c00; font-size: 16px;">0đ</span>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-actions">
-                <button type="button" class="btn-modal-cancel" onclick="closeModal('modal-order-detail')" style="width: 100%;">Đóng cửa sổ</button>
-            </div>
+      <div class="modal-content" style="max-width: 600px">
+        <div class="modal-header">
+          <h3 class="modal-title">Chi tiết đơn hàng</h3>
+          <button
+            class="modal-close"
+            onclick="closeModal('modal-order-detail')"
+          >
+            &times;
+          </button>
         </div>
+        <div
+          style="
+            border: 1px solid #d0c5af;
+            border-radius: 8px;
+            padding: 20px;
+            background-color: #ffffff;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+          "
+        >
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              border-bottom: 1px dashed #d0c5af;
+              padding-bottom: 12px;
+              margin-bottom: 12px;
+            "
+          >
+            <div>
+              <span
+                style="
+                  font-family: &quot;Be Vietnam Pro&quot;, sans-serif;
+                  font-size: 12px;
+                  color: #7f7663;
+                  text-transform: uppercase;
+                  letter-spacing: 0.05em;
+                "
+                >Mã đơn hàng</span
+              >
+              <h4
+                id="detail-order-id"
+                style="
+                  font-family: &quot;Be Vietnam Pro&quot;, sans-serif;
+                  font-size: 16px;
+                  font-weight: 600;
+                  color: #1b1c1c;
+                  margin: 4px 0 0 0;
+                "
+              ></h4>
+            </div>
+            <div style="text-align: right">
+              <span
+                style="
+                  font-family: &quot;Be Vietnam Pro&quot;, sans-serif;
+                  font-size: 12px;
+                  color: #7f7663;
+                  text-transform: uppercase;
+                  letter-spacing: 0.05em;
+                "
+                >Trạng thái</span
+              >
+              <div style="margin-top: 4px">
+                <span id="detail-order-status" class="status-badge"></span>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="detail-grid"
+            style="
+              grid-template-columns: 120px 1fr;
+              gap: 10px 15px;
+              border-bottom: 1px dashed #d0c5af;
+              padding-bottom: 15px;
+              margin-bottom: 15px;
+            "
+          >
+            <span class="detail-label">Khách hàng:</span>
+            <span
+              id="detail-order-customer"
+              class="detail-value"
+              style="font-weight: 600"
+            ></span>
+
+            <span class="detail-label">Số điện thoại:</span>
+            <span id="detail-order-phone" class="detail-value"></span>
+
+            <span class="detail-label">Địa chỉ giao đồ:</span>
+            <span id="detail-order-address" class="detail-value"></span>
+
+            <span class="detail-label">Thời hạn thuê:</span>
+            <span id="detail-order-dates" class="detail-value"></span>
+
+            <span class="detail-label">Thanh toán:</span>
+            <span id="detail-order-payment-method" class="detail-value"></span>
+          </div>
+
+          <span class="form-label" style="display: block; margin-bottom: 8px"
+            >Danh sách sản phẩm</span
+          >
+          <div id="detail-order-items-list" style="margin-bottom: 15px">
+            <!-- Động tải các dòng sản phẩm chi tiết -->
+          </div>
+
+          <div
+            style="
+              border-top: 1px dashed #d0c5af;
+              padding-top: 15px;
+              display: flex;
+              flex-direction: column;
+              gap: 6px;
+            "
+          >
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                font-size: 13px;
+              "
+            >
+              <span style="color: #5f5e5e">Tổng tiền thuê:</span>
+              <span id="detail-order-rental-total">0đ</span>
+            </div>
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                font-size: 13px;
+                border-bottom: 1px solid #efeded;
+                padding-bottom: 6px;
+              "
+            >
+              <span style="color: #5f5e5e">Tổng đặt cọc:</span>
+              <span id="detail-order-deposit-total">0đ</span>
+            </div>
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                font-size: 14px;
+                font-weight: 600;
+                margin-top: 4px;
+              "
+            >
+              <span style="color: #1b1c1c">Tổng thanh toán:</span>
+              <span
+                id="detail-order-grand-total"
+                style="color: #735c00; font-size: 16px"
+                >0đ</span
+              >
+            </div>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button
+            type="button"
+            class="btn-modal-cancel"
+            onclick="closeModal('modal-order-detail')"
+            style="width: 100%"
+          >
+            Đóng cửa sổ
+          </button>
+        </div>
+      </div>
     </div>
 
     <!-- Modal Chỉnh Sửa Đơn Hàng -->
     <div id="modal-order-edit" class="modal">
-        <div class="modal-content" style="max-width: 700px;">
-            <div class="modal-header">
-                <h3 class="modal-title">Chỉnh sửa đơn hàng</h3>
-                <button class="modal-close" onclick="closeModal('modal-order-edit')">&times;</button>
-            </div>
-            <form id="form-order-edit" onsubmit="handleOrderEdit(event)">
-                <input type="hidden" id="edit-order-id" name="id"/>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Khách hàng</label>
-                        <select id="edit-order-user" class="form-select user-select-dropdown" required name="user">
-                            <option value="">Chọn khách hàng</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Trạng thái</label>
-                        <select id="edit-order-status" class="form-select" name="status">
-                            <option value="pending">Chờ duyệt</option>
-                            <option value="approved">Đã duyệt</option>
-                            <option value="delivering">Đang giao</option>
-                            <option value="renting">Đang thuê</option>
-                            <option value="returned">Đã trả</option>
-                            <option value="completed">Hoàn thành</option>
-                            <option value="cancelled">Đã hủy</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Ngày bắt đầu thuê</label>
-                        <input type="date" id="edit-order-start-date" class="form-input" required name="startDate"/>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Ngày hẹn trả đồ</label>
-                        <input type="date" id="edit-order-return-date" class="form-input" required name="returnDate"/>
-                    </div>
-                </div>
-
-                <div class="form-group" style="margin-top: 15px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                        <label class="form-label" style="margin-bottom: 0;">Danh sách sản phẩm thuê</label>
-                        <button type="button" class="btn btn-add" style="padding: 6px 12px; font-size: 10px;" onclick="createOrderItemRow('edit-order-items-container')">
-                            <span class="material-symbols-outlined" style="font-size: 14px;">add</span> Thêm sản phẩm
-                        </button>
-                    </div>
-                    <div id="edit-order-items-container" style="max-height: 250px; overflow-y: auto; border: 1px dashed #d0c5af; padding: 12px; border-radius: 8px; background-color: #faf9f6;">
-                        <!-- Các dòng sản phẩm thuê sẽ được thêm động vào đây -->
-                    </div>
-                </div>
-
-                <div style="border-top: 1px solid #d0c5af; padding-top: 15px; margin-top: 15px; display: flex; justify-content: space-between; align-items: center;">
-                    <span class="form-label" style="font-size: 13px; color: #1b1c1c; text-transform: none;">Tổng số tiền tạm tính (Giá thuê + Tiền cọc):</span>
-                    <span id="edit-order-total-display" style="font-family: 'Be Vietnam Pro', sans-serif; font-size: 18px; font-weight: 600; color: #735c00;">0đ</span>
-                </div>
-
-                <div class="modal-actions">
-                    <button type="button" class="btn-modal-cancel" onclick="closeModal('modal-order-edit')">Hủy bỏ</button>
-                    <button type="submit" class="btn-modal-confirm">Cập nhật đơn hàng</button>
-                </div>
-            </form>
+      <div class="modal-content" style="max-width: 700px">
+        <div class="modal-header">
+          <h3 class="modal-title">Chỉnh sửa đơn hàng</h3>
+          <button class="modal-close" onclick="closeModal('modal-order-edit')">
+            &times;
+          </button>
         </div>
+        <form id="form-order-edit" onsubmit="handleOrderEdit(event)">
+          <input type="hidden" id="edit-order-id" name="id" />
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Khách hàng</label>
+              <select
+                id="edit-order-user"
+                class="form-select user-select-dropdown"
+                required
+                name="user"
+              >
+                <option value="">Chọn khách hàng</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Trạng thái</label>
+              <select id="edit-order-status" class="form-select" name="status">
+                <option value="pending">Chờ duyệt</option>
+                <option value="approved">Đã duyệt</option>
+                <option value="delivering">Đang giao</option>
+                <option value="renting">Đang thuê</option>
+                <option value="returned">Đã trả</option>
+                <option value="completed">Hoàn thành</option>
+                <option value="cancelled">Đã hủy</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Ngày bắt đầu thuê</label>
+              <input
+                type="date"
+                id="edit-order-start-date"
+                class="form-input"
+                required
+                name="startDate"
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Ngày hẹn trả đồ</label>
+              <input
+                type="date"
+                id="edit-order-return-date"
+                class="form-input"
+                required
+                name="returnDate"
+              />
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-top: 15px">
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 10px;
+              "
+            >
+              <label class="form-label" style="margin-bottom: 0"
+                >Danh sách sản phẩm thuê</label
+              >
+              <button
+                type="button"
+                class="btn btn-add"
+                style="padding: 6px 12px; font-size: 10px"
+                onclick="createOrderItemRow('edit-order-items-container')"
+              >
+                <span class="material-symbols-outlined" style="font-size: 14px"
+                  >add</span
+                >
+                Thêm sản phẩm
+              </button>
+            </div>
+            <div
+              id="edit-order-items-container"
+              style="
+                max-height: 250px;
+                overflow-y: auto;
+                border: 1px dashed #d0c5af;
+                padding: 12px;
+                border-radius: 8px;
+                background-color: #faf9f6;
+              "
+            >
+              <!-- Các dòng sản phẩm thuê sẽ được thêm động vào đây -->
+            </div>
+          </div>
+
+          <div
+            style="
+              border-top: 1px solid #d0c5af;
+              padding-top: 15px;
+              margin-top: 15px;
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+            "
+          >
+            <span
+              class="form-label"
+              style="font-size: 13px; color: #1b1c1c; text-transform: none"
+              >Tổng số tiền tạm tính (Giá thuê + Tiền cọc):</span
+            >
+            <span
+              id="edit-order-total-display"
+              style="
+                font-family: &quot;Be Vietnam Pro&quot;, sans-serif;
+                font-size: 18px;
+                font-weight: 600;
+                color: #735c00;
+              "
+              >0đ</span
+            >
+          </div>
+
+          <div class="modal-actions">
+            <button
+              type="button"
+              class="btn-modal-cancel"
+              onclick="closeModal('modal-order-edit')"
+            >
+              Hủy bỏ
+            </button>
+            <button type="submit" class="btn-modal-confirm">
+              Cập nhật đơn hàng
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
 
     <!-- Modal Xác Nhận Xóa Đơn Hàng -->
     <div id="modal-order-delete" class="modal">
-        <div class="modal-content modal-sm">
-            <div class="modal-header">
-                <h3 class="modal-title" style="color: #ba1a1a;">Xác nhận xóa đơn hàng</h3>
-                <button class="modal-close" onclick="closeModal('modal-order-delete')">&times;</button>
-            </div>
-            <div style="font-family: 'Be Vietnam Pro', sans-serif; font-size: 14px; color: #1c1b1b; line-height: 1.6; margin-bottom: 20px;">
-                Bạn có chắc chắn muốn xóa đơn hàng <span id="delete-order-id-label" style="font-weight: bold; font-family: 'Be Vietnam Pro', sans-serif;"></span>? Hành động này sẽ không thể khôi phục lại.
-            </div>
-            <input type="hidden" id="delete-order-id"/>
-            <div class="modal-actions">
-                <button type="button" class="btn-modal-cancel" onclick="closeModal('modal-order-delete')">Hủy</button>
-                <button type="button" class="btn-modal-delete" onclick="confirmOrderDelete()">Xác nhận xóa</button>
-            </div>
+      <div class="modal-content modal-sm">
+        <div class="modal-header">
+          <h3 class="modal-title" style="color: #ba1a1a">
+            Xác nhận xóa đơn hàng
+          </h3>
+          <button
+            class="modal-close"
+            onclick="closeModal('modal-order-delete')"
+          >
+            &times;
+          </button>
         </div>
+        <div
+          style="
+            font-family: &quot;Be Vietnam Pro&quot;, sans-serif;
+            font-size: 14px;
+            color: #1c1b1b;
+            line-height: 1.6;
+            margin-bottom: 20px;
+          "
+        >
+          Bạn có chắc chắn muốn xóa đơn hàng
+          <span
+            id="delete-order-id-label"
+            style="
+              font-weight: bold;
+              font-family: &quot;Be Vietnam Pro&quot;, sans-serif;
+            "
+          ></span
+          >? Hành động này sẽ không thể khôi phục lại.
+        </div>
+        <input type="hidden" id="delete-order-id" />
+        <div class="modal-actions">
+          <button
+            type="button"
+            class="btn-modal-cancel"
+            onclick="closeModal('modal-order-delete')"
+          >
+            Hủy
+          </button>
+          <button
+            type="button"
+            class="btn-modal-delete"
+            onclick="confirmOrderDelete()"
+          >
+            Xác nhận xóa
+          </button>
+        </div>
+      </div>
     </div>
 
     <script src="/public/js/apiClient.js"></script>
     <script src="/public/js/layouts/navbar.js"></script>
     <script src="/public/js/admin/orders.js"></script>
-</body>
+  </body>
 </html>

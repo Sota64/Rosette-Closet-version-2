@@ -176,7 +176,7 @@ function updateNavbarCartBadge() {
 
   try {
     const cart = JSON.parse(localStorage.getItem("rosette_cart") || "[]");
-    const count = cart.reduce((total, item) => total + (Number(item.quantity) || 1), 0);
+    const count = Array.isArray(cart) ? cart.length : 0;
 
     if (count > 0) {
       badge.textContent = count;
@@ -208,3 +208,191 @@ window.initNavbarAuth = async function() {
   }
   initNavbarCart();
 };
+
+const ROSETTE_CHATBOT_API_URL = "/api/chatbot";
+
+function ensureRosetteChatbotStyles() {
+  if (document.querySelector('link[href="/public/css/layouts/chatbot.css"]')) return;
+
+  const link = document.createElement("link");
+  link.rel = "stylesheet";
+  link.href = "/public/css/layouts/chatbot.css";
+  document.head.appendChild(link);
+}
+
+function extractRosetteChatbotAnswer(payload) {
+  if (typeof payload === "string") return payload;
+
+  const candidates = [
+    payload?.data?.answer,
+    payload?.data?.message,
+    payload?.data?.reply,
+    payload?.data?.response,
+    payload?.data?.content,
+    payload?.answer,
+    payload?.reply,
+    payload?.response,
+    payload?.content,
+    payload?.message
+  ];
+
+  const answer = candidates.find((item) => typeof item === "string" && item.trim());
+  return answer || "Mình đã nhận phản hồi nhưng chưa đọc được nội dung trả lời.";
+}
+
+function appendRosetteChatbotMessage(messages, text, role = "bot") {
+  const message = document.createElement("div");
+  message.className = `chatbot-message ${role}`;
+  message.textContent = text;
+  messages.appendChild(message);
+  messages.scrollTop = messages.scrollHeight;
+  return message;
+}
+
+function setRosetteChatbotOpen(widget, isOpen) {
+  const launcher = widget.querySelector(".chatbot-launcher");
+  const input = widget.querySelector(".chatbot-input");
+
+  widget.classList.toggle("is-open", isOpen);
+  launcher?.setAttribute("aria-expanded", String(isOpen));
+
+  if (isOpen) {
+    setTimeout(() => input?.focus(), 120);
+  }
+}
+
+function renderRosetteChatbotWidget() {
+  if (document.querySelector("[data-rosette-chatbot]")) return;
+
+  ensureRosetteChatbotStyles();
+
+  const widget = document.createElement("div");
+  widget.className = "chatbot-widget";
+  widget.dataset.rosetteChatbot = "true";
+  widget.innerHTML = `
+    <section class="chatbot-panel" aria-label="Chatbot Rosette Closet">
+      <div class="chatbot-header">
+        <div class="chatbot-title">
+          <span class="chatbot-title-icon" aria-hidden="true">
+            <span class="material-symbols-outlined">support_agent</span>
+          </span>
+          <div>
+            <strong>Rosette Assistant</strong>
+            <span>Hỗ trợ tư vấn nhanh</span>
+          </div>
+        </div>
+        <button class="chatbot-close" type="button" aria-label="Đóng chatbot">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <div class="chatbot-messages" aria-live="polite">
+        <div class="chatbot-message bot">Xin chào, mình có thể hỗ trợ gì cho bạn?</div>
+      </div>
+      <form class="chatbot-form">
+        <textarea class="chatbot-input" rows="1" placeholder="Nhập câu hỏi..." aria-label="Nhập câu hỏi chatbot"></textarea>
+        <button class="chatbot-send" type="submit" aria-label="Gửi câu hỏi">
+          <span class="material-symbols-outlined">send</span>
+        </button>
+      </form>
+    </section>
+    <button class="chatbot-launcher" type="button" aria-label="Mở chatbot" aria-expanded="false">
+      <span class="material-symbols-outlined">support_agent</span>
+      <span class="chatbot-launcher-dot" aria-hidden="true"></span>
+    </button>
+  `;
+
+  document.body.appendChild(widget);
+
+  const launcher = widget.querySelector(".chatbot-launcher");
+  const closeButton = widget.querySelector(".chatbot-close");
+  const form = widget.querySelector(".chatbot-form");
+  const input = widget.querySelector(".chatbot-input");
+  const sendButton = widget.querySelector(".chatbot-send");
+  const messages = widget.querySelector(".chatbot-messages");
+
+  launcher?.addEventListener("click", () => {
+    setRosetteChatbotOpen(widget, !widget.classList.contains("is-open"));
+  });
+
+  closeButton?.addEventListener("click", () => {
+    setRosetteChatbotOpen(widget, false);
+  });
+
+  input?.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      form?.requestSubmit();
+    }
+  });
+
+  input?.addEventListener("input", () => {
+    input.style.height = "auto";
+    input.style.height = `${Math.min(input.scrollHeight, 112)}px`;
+  });
+
+  form?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const question = input.value.trim();
+    if (!question) return;
+
+    appendRosetteChatbotMessage(messages, question, "user");
+    input.value = "";
+    input.style.height = "auto";
+    input.disabled = true;
+    sendButton.disabled = true;
+
+    const loadingMessage = appendRosetteChatbotMessage(messages, "Đang trả lời...", "bot loading");
+
+    try {
+      const response = await fetch(ROSETTE_CHATBOT_API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ question })
+      });
+      const responseText = await response.text();
+      let result = responseText;
+
+      try {
+        result = responseText ? JSON.parse(responseText) : {};
+      } catch (error) {
+        result = responseText;
+      }
+
+      if (!response.ok) {
+        throw new Error(result?.message || "Chatbot chưa thể trả lời lúc này.");
+      }
+
+      loadingMessage.className = "chatbot-message bot";
+      loadingMessage.textContent = extractRosetteChatbotAnswer(result);
+    } catch (error) {
+      loadingMessage.className = "chatbot-message bot";
+      loadingMessage.textContent = error.message || "Không thể kết nối tới chatbot.";
+    } finally {
+      input.disabled = false;
+      sendButton.disabled = false;
+      input.focus();
+      messages.scrollTop = messages.scrollHeight;
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      setRosetteChatbotOpen(widget, false);
+    }
+  });
+}
+
+function initRosetteChatbot() {
+  if (window.__rosetteChatbotInitialized) return;
+  window.__rosetteChatbotInitialized = true;
+  renderRosetteChatbotWidget();
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initRosetteChatbot);
+} else {
+  initRosetteChatbot();
+}
