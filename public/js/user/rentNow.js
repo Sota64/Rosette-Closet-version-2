@@ -7,6 +7,7 @@ const rentNowState = {
 const ADDRESS_API_URL = "https://provinces.open-api.vn/api/?depth=3";
 const ADDRESS_CACHE_KEY = "rosette_vietnam_address_data";
 const ADDRESS_CACHE_MAX_AGE = 7 * 24 * 60 * 60 * 1000;
+const CHECKOUT_CART_KEYS = "rosette_checkout_cart_keys";
 const FALLBACK_ADDRESS_DATA = [
   {
     name: "Thành phố Hà Nội",
@@ -77,6 +78,48 @@ function escapeHtml(value = "") {
 
 function formatCurrency(value = 0) {
   return Number(value || 0).toLocaleString("vi-VN") + "đ";
+}
+
+function getCartItemKey(item) {
+  return `${item._id}::${item.size || ""}`;
+}
+
+function getCheckoutCartKeys() {
+  try {
+    const keys = JSON.parse(localStorage.getItem(CHECKOUT_CART_KEYS) || "[]");
+    return Array.isArray(keys) ? keys : [];
+  } catch (error) {
+    return [];
+  }
+}
+
+function getSelectedCartItemsForCheckout() {
+  const cart = JSON.parse(localStorage.getItem("rosette_cart") || "[]");
+  const selectedKeys = getCheckoutCartKeys();
+
+  if (!cart || cart.length === 0) return [];
+  if (!selectedKeys.length) return cart;
+
+  const keySet = new Set(selectedKeys);
+  return cart.filter((item) => keySet.has(getCartItemKey(item)));
+}
+
+function removeCheckedOutCartItems() {
+  const selectedKeys = getCheckoutCartKeys();
+  const cart = JSON.parse(localStorage.getItem("rosette_cart") || "[]");
+
+  if (!Array.isArray(cart) || cart.length === 0) return;
+
+  if (!selectedKeys.length) {
+    localStorage.removeItem("rosette_cart");
+  } else {
+    const selectedKeySet = new Set(selectedKeys);
+    const remainingCart = cart.filter((item) => !selectedKeySet.has(getCartItemKey(item)));
+    localStorage.setItem("rosette_cart", JSON.stringify(remainingCart));
+  }
+
+  localStorage.removeItem(CHECKOUT_CART_KEYS);
+  document.dispatchEvent(new CustomEvent("rosette:cart-updated"));
 }
 
 function getTodayInputValue() {
@@ -652,8 +695,7 @@ async function submitRentalOrder(event) {
 
     // Clear cart if successfully checked out from cart
     if (params.get("from") === "cart") {
-      localStorage.removeItem("rosette_cart");
-      document.dispatchEvent(new CustomEvent("rosette:cart-updated"));
+      removeCheckedOutCartItems();
     }
 
     setFeedback("Đặt thuê thành công! Đang chuyển hướng...", "success");
@@ -682,9 +724,9 @@ async function loadRentNowPage() {
     const isFromCart = params.get("from") === "cart";
 
     if (isFromCart) {
-      const cart = JSON.parse(localStorage.getItem("rosette_cart") || "[]");
+      const cart = getSelectedCartItemsForCheckout();
       if (!cart || cart.length === 0) {
-        throw new Error("Giỏ hàng của bạn đang trống.");
+        throw new Error("Bạn chưa chọn sản phẩm nào trong giỏ hàng để đặt thuê.");
       }
       rentNowState.products = cart;
       renderProductsList();

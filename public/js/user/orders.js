@@ -510,8 +510,8 @@ function showVNPayReturnMessage() {
   if (!vnpayStatus) return;
 
   const messages = {
-    failed: "Thanh toán VNPAY thất bại. Đơn hàng chưa được tạo.",
-    missing: "Không tìm thấy phiên thanh toán VNPAY. Đơn hàng chưa được tạo.",
+    failed: "Thanh toán VNPAY thất bại.",
+    missing: "Không tìm thấy phiên thanh toán VNPAY.",
     error: params.get("message") || "Có lỗi khi xác nhận thanh toán VNPAY."
   };
 

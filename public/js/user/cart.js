@@ -51,6 +51,13 @@ function getProductDetailUrl(productId) {
 }
 
 let cartItemsState = [];
+let selectedCartKeys = new Set();
+let hasInitializedSelection = false;
+const CHECKOUT_CART_KEYS = "rosette_checkout_cart_keys";
+
+function getCartItemKey(item) {
+  return `${item._id}::${item.size || ""}`;
+}
 
 function getCart() {
   try {
@@ -64,6 +71,43 @@ function getCart() {
 function saveCart(cart) {
   localStorage.setItem("rosette_cart", JSON.stringify(cart));
   document.dispatchEvent(new CustomEvent("rosette:cart-updated"));
+}
+
+function syncSelectedKeysWithCart(cart) {
+  const existingKeys = new Set(cart.map(getCartItemKey));
+
+  if (!hasInitializedSelection) {
+    selectedCartKeys = new Set(existingKeys);
+    hasInitializedSelection = true;
+    return;
+  }
+
+  selectedCartKeys = new Set([...selectedCartKeys].filter((key) => existingKeys.has(key)));
+}
+
+function getSelectedCartItems() {
+  return cartItemsState.filter((item) => selectedCartKeys.has(getCartItemKey(item)));
+}
+
+function updateSelectionControls() {
+  const selectAll = document.getElementById("cart-select-all");
+  const selectedCount = document.getElementById("cart-selected-count");
+  const checkoutBtn = document.getElementById("checkout-btn");
+  const selectedItems = getSelectedCartItems();
+  const totalItems = cartItemsState.length;
+
+  if (selectAll) {
+    selectAll.checked = totalItems > 0 && selectedItems.length === totalItems;
+    selectAll.indeterminate = selectedItems.length > 0 && selectedItems.length < totalItems;
+  }
+
+  if (selectedCount) {
+    selectedCount.textContent = `${selectedItems.length} / ${totalItems} sản phẩm được chọn`;
+  }
+
+  if (checkoutBtn) {
+    checkoutBtn.disabled = selectedItems.length === 0;
+  }
 }
 
 function showToast(message, type = "error") {
@@ -116,8 +160,9 @@ function showToast(message, type = "error") {
 }
 
 function updateCartTotals() {
-  const rentalTotal = cartItemsState.reduce((sum, item) => sum + Number(item.rentalPrice || 0), 0);
-  const depositTotal = cartItemsState.reduce((sum, item) => sum + Number(item.deposit || 0), 0);
+  const selectedItems = getSelectedCartItems();
+  const rentalTotal = selectedItems.reduce((sum, item) => sum + Number(item.rentalPrice || 0), 0);
+  const depositTotal = selectedItems.reduce((sum, item) => sum + Number(item.deposit || 0), 0);
   const grandTotal = rentalTotal + depositTotal;
 
   const rentalPriceEl = document.getElementById("summary-rental-price");
@@ -127,6 +172,7 @@ function updateCartTotals() {
   if (rentalPriceEl) rentalPriceEl.textContent = formatCurrency(rentalTotal);
   if (depositPriceEl) depositPriceEl.textContent = formatCurrency(depositTotal);
   if (totalPriceEl) totalPriceEl.textContent = formatCurrency(grandTotal);
+  updateSelectionControls();
 }
 
 function deleteCartItem(productId, size, element) {
@@ -143,6 +189,7 @@ function deleteCartItem(productId, size, element) {
 
 function renderCart() {
   cartItemsState = getCart();
+  syncSelectedKeysWithCart(cartItemsState);
 
   const cartContainer = document.getElementById("cart-container");
   const emptyView = document.getElementById("cart-empty-view");
@@ -159,13 +206,20 @@ function renderCart() {
 
   if (!itemsList) return;
 
-  itemsList.innerHTML = cartItemsState.map((item) => {
+  itemsList.innerHTML = cartItemsState.map((item, index) => {
     const uniqueId = `item-${item._id}-${item.size}`;
+    const itemKey = getCartItemKey(item);
     const itemTotalRental = Number(item.rentalPrice || 0);
     const itemTotalDeposit = Number(item.deposit || 0);
+    const isSelected = selectedCartKeys.has(itemKey);
 
     return `
-      <div class="cart-item" id="${uniqueId}">
+      <div class="cart-item ${isSelected ? "is-selected" : ""}" id="${uniqueId}">
+        <label class="cart-item-select" for="cart-item-select-${index}" aria-label="Chọn ${escapeHtml(item.name)}">
+          <input id="cart-item-select-${index}" class="cart-item-checkbox" type="checkbox" data-cart-key="${escapeHtml(itemKey)}" ${isSelected ? "checked" : ""} />
+          <span class="cart-checkbox-visual" aria-hidden="true"></span>
+        </label>
+
         <div class="cart-item-image">
           <a href="${getProductDetailUrl(item._id)}">
             <img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}" />
@@ -207,9 +261,24 @@ function renderCart() {
     if (!rowEl) return;
 
     const deleteBtn = rowEl.querySelector(".delete-item-btn");
+    const checkbox = rowEl.querySelector(".cart-item-checkbox");
 
     if (deleteBtn) {
       deleteBtn.addEventListener("click", () => deleteCartItem(item._id, item.size, rowEl));
+    }
+
+    if (checkbox) {
+      checkbox.addEventListener("change", () => {
+        const key = getCartItemKey(item);
+        if (checkbox.checked) {
+          selectedCartKeys.add(key);
+          rowEl.classList.add("is-selected");
+        } else {
+          selectedCartKeys.delete(key);
+          rowEl.classList.remove("is-selected");
+        }
+        updateCartTotals();
+      });
     }
   });
 
@@ -222,6 +291,14 @@ async function handleCheckout() {
     showToast("Giỏ hàng của bạn đang trống!");
     return;
   }
+
+  const selectedItems = getSelectedCartItems();
+  if (selectedItems.length === 0) {
+    showToast("Vui lòng chọn ít nhất một sản phẩm để đặt thuê.");
+    return;
+  }
+
+  localStorage.setItem(CHECKOUT_CART_KEYS, JSON.stringify(selectedItems.map(getCartItemKey)));
 
   const rentNowUrl = "/views/user/rentNow.html?from=cart";
   if (!(await isUserAuthenticated())) {
@@ -240,6 +317,16 @@ document.addEventListener("DOMContentLoaded", async () => {
   ]);
 
   renderCart();
+
+  const selectAll = document.getElementById("cart-select-all");
+  if (selectAll) {
+    selectAll.addEventListener("change", () => {
+      selectedCartKeys = selectAll.checked
+        ? new Set(cartItemsState.map(getCartItemKey))
+        : new Set();
+      renderCart();
+    });
+  }
 
   const checkoutBtn = document.getElementById("checkout-btn");
   if (checkoutBtn) {

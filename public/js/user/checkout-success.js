@@ -23,6 +23,38 @@ function formatCurrency(value = 0) {
   return Number(value || 0).toLocaleString("vi-VN") + "đ";
 }
 
+const CHECKOUT_CART_KEYS = "rosette_checkout_cart_keys";
+
+function getCartItemKey(item) {
+  return `${item._id}::${item.size || ""}`;
+}
+
+function removeCheckedOutCartItems() {
+  let selectedKeys = [];
+  let cart = [];
+
+  try {
+    selectedKeys = JSON.parse(localStorage.getItem(CHECKOUT_CART_KEYS) || "[]");
+    cart = JSON.parse(localStorage.getItem("rosette_cart") || "[]");
+  } catch (error) {
+    selectedKeys = [];
+    cart = [];
+  }
+
+  if (!Array.isArray(cart) || cart.length === 0) return;
+
+  if (!Array.isArray(selectedKeys) || selectedKeys.length === 0) {
+    localStorage.removeItem("rosette_cart");
+  } else {
+    const selectedKeySet = new Set(selectedKeys);
+    const remainingCart = cart.filter((item) => !selectedKeySet.has(getCartItemKey(item)));
+    localStorage.setItem("rosette_cart", JSON.stringify(remainingCart));
+  }
+
+  localStorage.removeItem(CHECKOUT_CART_KEYS);
+  document.dispatchEvent(new CustomEvent("rosette:cart-updated"));
+}
+
 function formatDate(dateValue) {
   if (!dateValue) return "";
   const date = new Date(dateValue);
@@ -95,8 +127,7 @@ async function loadSuccessDetails() {
   const orderId = params.get("orderId");
 
   if (params.get("clearCart") === "1") {
-    localStorage.removeItem("rosette_cart");
-    document.dispatchEvent(new CustomEvent("rosette:cart-updated"));
+    removeCheckedOutCartItems();
   }
 
   if (!orderId) {
