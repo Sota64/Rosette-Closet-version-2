@@ -545,6 +545,15 @@ img {
   background: rgba(0, 0, 0, 0.9);
 }
 
+.rent-button[aria-disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.rent-button[aria-disabled="true"]:hover {
+  transform: none;
+}
+
 .details-section {
   margin-top: 96px;
 }

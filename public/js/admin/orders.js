@@ -111,6 +111,7 @@ let orders = [];
 let ordersPagination = {
     total: 0
 };
+const ORDER_STATUS_FLOW = ["pending", "approved", "delivering", "renting", "returned", "completed"];
 
 async function loadOrders() {
     try {
@@ -208,6 +209,7 @@ function renderOrdersTable(orderList) {
             : "KH";
 
         const statusMeta = getStatusMeta(order.status);
+        const statusSelectHtml = renderOrderStatusSelect(order._id, order.status);
 
         return `
             <tr>
@@ -236,7 +238,7 @@ function renderOrdersTable(orderList) {
                     ${formatCurrency(order.totalAmount)}
                 </td>
                 <td>
-                    <span class="status-badge ${statusMeta.class}">${statusMeta.label}</span>
+                    ${statusSelectHtml || `<span class="status-badge ${statusMeta.class}">${statusMeta.label}</span>`}
                 </td>
                 <td>
                     <div class="action-buttons">
@@ -254,6 +256,67 @@ function renderOrdersTable(orderList) {
             </tr>
         `;
     }).join("");
+}
+
+function getNextOrderStatus(status) {
+    const currentIndex = ORDER_STATUS_FLOW.indexOf(status);
+    return currentIndex >= 0 ? ORDER_STATUS_FLOW[currentIndex + 1] : null;
+}
+
+function renderOrderStatusSelect(orderId, status) {
+    if (status === "completed" || status === "cancelled") {
+        const statusMeta = getStatusMeta(status);
+        return `<span class="status-badge ${statusMeta.class}">${statusMeta.label}</span>`;
+    }
+
+    const nextStatus = getNextOrderStatus(status);
+    const statusOptions = [status, nextStatus].filter(Boolean);
+
+    return `
+        <select class="order-status-select ${getStatusMeta(status).class}" data-order-id="${escapeHtml(orderId)}" data-current-status="${escapeHtml(status)}" onchange="handleOrderStatusSelectChange(this)">
+            ${statusOptions.map((optionStatus) => `
+                <option value="${optionStatus}" ${optionStatus === status ? "selected" : ""}>
+                    ${escapeHtml(getStatusMeta(optionStatus).label)}
+                </option>
+            `).join("")}
+        </select>
+    `;
+}
+
+function renderStatusOptions(status) {
+    const nextStatus = getNextOrderStatus(status);
+    return [status, nextStatus].filter(Boolean).map((optionStatus) => `
+        <option value="${optionStatus}" ${optionStatus === status ? "selected" : ""}>
+            ${escapeHtml(getStatusMeta(optionStatus).label)}
+        </option>
+    `).join("");
+}
+
+async function handleOrderStatusSelectChange(selectEl) {
+    const orderId = selectEl.dataset.orderId;
+    const currentStatus = selectEl.dataset.currentStatus;
+    const nextStatus = selectEl.value;
+
+    if (!orderId || nextStatus === currentStatus) return;
+
+    selectEl.disabled = true;
+
+    try {
+        const response = await apiFetch(`/api/orders/${orderId}/status`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ status: nextStatus })
+        });
+        await parseApiResponse(response);
+        await loadOrders();
+        showToast("Cập nhật trạng thái đơn hàng thành công!", "success");
+    } catch (error) {
+        selectEl.value = currentStatus;
+        selectEl.disabled = false;
+        showToast(error.message, "error");
+    }
 }
 
 function getStatusMeta(status) {
@@ -602,7 +665,12 @@ async function openOrderEditModal(id) {
 
         document.getElementById("edit-order-id").value = order._id;
         document.getElementById("edit-order-user").value = order.user?._id || "";
-        document.getElementById("edit-order-status").value = order.status;
+        const editStatusSelect = document.getElementById("edit-order-status");
+        if (editStatusSelect) {
+            editStatusSelect.innerHTML = renderStatusOptions(order.status);
+            editStatusSelect.value = order.status;
+            editStatusSelect.disabled = order.status === "completed" || order.status === "cancelled";
+        }
         document.getElementById("edit-order-start-date").value = formatDateToYYYYMMDD(order.startDate);
         document.getElementById("edit-order-return-date").value = formatDateToYYYYMMDD(order.returnDate);
 

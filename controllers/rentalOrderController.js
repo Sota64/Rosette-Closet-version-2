@@ -6,6 +6,16 @@ const { sendSuccess, sendError } = require("../middleware/response");
 
 const orderStatuses = ["pending", "approved", "delivering", "renting", "returned", "completed", "cancelled"];
 const paymentMethods = ["bank_transfer", "cash_on_delivery"];
+const forwardOrderStatusFlow = ["pending", "approved", "delivering", "renting", "returned", "completed"];
+
+const getNextOrderStatus = (status) => {
+  const currentIndex = forwardOrderStatusFlow.indexOf(status);
+  return currentIndex >= 0 ? forwardOrderStatusFlow[currentIndex + 1] : null;
+};
+
+const canMoveOrderStatus = (currentStatus, nextStatus) => {
+  return currentStatus === nextStatus || getNextOrderStatus(currentStatus) === nextStatus;
+};
 
 const escapeRegex = (value) => {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -266,15 +276,23 @@ const updateOrder = async (req, res) => {
       }
     });
 
-    const needsTotalRecalculation = req.body.items !== undefined ||
+    let existingOrder = null;
+    const needsExistingOrder = req.body.items !== undefined ||
+      (payload.status !== undefined) ||
       (req.body.totalAmount === undefined && (req.body.startDate !== undefined || req.body.returnDate !== undefined));
 
-    if (needsTotalRecalculation) {
-      const existingOrder = await RentalOrder.findById(req.params.id);
+    if (needsExistingOrder) {
+      existingOrder = await RentalOrder.findById(req.params.id);
       if (!existingOrder) {
         return sendError(res, "Khong tim thay don thue", 404);
       }
+    }
 
+    if (payload.status !== undefined && !canMoveOrderStatus(existingOrder.status, payload.status)) {
+      return sendError(res, "Khong the quay lai hoac bo qua trang thai don thue", 400);
+    }
+
+    if (req.body.items !== undefined || (req.body.totalAmount === undefined && (req.body.startDate !== undefined || req.body.returnDate !== undefined))) {
       if (req.body.items !== undefined) {
         payload.items = await buildOrderItems(req.body.items);
       }
@@ -323,8 +341,18 @@ const updateOrderStatus = async (req, res) => {
       return sendError(res, "Trang thai don thue khong hop le", 400);
     }
 
+    const currentOrder = await RentalOrder.findById(req.params.id);
+
+    if (!currentOrder) {
+      return sendError(res, "Khong tim thay don thue", 404);
+    }
+
+    if (!canMoveOrderStatus(currentOrder.status, status)) {
+      return sendError(res, "Khong the quay lai hoac bo qua trang thai don thue", 400);
+    }
+
     const order = await populateOrder(RentalOrder.findByIdAndUpdate(
-      req.params.id,
+      currentOrder._id,
       { status },
       {
         new: true,

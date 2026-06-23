@@ -191,6 +191,11 @@ function getSelectedSize() {
   return selectedSizeBtn?.querySelector("span")?.textContent?.trim() || "";
 }
 
+function canRentProduct(product) {
+  const selectedSize = getSelectedSize();
+  return product.status !== "rented" && Boolean(selectedSize);
+}
+
 function buildRentNowUrl(product) {
   const params = new URLSearchParams({
     id: product._id
@@ -218,7 +223,25 @@ function updateRentNowLink(product) {
   const rentNowLink = document.getElementById("rent-now-link");
   if (rentNowLink) {
     rentNowLink.href = buildRentNowUrl(product);
+    rentNowLink.setAttribute("aria-disabled", String(!canRentProduct(product)));
   }
+}
+
+function bindRentNowLink(product) {
+  const rentNowLink = document.getElementById("rent-now-link");
+  if (!rentNowLink) return;
+
+  const newRentNowLink = rentNowLink.cloneNode(true);
+  rentNowLink.parentNode.replaceChild(newRentNowLink, rentNowLink);
+  newRentNowLink.addEventListener("click", (event) => {
+    if (!canRentProduct(product)) {
+      event.preventDefault();
+      showToast("Sản phẩm đang được thuê.");
+      return;
+    }
+
+    newRentNowLink.href = buildRentNowUrl(product);
+  });
 }
 
 function updateRentalDateSelection(product) {
@@ -406,11 +429,6 @@ function renderProductDetail(data) {
     categoryLink.textContent = categoryName;
   }
 
-  const rentNowLink = document.getElementById("rent-now-link");
-  if (rentNowLink) {
-    rentNowLink.href = buildRentNowUrl(product);
-  }
-
   const cartBtn = document.querySelector(".cart-button");
   if (cartBtn) {
     const newCartBtn = cartBtn.cloneNode(true);
@@ -420,6 +438,7 @@ function renderProductDetail(data) {
 
   renderGallery(product);
   renderSizes(product);
+  bindRentNowLink(product);
   updateRentNowLink(product);
   bindRentDatePicker(product);
   renderSimilarProducts(data.similarProducts || []);
