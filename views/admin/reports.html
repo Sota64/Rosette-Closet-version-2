@@ -80,10 +80,8 @@
             <!-- SVG Trend Line Chart Card -->
             <div class="table-card" style="padding: 24px;">
                 <h3 class="card-heading" style="font-family: 'Be Vietnam Pro', sans-serif; font-size: 16px; font-weight: 600; color: #735c00; margin-bottom: 16px;">Biểu đồ xu hướng doanh thu</h3>
-                <div class="chart-container" style="position: relative; height: 260px; width: 100%;">
-                    <svg id="revenue-trend-chart" preserveAspectRatio="none" viewBox="0 0 600 200" style="width: 100%; height: 100%;">
-                        <!-- Dynamic content will be injected via JS -->
-                    </svg>
+                <div class="chart-container" style="position: relative; height: 320px; width: 100%;">
+                    <canvas id="revenue-trend-chart"></canvas>
                 </div>
             </div>
 
@@ -141,6 +139,7 @@
     <!-- Toast Notifications Container -->
     <div id="toast-container"></div>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="/public/js/apiClient.js"></script>
     <script src="/public/js/layouts/navbar.js"></script>
     <script src="/public/js/admin/reports.js"></script>
