@@ -197,12 +197,9 @@ function renderUsersTable(userList) {
                 </td>
                 <td class="user-created">${registeredDate}</td>
                 <td>
-                    <div class="status-wrapper">
-                        <div class="status-dot ${user.isActive ? 'active' : 'inactive'}"></div>
-                        <span class="status-text ${user.isActive ? 'active' : 'inactive'}">
-                            ${user.isActive ? 'Đang hoạt động' : 'Đã khóa'}
-                        </span>
-                    </div>
+                    <span class="status-badge ${user.isActive ? 'active' : 'inactive'}">
+                        ${user.isActive ? 'Đang hoạt động' : 'Đã khóa'}
+                    </span>
                 </td>
                 <td>
                     <div class="action-buttons">

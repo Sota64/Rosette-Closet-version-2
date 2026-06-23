@@ -682,6 +682,7 @@ a {
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.1em;
+    white-space: nowrap;
 }
 
 .role-badge.admin {
@@ -695,34 +696,34 @@ a {
 }
 
 /* Status cell */
-.status-wrapper {
-    display: flex;
+.status-badge {
+    display: inline-flex;
     align-items: center;
-    gap: 8px;
+    justify-content: center;
+    min-width: 112px;
+    min-height: 34px;
+    padding: 4px 12px;
+    font-size: 10px;
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    line-height: 1;
+    white-space: nowrap;
+    border-radius: 9999px;
+    border: 1px solid;
 }
 
-.status-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-}
-
-.status-dot.active {
-    background-color: #10b981;
-}
-
-.status-text.active {
+.status-badge.active {
+    background-color: #ecfdf5;
     color: #047857;
-    font-weight: 500;
+    border-color: #d1fae5;
 }
 
-.status-dot.inactive {
-    background-color: #c8c6c5;
-}
-
-.status-text.inactive {
-    color: #4d4635;
-    font-weight: 500;
+.status-badge.inactive {
+    background-color: #fef2f2;
+    color: #b91c1c;
+    border-color: #fecaca;
 }
 
 /* Action Buttons */
