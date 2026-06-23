@@ -90,6 +90,7 @@ function initUsersPage() {
     const addBtn = document.querySelector(".btn-add");
     if (addBtn) {
         addBtn.addEventListener("click", () => {
+            resetUserAddressFields("add");
             openModal("modal-user-add");
         });
     }
@@ -109,6 +110,243 @@ let users = [];
 let usersPagination = {
     total: 0
 };
+const USER_ADDRESS_API_URL = "https://provinces.open-api.vn/api/?depth=3";
+const USER_ADDRESS_CACHE_KEY = "rosette_vietnam_address_data";
+const USER_ADDRESS_CACHE_MAX_AGE = 7 * 24 * 60 * 60 * 1000;
+const USER_FALLBACK_ADDRESS_DATA = [
+    {
+        name: "Thành phố Hà Nội",
+        districts: [
+            { name: "Quận Ba Đình", wards: [{ name: "Phường Phúc Xá" }, { name: "Phường Trúc Bạch" }, { name: "Phường Liễu Giai" }] },
+            { name: "Quận Hoàn Kiếm", wards: [{ name: "Phường Hàng Bạc" }, { name: "Phường Hàng Bài" }, { name: "Phường Tràng Tiền" }] },
+            { name: "Quận Cầu Giấy", wards: [{ name: "Phường Nghĩa Đô" }, { name: "Phường Quan Hoa" }, { name: "Phường Yên Hoà" }] }
+        ]
+    },
+    {
+        name: "Thành phố Hồ Chí Minh",
+        districts: [
+            { name: "Quận 1", wards: [{ name: "Phường Bến Nghé" }, { name: "Phường Bến Thành" }, { name: "Phường Đa Kao" }] },
+            { name: "Quận 3", wards: [{ name: "Phường 1" }, { name: "Phường 2" }, { name: "Phường 3" }] },
+            { name: "Thành phố Thủ Đức", wards: [{ name: "Phường Linh Trung" }, { name: "Phường Thảo Điền" }, { name: "Phường An Phú" }] }
+        ]
+    },
+    {
+        name: "Thành phố Đà Nẵng",
+        districts: [
+            { name: "Quận Hải Châu", wards: [{ name: "Phường Hải Châu I" }, { name: "Phường Hải Châu II" }] },
+            { name: "Quận Sơn Trà", wards: [{ name: "Phường An Hải Bắc" }, { name: "Phường Phước Mỹ" }] }
+        ]
+    }
+];
+let userAddressData = [];
+
+function normalizeAddressName(value = "") {
+    return String(value)
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/^(tinh|thanh pho|tp|quan|huyen|thi xa|phuong|xa|thi tran)\s+/i, "")
+        .replace(/\s+/g, " ")
+        .trim()
+        .toLowerCase();
+}
+
+function getCachedAddressData() {
+    try {
+        const cached = JSON.parse(localStorage.getItem(USER_ADDRESS_CACHE_KEY) || "null");
+        if (!cached?.data || !cached?.savedAt) return null;
+        if (Date.now() - cached.savedAt > USER_ADDRESS_CACHE_MAX_AGE) return null;
+        return cached.data;
+    } catch (error) {
+        return null;
+    }
+}
+
+function saveCachedAddressData(data) {
+    try {
+        localStorage.setItem(USER_ADDRESS_CACHE_KEY, JSON.stringify({
+            savedAt: Date.now(),
+            data
+        }));
+    } catch (error) {
+        console.warn("Không thể lưu cache địa chỉ:", error);
+    }
+}
+
+async function loadVietnamAddressData() {
+    const cached = getCachedAddressData();
+    if (cached) {
+        userAddressData = cached;
+        return cached;
+    }
+
+    try {
+        const response = await fetch(USER_ADDRESS_API_URL);
+        if (!response.ok) throw new Error("Không thể tải danh sách tỉnh thành");
+        const data = await response.json();
+        if (!Array.isArray(data) || data.length === 0) throw new Error("Dữ liệu tỉnh thành không hợp lệ");
+        userAddressData = data;
+        saveCachedAddressData(data);
+        return data;
+    } catch (error) {
+        console.warn("Đang dùng dữ liệu địa chỉ dự phòng:", error);
+        userAddressData = USER_FALLBACK_ADDRESS_DATA;
+        return USER_FALLBACK_ADDRESS_DATA;
+    }
+}
+
+function setSelectOptions(select, options, placeholder, selectedName = "") {
+    if (!select) return;
+
+    select.innerHTML = `<option value="">${placeholder}</option>`;
+    options.forEach((item) => {
+        const option = document.createElement("option");
+        option.value = item.name;
+        option.textContent = item.name;
+        select.appendChild(option);
+    });
+
+    if (selectedName) {
+        const selected = Array.from(select.options).find((option) => (
+            normalizeAddressName(option.value) === normalizeAddressName(selectedName)
+        ));
+
+        if (selected) {
+            select.value = selected.value;
+        } else {
+            const option = document.createElement("option");
+            option.value = selectedName;
+            option.textContent = selectedName;
+            select.appendChild(option);
+            select.value = selectedName;
+        }
+    }
+}
+
+function findProvince(name) {
+    const normalized = normalizeAddressName(name);
+    return userAddressData.find((province) => normalizeAddressName(province.name) === normalized);
+}
+
+function findDistrict(province, name) {
+    const normalized = normalizeAddressName(name);
+    return province?.districts?.find((district) => normalizeAddressName(district.name) === normalized);
+}
+
+function populateUserProvinceSelect(prefix, selectedProvince = "") {
+    setSelectOptions(
+        document.getElementById(`${prefix}-user-province`),
+        userAddressData,
+        "Chọn tỉnh / thành phố",
+        selectedProvince
+    );
+}
+
+function populateUserDistrictSelect(prefix, provinceName, selectedDistrict = "") {
+    const districtSelect = document.getElementById(`${prefix}-user-district`);
+    const province = findProvince(provinceName);
+    const districts = province?.districts || [];
+
+    setSelectOptions(districtSelect, districts, "Chọn quận / huyện", selectedDistrict);
+    if (districtSelect) districtSelect.disabled = districts.length === 0;
+}
+
+function populateUserWardSelect(prefix, provinceName, districtName, selectedWard = "") {
+    const wardSelect = document.getElementById(`${prefix}-user-ward`);
+    const province = findProvince(provinceName);
+    const district = findDistrict(province, districtName);
+    const wards = district?.wards || [];
+
+    setSelectOptions(wardSelect, wards, "Chọn phường / xã", selectedWard);
+    if (wardSelect) wardSelect.disabled = wards.length === 0;
+}
+
+function parseAddress(addressString = "") {
+    if (!addressString || addressString === "Chưa cập nhật") {
+        return { street: "", ward: "", district: "", province: "" };
+    }
+
+    const parts = addressString.split(",").map((part) => part.trim()).filter(Boolean);
+    const address = { street: "", ward: "", district: "", province: "" };
+
+    if (parts.length >= 4) {
+        address.province = parts[parts.length - 1];
+        address.district = parts[parts.length - 2];
+        address.ward = parts[parts.length - 3];
+        address.street = parts.slice(0, parts.length - 3).join(", ");
+    } else if (parts.length === 3) {
+        address.province = parts[2];
+        address.district = parts[1];
+        address.street = parts[0];
+    } else if (parts.length === 2) {
+        address.province = parts[1];
+        address.street = parts[0];
+    } else {
+        address.street = addressString;
+    }
+
+    return address;
+}
+
+function setSelectedUserAddress(prefix, address) {
+    populateUserProvinceSelect(prefix, address.province);
+    populateUserDistrictSelect(prefix, document.getElementById(`${prefix}-user-province`)?.value, address.district);
+    populateUserWardSelect(
+        prefix,
+        document.getElementById(`${prefix}-user-province`)?.value,
+        document.getElementById(`${prefix}-user-district`)?.value,
+        address.ward
+    );
+
+    const streetInput = document.getElementById(`${prefix}-user-street`);
+    if (streetInput) streetInput.value = address.street || "";
+}
+
+function resetUserAddressFields(prefix) {
+    setSelectedUserAddress(prefix, { street: "", ward: "", district: "", province: "" });
+    const districtSelect = document.getElementById(`${prefix}-user-district`);
+    const wardSelect = document.getElementById(`${prefix}-user-ward`);
+    if (districtSelect) districtSelect.disabled = true;
+    if (wardSelect) wardSelect.disabled = true;
+}
+
+function getUserAddressPayload(prefix) {
+    const street = document.getElementById(`${prefix}-user-street`)?.value.trim() || "";
+    const ward = document.getElementById(`${prefix}-user-ward`)?.value.trim() || "";
+    const district = document.getElementById(`${prefix}-user-district`)?.value.trim() || "";
+    const province = document.getElementById(`${prefix}-user-province`)?.value.trim() || "";
+
+    if (!street || !ward || !district || !province) {
+        throw new Error("Vui lòng chọn đầy đủ tỉnh/thành phố, quận/huyện, phường/xã và nhập địa chỉ chi tiết.");
+    }
+
+    return [street, ward, district, province].join(", ");
+}
+
+function bindUserAddressSelectors(prefix) {
+    const provinceSelect = document.getElementById(`${prefix}-user-province`);
+    const districtSelect = document.getElementById(`${prefix}-user-district`);
+    const wardSelect = document.getElementById(`${prefix}-user-ward`);
+
+    provinceSelect?.addEventListener("change", () => {
+        populateUserDistrictSelect(prefix, provinceSelect.value);
+        populateUserWardSelect(prefix, provinceSelect.value, "");
+    });
+
+    districtSelect?.addEventListener("change", () => {
+        populateUserWardSelect(prefix, provinceSelect?.value, districtSelect.value);
+    });
+
+    if (districtSelect) districtSelect.disabled = true;
+    if (wardSelect) wardSelect.disabled = true;
+}
+
+async function initUserAddressSelectors() {
+    await loadVietnamAddressData();
+    ["add", "edit"].forEach((prefix) => {
+        populateUserProvinceSelect(prefix);
+        bindUserAddressSelectors(prefix);
+    });
+}
 
 async function loadUsers() {
     try {
@@ -340,7 +578,7 @@ async function openEditModal(id) {
         document.getElementById("edit-user-password").value = "";
         document.getElementById("edit-user-phone").value = user.phone;
         document.getElementById("edit-user-role").value = user.role;
-        document.getElementById("edit-user-address").value = user.address || "";
+        setSelectedUserAddress("edit", parseAddress(user.address || ""));
         document.getElementById("edit-user-status").value = String(user.isActive);
 
         openModal("modal-user-edit");
@@ -380,17 +618,17 @@ async function handleUserAdd(event) {
     const form = event.target;
     const formData = new FormData(form);
 
-    const payload = {
-        fullName: formData.get("fullName").trim(),
-        email: formData.get("email").trim(),
-        password: formData.get("password"),
-        phone: formData.get("phone").trim(),
-        address: formData.get("address").trim(),
-        role: formData.get("role"),
-        isActive: formData.get("isActive") === "true"
-    };
-
     try {
+        const payload = {
+            fullName: formData.get("fullName").trim(),
+            email: formData.get("email").trim(),
+            password: formData.get("password"),
+            phone: formData.get("phone").trim(),
+            address: getUserAddressPayload("add"),
+            role: formData.get("role"),
+            isActive: formData.get("isActive") === "true"
+        };
+
         const response = await apiFetch("/api/users", {
             method: "POST",
             headers: {
@@ -402,6 +640,7 @@ async function handleUserAdd(event) {
 
         closeModal("modal-user-add");
         form.reset();
+        resetUserAddressFields("add");
         await loadUsers();
         showToast("Thêm người dùng mới thành công!", "success");
     } catch (error) {
@@ -415,21 +654,21 @@ async function handleUserEdit(event) {
     const id = document.getElementById("edit-user-id").value;
     const formData = new FormData(form);
 
-    const payload = {
-        fullName: formData.get("fullName").trim(),
-        email: formData.get("email").trim(),
-        phone: formData.get("phone").trim(),
-        address: formData.get("address").trim(),
-        role: formData.get("role"),
-        isActive: formData.get("isActive") === "true"
-    };
-
-    const newPassword = formData.get("password");
-    if (newPassword && newPassword.trim() !== "") {
-        payload.password = newPassword;
-    }
-
     try {
+        const payload = {
+            fullName: formData.get("fullName").trim(),
+            email: formData.get("email").trim(),
+            phone: formData.get("phone").trim(),
+            address: getUserAddressPayload("edit"),
+            role: formData.get("role"),
+            isActive: formData.get("isActive") === "true"
+        };
+
+        const newPassword = formData.get("password");
+        if (newPassword && newPassword.trim() !== "") {
+            payload.password = newPassword;
+        }
+
         const response = await apiFetch(`/api/users/${id}`, {
             method: "PUT",
             headers: {
@@ -468,7 +707,8 @@ function escapeHtml(str) {
 document.addEventListener("DOMContentLoaded", async () => {
     const [sidebarLoaded] = await Promise.all([
         loadLayout("sidebar-placeholder", "../layouts/sidebar.html"),
-        loadLayout("footer-placeholder", "../layouts/footer.html")
+        loadLayout("footer-placeholder", "../layouts/footer.html"),
+        initUserAddressSelectors()
     ]);
 
     if (sidebarLoaded) {

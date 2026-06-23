@@ -207,7 +207,27 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label">Địa chỉ</label>
-                    <input type="text" class="form-input" required placeholder="Nhập địa chỉ..." name="address"/>
+                    <input type="text" id="add-user-street" class="form-input" required placeholder="Số nhà, tên đường..." name="street"/>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Tỉnh / Thành phố</label>
+                        <select id="add-user-province" class="form-select" required name="province">
+                            <option value="">Chọn tỉnh / thành phố</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Quận / Huyện</label>
+                        <select id="add-user-district" class="form-select" required name="district" disabled>
+                            <option value="">Chọn quận / huyện</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Phường / Xã</label>
+                    <select id="add-user-ward" class="form-select" required name="ward" disabled>
+                        <option value="">Chọn phường / xã</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Trạng thái hoạt động</label>
@@ -297,7 +317,27 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label">Địa chỉ</label>
-                    <input type="text" id="edit-user-address" class="form-input" required placeholder="Nhập địa chỉ..." name="address"/>
+                    <input type="text" id="edit-user-street" class="form-input" required placeholder="Số nhà, tên đường..." name="street"/>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Tỉnh / Thành phố</label>
+                        <select id="edit-user-province" class="form-select" required name="province">
+                            <option value="">Chọn tỉnh / thành phố</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Quận / Huyện</label>
+                        <select id="edit-user-district" class="form-select" required name="district" disabled>
+                            <option value="">Chọn quận / huyện</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Phường / Xã</label>
+                    <select id="edit-user-ward" class="form-select" required name="ward" disabled>
+                        <option value="">Chọn phường / xã</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Trạng thái hoạt động</label>
