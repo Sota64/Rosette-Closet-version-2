@@ -188,7 +188,7 @@ function renderOrdersTable(orderList) {
         // Compute total deposit
         let totalDeposit = 0;
         if (order.items && order.items.length > 0) {
-            totalDeposit = order.items.reduce((sum, item) => sum + (item.deposit || 0) * rentalDays * (item.quantity || 1), 0);
+            totalDeposit = order.items.reduce((sum, item) => sum + (item.deposit || 0) * rentalDays, 0);
         }
 
         // Generate product names summary
@@ -198,7 +198,6 @@ function renderOrdersTable(orderList) {
                 return `
                     <div class="product-detail-cell" style="margin-bottom: 4px;">
                         <span style="font-weight: 500;">${escapeHtml(productName)}</span>
-                        <div class="product-spec" style="font-size: 11px; color: #7a7979;">Số lượng: ${item.quantity || 1}</div>
                     </div>
                 `;
             }).join("")
@@ -314,13 +313,13 @@ function populateUserDropdowns() {
     });
 }
 
-function createOrderItemRow(containerId, productVal='', qtyVal=1, priceVal='', depositVal='') {
+function createOrderItemRow(containerId, productVal='', priceVal='', depositVal='') {
     const container = document.getElementById(containerId);
     if (!container) return;
 
     const row = document.createElement("div");
     row.className = "form-row order-item-row";
-    row.style.gridTemplateColumns = "2.5fr 1fr 1.5fr 1.5fr auto";
+    row.style.gridTemplateColumns = "2.5fr 1.5fr 1.5fr auto";
     row.style.alignItems = "end";
     row.style.gap = "10px";
     row.style.marginBottom = "10px";
@@ -336,10 +335,6 @@ function createOrderItemRow(containerId, productVal='', qtyVal=1, priceVal='', d
                 <option value="">Chọn sản phẩm</option>
                 ${productOptions}
             </select>
-        </div>
-        <div class="form-group" style="margin-bottom: 0;">
-            <label class="form-label" style="font-size:9px;">SL</label>
-            <input type="number" class="form-input item-quantity" required min="1" value="${qtyVal}"/>
         </div>
         <div class="form-group" style="margin-bottom: 0;">
             <label class="form-label" style="font-size:9px;">Giá thuê (VNĐ)</label>
@@ -361,7 +356,6 @@ function createOrderItemRow(containerId, productVal='', qtyVal=1, priceVal='', d
     }
 
     const prefix = containerId.split('-')[0];
-    row.querySelector(".item-quantity").addEventListener("input", () => calculateTotalOrderAmount(prefix));
     row.querySelector(".item-price").addEventListener("input", () => calculateTotalOrderAmount(prefix));
     row.querySelector(".item-deposit").addEventListener("input", () => calculateTotalOrderAmount(prefix));
     
@@ -393,7 +387,7 @@ function calculateTotalOrderAmount(prefix) {
     let total = 0;
     const rows = container.querySelectorAll(".order-item-row");
     rows.forEach(row => {
-        const qty = parseInt(row.querySelector(".item-quantity").value) || 0;
+        const qty = 1;
         const price = parseFloat(row.querySelector(".item-price").value) || 0;
         const deposit = parseFloat(row.querySelector(".item-deposit").value) || 0;
         total += ((price + deposit) * rentalDays) * qty;
@@ -573,8 +567,8 @@ async function openOrderDetailModal(id) {
         const itemsListEl = document.getElementById("detail-order-items-list");
         itemsListEl.innerHTML = order.items.map(item => {
             const productTitle = item.product?.name || "Sản phẩm đã xóa";
-            const itemRent = (item.rentalPrice || 0) * rentalDays * (item.quantity || 1);
-            const itemDep = (item.deposit || 0) * rentalDays * (item.quantity || 1);
+            const itemRent = (item.rentalPrice || 0) * rentalDays;
+            const itemDep = (item.deposit || 0) * rentalDays;
             rentalSum += itemRent;
             depositSum += itemDep;
 
@@ -582,7 +576,7 @@ async function openOrderDetailModal(id) {
                 <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #efeded; font-size: 13px;">
                     <div>
                         <div style="font-weight: 500;">${escapeHtml(productTitle)}</div>
-                        <div style="font-size: 11px; color: #7a7979;">Đơn giá thuê/ngày: ${formatCurrency(item.rentalPrice)} | Cọc/ngày: ${formatCurrency(item.deposit)} | ${rentalDays} ngày | SL: ${item.quantity}</div>
+                        <div style="font-size: 11px; color: #7a7979;">Đơn giá thuê/ngày: ${formatCurrency(item.rentalPrice)} | Cọc/ngày: ${formatCurrency(item.deposit)} | ${rentalDays} ngày</div>
                     </div>
                     <div style="text-align: right; font-weight: 500;">
                         <div>Thuê: ${formatCurrency(itemRent)}</div>
@@ -618,7 +612,7 @@ async function openOrderEditModal(id) {
         
         if (order.items && order.items.length > 0) {
             order.items.forEach(item => {
-                createOrderItemRow("edit-order-items-container", item.product?._id || item.product, item.quantity, item.rentalPrice, item.deposit);
+                createOrderItemRow("edit-order-items-container", item.product?._id || item.product, item.rentalPrice, item.deposit);
             });
         } else {
             createOrderItemRow("edit-order-items-container");
@@ -662,14 +656,13 @@ function collectOrderItemsPayload(containerId) {
     const rows = container.querySelectorAll(".order-item-row");
     rows.forEach(row => {
         const productVal = row.querySelector(".item-product").value;
-        const qtyVal = parseInt(row.querySelector(".item-quantity").value) || 1;
         const priceVal = parseFloat(row.querySelector(".item-price").value) || 0;
         const depositVal = parseFloat(row.querySelector(".item-deposit").value) || 0;
 
         if (productVal) {
             items.push({
                 product: productVal,
-                quantity: qtyVal,
+                quantity: 1,
                 rentalPrice: priceVal,
                 deposit: depositVal
             });

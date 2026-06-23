@@ -7,6 +7,10 @@ const rentalOrderItemSchema = new mongoose.Schema(
       ref: "Product",
       required: true
     },
+    size: {
+      type: String,
+      enum: ["XS", "S", "M", "L", "XL", "XXL"]
+    },
     quantity: {
       type: Number,
       required: true,
@@ -71,4 +75,3 @@ const rentalOrderSchema = new mongoose.Schema(
 );
 
 module.exports = mongoose.model("RentalOrder", rentalOrderSchema);
-

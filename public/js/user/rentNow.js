@@ -112,6 +112,16 @@ function getCategoryName(product) {
   return product?.category?.name || "Bộ sưu tập";
 }
 
+function getAvailableProductSizes(product) {
+  const availability = product?.sizeAvailability?.length
+    ? product.sizeAvailability
+    : (product?.sizes || []).map((size) => ({ size, status: "available" }));
+
+  return availability
+    .filter((item) => item.status === "available")
+    .map((item) => item.size);
+}
+
 async function parseApiResponse(response, fallbackMessage) {
   const result = await response.json();
 
@@ -386,7 +396,7 @@ function renderProductsList() {
         <div>
           <h4 style="font-size: 15px; font-weight: 600; color: var(--primary); margin: 0 0 4px 0;">${escapeHtml(item.name)}</h4>
           <p style="font-size: 13px; color: var(--on-surface-variant); margin: 0 0 2px 0;">Phân loại: ${escapeHtml(item.category || getCategoryName(item))}</p>
-          <p style="font-size: 13px; color: var(--on-surface-variant); margin: 0 0 4px 0;">Size: ${escapeHtml(item.size || "Mặc định")} | SL: ${item.quantity || 1}</p>
+          <p style="font-size: 13px; color: var(--on-surface-variant); margin: 0 0 4px 0;">Size: ${escapeHtml(item.size || "Mặc định")}</p>
           <strong style="font-size: 14px; font-weight: 600; color: var(--on-surface);">${formatCurrency(item.rentalPrice)} / ngày</strong>
         </div>
       </div>
@@ -401,10 +411,10 @@ function updateOrderSummary() {
   rentNowState.rentalDays = getRentalDays();
 
   const rentalTotal = products.reduce((sum, item) => (
-    sum + Number(item.rentalPrice || 0) * (Number(item.quantity) || 1) * rentNowState.rentalDays
+    sum + Number(item.rentalPrice || 0) * rentNowState.rentalDays
   ), 0);
   const depositTotal = products.reduce((sum, item) => (
-    sum + Number(item.deposit || 0) * (Number(item.quantity) || 1) * rentNowState.rentalDays
+    sum + Number(item.deposit || 0) * rentNowState.rentalDays
   ), 0);
   const total = rentalTotal + depositTotal;
 
@@ -483,14 +493,15 @@ function buildOrderPayload() {
 
   const items = products.map(item => ({
     product: item._id,
-    quantity: Number(item.quantity) || 1,
+    size: item.size,
+    quantity: 1,
     rentalPrice: Number(item.rentalPrice || 0),
     deposit: Number(item.deposit || 0)
   }));
 
   const rentalDays = getRentalDays();
   const totalAmount = items.reduce((sum, item) => (
-    sum + ((item.rentalPrice + item.deposit) * rentalDays) * item.quantity
+    sum + ((item.rentalPrice + item.deposit) * rentalDays)
   ), 0);
 
   return {
@@ -597,7 +608,15 @@ async function loadRentNowPage() {
     } else {
       const productId = await resolveProductId();
       const product = await fetchProduct(productId);
-      const size = params.get("size") || product.sizes?.[0] || "Đang cập nhật";
+      const availableSizes = getAvailableProductSizes(product);
+      const requestedSize = params.get("size");
+      const size = availableSizes.includes(requestedSize)
+        ? requestedSize
+        : availableSizes[0];
+
+      if (!size) {
+        throw new Error("Sản phẩm này hiện không còn size trống để thuê.");
+      }
 
       rentNowState.products = [{
         _id: product._id,

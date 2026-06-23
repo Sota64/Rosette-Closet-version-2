@@ -51,8 +51,8 @@ function saveCart(cart) {
 }
 
 function updateCartTotals() {
-  const rentalTotal = cartItemsState.reduce((sum, item) => sum + (Number(item.rentalPrice || 0) * (Number(item.quantity) || 1)), 0);
-  const depositTotal = cartItemsState.reduce((sum, item) => sum + (Number(item.deposit || 0) * (Number(item.quantity) || 1)), 0);
+  const rentalTotal = cartItemsState.reduce((sum, item) => sum + Number(item.rentalPrice || 0), 0);
+  const depositTotal = cartItemsState.reduce((sum, item) => sum + Number(item.deposit || 0), 0);
   const grandTotal = rentalTotal + depositTotal;
 
   const rentalPriceEl = document.getElementById("summary-rental-price");
@@ -62,18 +62,6 @@ function updateCartTotals() {
   if (rentalPriceEl) rentalPriceEl.textContent = formatCurrency(rentalTotal);
   if (depositPriceEl) depositPriceEl.textContent = formatCurrency(depositTotal);
   if (totalPriceEl) totalPriceEl.textContent = formatCurrency(grandTotal);
-}
-
-function updateQuantity(productId, size, change) {
-  const itemIndex = cartItemsState.findIndex(item => item._id === productId && item.size === size);
-  if (itemIndex === -1) return;
-
-  const newQty = (cartItemsState[itemIndex].quantity || 1) + change;
-  if (newQty < 1) return; // Keep quantity at least 1
-
-  cartItemsState[itemIndex].quantity = newQty;
-  saveCart(cartItemsState);
-  renderCart();
 }
 
 function deleteCartItem(productId, size, element) {
@@ -108,9 +96,8 @@ function renderCart() {
 
   itemsList.innerHTML = cartItemsState.map((item) => {
     const uniqueId = `item-${item._id}-${item.size}`;
-    const qty = Number(item.quantity) || 1;
-    const itemTotalRental = Number(item.rentalPrice || 0) * qty;
-    const itemTotalDeposit = Number(item.deposit || 0) * qty;
+    const itemTotalRental = Number(item.rentalPrice || 0);
+    const itemTotalDeposit = Number(item.deposit || 0);
 
     return `
       <div class="cart-item" id="${uniqueId}">
@@ -128,16 +115,6 @@ function renderCart() {
             <span>Danh mục: <strong>${escapeHtml(item.category || "Bộ sưu tập")}</strong></span>
             <span>Size: <strong>${escapeHtml(item.size)}</strong></span>
             <span>Màu: <strong>${escapeHtml(item.color)}</strong></span>
-          </div>
-
-          <div class="quantity-control">
-            <button type="button" class="minus-btn" aria-label="Giảm số lượng" ${qty <= 1 ? "disabled" : ""}>
-              <span class="material-symbols-outlined">remove</span>
-            </button>
-            <span>${qty}</span>
-            <button type="button" class="plus-btn" aria-label="Tăng số lượng">
-              <span class="material-symbols-outlined">add</span>
-            </button>
           </div>
         </div>
 
@@ -158,22 +135,14 @@ function renderCart() {
     `;
   }).join("");
 
-  // Attach event listeners to quantity buttons and delete button for each item
+  // Attach event listeners to delete button for each item
   cartItemsState.forEach((item) => {
     const uniqueId = `item-${item._id}-${item.size}`;
     const rowEl = document.getElementById(uniqueId);
     if (!rowEl) return;
 
-    const minusBtn = rowEl.querySelector(".minus-btn");
-    const plusBtn = rowEl.querySelector(".plus-btn");
     const deleteBtn = rowEl.querySelector(".delete-item-btn");
 
-    if (minusBtn) {
-      minusBtn.addEventListener("click", () => updateQuantity(item._id, item.size, -1));
-    }
-    if (plusBtn) {
-      plusBtn.addEventListener("click", () => updateQuantity(item._id, item.size, 1));
-    }
     if (deleteBtn) {
       deleteBtn.addEventListener("click", () => deleteCartItem(item._id, item.size, rowEl));
     }

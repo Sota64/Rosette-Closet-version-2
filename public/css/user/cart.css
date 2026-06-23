@@ -191,39 +191,6 @@ img {
   color: var(--on-surface);
 }
 
-/* Quantity Control */
-.quantity-control {
-  display: flex;
-  align-items: center;
-  border: 1px solid var(--outline-variant);
-  border-radius: 6px;
-  width: fit-content;
-  background: rgba(255, 255, 255, 0.5);
-  overflow: hidden;
-}
-
-.quantity-control button {
-  width: 32px;
-  height: 32px;
-  display: grid;
-  place-items: center;
-  color: var(--on-surface-variant);
-  transition: background var(--transition), color var(--transition);
-}
-
-.quantity-control button:hover {
-  background: var(--surface-container-highest);
-  color: var(--primary);
-}
-
-.quantity-control span {
-  width: 36px;
-  text-align: center;
-  font-weight: 600;
-  font-size: 14px;
-  color: var(--on-surface);
-}
-
 /* Cart Item Pricing */
 .cart-item-pricing {
   display: flex;

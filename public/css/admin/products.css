@@ -716,25 +716,43 @@ a {
 .size-group {
     display: flex;
     justify-content: center;
-    gap: 4px;
+    flex-wrap: wrap;
+    gap: 6px;
 }
 
 .size-tag {
-    width: 24px;
-    height: 24px;
+    min-width: 58px;
+    min-height: 34px;
     border-radius: 0.125rem;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: 2px;
+    padding: 4px 6px;
     font-size: 10px;
     font-weight: bold;
     border: 1px solid #d0c5af; /* outline-variant */
     color: #7f7663; /* outline */
 }
 
+.size-tag small {
+    font-size: 7px;
+    line-height: 1;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
 .size-tag.size-active {
-    border-color: #7f7663; /* outline */
-    color: #1b1c1c; /* on-surface */
+    border-color: rgba(26, 115, 232, 0.35);
+    background: rgba(26, 115, 232, 0.08);
+    color: #174ea6;
+}
+
+.size-tag.size-rented {
+    border-color: rgba(186, 26, 26, 0.28);
+    background: rgba(186, 26, 26, 0.08);
+    color: #8c1d18;
 }
 
 .price-text {

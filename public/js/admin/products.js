@@ -49,13 +49,25 @@ function getCategoryName(product) {
 
 function getStatusMeta(status) {
     const map = {
-        available: { className: "badge-available", label: "Available" },
-        rented: { className: "badge-rented", label: "Rented" },
-        maintenance: { className: "badge-cleaning", label: "Cleaning" },
-        outofstock: { className: "badge-outofstock", label: "Out of Stock" }
+        available: { className: "badge-available", label: "Sẵn sàng" },
+        rented: { className: "badge-rented", label: "Đang thuê" },
+        maintenance: { className: "badge-cleaning", label: "Đang vệ sinh" },
+        outofstock: { className: "badge-outofstock", label: "Hết hàng" }
     };
 
     return map[status] || map.available;
+}
+
+function getSizeAvailability(product) {
+    if (Array.isArray(product.sizeAvailability) && product.sizeAvailability.length) {
+        return product.sizeAvailability;
+    }
+
+    const rentedSizes = product.rentedSizes || [];
+    return (product.sizes || []).map((size) => ({
+        size,
+        status: rentedSizes.includes(size) ? "rented" : "available"
+    }));
 }
 
 function buildProductFormData(form) {
@@ -181,7 +193,7 @@ function renderCategoryOptions() {
 async function loadProducts() {
     const tbody = document.querySelector(".products-table tbody");
     if (tbody) {
-        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding: 28px;">Đang tải sản phẩm...</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 28px;">Đang tải sản phẩm...</td></tr>';
     }
 
     try {
@@ -198,7 +210,7 @@ async function loadProducts() {
         renderStats(data.stats);
     } catch (error) {
         if (tbody) {
-            tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding: 28px;">${escapeHtml(error.message)}</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding: 28px;">${escapeHtml(error.message)}</td></tr>`;
         }
     }
 }
@@ -237,17 +249,26 @@ function renderProductsTable() {
     if (!tbody) return;
 
     if (!pageState.products.length) {
-        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding: 28px;">Chưa có sản phẩm phù hợp.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 28px;">Chưa có sản phẩm phù hợp.</td></tr>';
         return;
     }
 
     tbody.innerHTML = "";
 
     pageState.products.forEach((product) => {
-        const status = getStatusMeta(product.status);
         const sizeTags = ["XS", "S", "M", "L", "XL", "XXL"].map((size) => {
-            const isActive = product.sizes?.includes(size);
-            return `<span class="size-tag ${isActive ? "size-active" : ""}">${size}</span>`;
+            const sizeInfo = getSizeAvailability(product).find((item) => item.size === size);
+            if (!sizeInfo) {
+                return `<span class="size-tag">${size}</span>`;
+            }
+
+            const isRented = sizeInfo.status === "rented";
+            return `
+                <span class="size-tag ${isRented ? "size-rented" : "size-active"}" title="${isRented ? "Đang được thuê" : "Sẵn sàng"}">
+                    ${size}
+                    <small>${isRented ? "Đang thuê" : "Sẵn sàng"}</small>
+                </span>
+            `;
         }).join("");
         const tr = document.createElement("tr");
 
@@ -272,12 +293,6 @@ function renderProductsTable() {
             </td>
             <td><span class="price-text">${formatCurrency(product.rentalPrice)}</span></td>
             <td><span class="price-text" style="font-weight: normal; color: #5f5e5e;">${formatCurrency(product.deposit)}</span></td>
-            <td>
-                <span class="status-badge ${status.className}">
-                    <span class="badge-dot ${product.status === "maintenance" ? "badge-pulse" : ""}"></span>
-                    ${status.label}
-                </span>
-            </td>
             <td>
                 <div class="action-buttons">
                     <button class="action-btn-icon" title="Xem chi tiết" onclick="openDetailModal('${product._id}')">
@@ -697,10 +712,10 @@ function bindFilters() {
     if (selects[1]) {
         selects[1].innerHTML = `
             <option value="all">Trạng thái</option>
-            <option value="available">Available</option>
-            <option value="rented">Rented</option>
-            <option value="maintenance">Cleaning</option>
-            <option value="outofstock">Out of Stock</option>
+            <option value="available">Sẵn sàng</option>
+            <option value="rented">Đang thuê</option>
+            <option value="maintenance">Đang vệ sinh</option>
+            <option value="outofstock">Hết hàng</option>
         `;
         selects[1].addEventListener("change", () => {
             pageState.status = selects[1].value || "all";

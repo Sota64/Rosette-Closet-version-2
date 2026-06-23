@@ -90,8 +90,7 @@ function renderOrders(orders = []) {
     const products = (order.items || [])
       .map((item) => {
         const productName = item.product?.name || "Sản phẩm";
-        const quantity = Number(item.quantity) || 1;
-        return `${escapeHtml(productName)} x${quantity}`;
+        return escapeHtml(productName);
       })
       .join(", ");
 
@@ -151,17 +150,15 @@ async function openOrderDetailModal(orderId) {
       const color = product?.color || "Đang cập nhật";
       const rentalPrice = item.rentalPrice || 0;
       const deposit = item.deposit || 0;
-      const quantity = item.quantity || 1;
-
-      totalRent += rentalPrice * rentalDays * quantity;
-      totalDeposit += deposit * rentalDays * quantity;
+      totalRent += rentalPrice * rentalDays;
+      totalDeposit += deposit * rentalDays;
 
       return `
         <div class="modal-product-item">
           <img class="modal-product-thumb" src="${escapeHtml(image)}" alt="${escapeHtml(name)}" />
           <div class="modal-product-info">
             <h4 class="modal-product-name">${escapeHtml(name)}</h4>
-            <p class="modal-product-meta">Size: ${escapeHtml(size)} | Màu: ${escapeHtml(color)} | Số lượng: ${quantity}</p>
+            <p class="modal-product-meta">Size: ${escapeHtml(size)} | Màu: ${escapeHtml(color)}</p>
           </div>
           <div class="modal-product-price">
             <strong>${formatCurrency(rentalPrice)} / ngày</strong>

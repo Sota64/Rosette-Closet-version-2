@@ -56,11 +56,10 @@ const buildOrderItems = async (items = []) => {
       throw new Error("San pham trong don thue khong ton tai");
     }
 
-    const quantity = Math.max(Number(item.quantity) || 1, 1);
-
     return {
       product: product._id,
-      quantity,
+      size: item.size,
+      quantity: 1,
       rentalPrice: item.rentalPrice !== undefined ? Number(item.rentalPrice) : product.rentalPrice,
       deposit: item.deposit !== undefined ? Number(item.deposit) : product.deposit
     };

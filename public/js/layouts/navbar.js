@@ -176,7 +176,7 @@ function updateNavbarCartBadge() {
 
   try {
     const cart = JSON.parse(localStorage.getItem("rosette_cart") || "[]");
-    const count = cart.reduce((total, item) => total + (Number(item.quantity) || 1), 0);
+    const count = Array.isArray(cart) ? cart.length : 0;
 
     if (count > 0) {
       badge.textContent = count;

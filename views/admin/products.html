@@ -124,9 +124,9 @@
           </select>
           <select class="filter-select">
             <option>Trạng thái</option>
-            <option>Available</option>
-            <option>Rented</option>
-            <option>Cleaning</option>
+            <option>Sẵn sàng</option>
+            <option>Đang thuê</option>
+            <option>Đang vệ sinh</option>
           </select>
           <select class="filter-select">
             <option>Giá thuê</option>
@@ -150,7 +150,6 @@
                   <th class="text-center">KÍCH CỠ</th>
                   <th>GIÁ THUÊ</th>
                   <th>TIỀN CỌC</th>
-                  <th>TRẠNG THÁI</th>
                   <th class="text-right">THAO TÁC</th>
                 </tr>
               </thead>
@@ -191,12 +190,6 @@
                       style="font-weight: normal; color: #5f5e5e"
                       >2.000.000đ</span
                     >
-                  </td>
-                  <td>
-                    <span class="status-badge badge-available">
-                      <span class="badge-dot"></span>
-                      Available
-                    </span>
                   </td>
                   <td>
                     <div class="action-buttons">
@@ -252,12 +245,6 @@
                     >
                   </td>
                   <td>
-                    <span class="status-badge badge-rented">
-                      <span class="badge-dot"></span>
-                      Rented
-                    </span>
-                  </td>
-                  <td>
                     <div class="action-buttons">
                       <button class="action-btn-icon" title="Xem chi tiết">
                         <span class="material-symbols-outlined"
@@ -311,12 +298,6 @@
                     >
                   </td>
                   <td>
-                    <span class="status-badge badge-cleaning">
-                      <span class="badge-dot badge-pulse"></span>
-                      Cleaning
-                    </span>
-                  </td>
-                  <td>
                     <div class="action-buttons">
                       <button class="action-btn-icon" title="Xem chi tiết">
                         <span class="material-symbols-outlined"
@@ -368,12 +349,6 @@
                       style="font-weight: normal; color: #5f5e5e"
                       >800.000đ</span
                     >
-                  </td>
-                  <td>
-                    <span class="status-badge badge-outofstock">
-                      <span class="badge-dot"></span>
-                      Out of Stock
-                    </span>
                   </td>
                   <td>
                     <div class="action-buttons">
@@ -602,9 +577,9 @@
             <div class="form-group">
               <label class="form-label">Trạng thái</label>
               <select class="form-select" name="status">
-                <option value="available">Available</option>
-                <option value="rented">Rented</option>
-                <option value="maintenance">Cleaning</option>
+                <option value="available">Sẵn sàng</option>
+                <option value="rented">Đang thuê</option>
+                <option value="maintenance">Đang vệ sinh</option>
               </select>
             </div>
           </div>
@@ -759,7 +734,7 @@
           >
 
           <span class="detail-label">Trạng thái:</span>
-          <span id="detail-product-status" class="detail-value">Available</span>
+          <span id="detail-product-status" class="detail-value">Sẵn sàng</span>
 
           <span class="detail-label">Mô tả sản phẩm:</span>
           <span id="detail-product-description" class="detail-value description"
@@ -931,9 +906,9 @@
                 class="form-select"
                 name="status"
               >
-                <option value="available">Available</option>
-                <option value="rented">Rented</option>
-                <option value="maintenance">Cleaning</option>
+                <option value="available">Sẵn sàng</option>
+                <option value="rented">Đang thuê</option>
+                <option value="maintenance">Đang vệ sinh</option>
               </select>
             </div>
           </div>

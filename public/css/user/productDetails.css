@@ -395,6 +395,12 @@ img {
   transition: border-color var(--transition), color var(--transition);
 }
 
+.size-options button small {
+  font-size: 8px;
+  line-height: 1;
+  font-weight: 700;
+}
+
 .size-options button:hover,
 .size-options button.selected {
   border-color: var(--primary);
@@ -404,6 +410,21 @@ img {
 .size-options button.selected {
   border-width: 2px;
   font-weight: 700;
+}
+
+.size-options button.rented,
+.size-options button:disabled {
+  cursor: not-allowed;
+  border-color: rgba(126, 33, 33, 0.25);
+  background: rgba(126, 33, 33, 0.08);
+  color: #8b2b2b;
+  opacity: 0.72;
+}
+
+.size-options button.rented:hover,
+.size-options button:disabled:hover {
+  border-color: rgba(126, 33, 33, 0.25);
+  color: #8b2b2b;
 }
 
 .option-label {

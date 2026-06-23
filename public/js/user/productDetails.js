@@ -147,18 +147,36 @@ function renderGallery(product) {
 }
 
 function renderSizes(product) {
-  const sizes = product.sizes?.length ? product.sizes : ["Đang cập nhật"];
+  const sizeAvailability = product.sizeAvailability?.length
+    ? product.sizeAvailability
+    : (product.sizes || []).map((size) => ({ size, status: "available" }));
+  const sizes = sizeAvailability.length ? sizeAvailability : [{ size: "Đang cập nhật", status: "unavailable" }];
   const sizeOptions = document.getElementById("product-size-options");
 
   if (!sizeOptions) return;
 
-  sizeOptions.innerHTML = sizes.map((size, index) => `
-    <button class="${index === 0 ? "selected" : ""}" type="button">${escapeHtml(size)}</button>
-  `).join("");
+  const firstAvailableIndex = sizes.findIndex((item) => item.status === "available");
+
+  sizeOptions.innerHTML = sizes.map((item, index) => {
+    const isRented = item.status === "rented";
+    const isSelected = index === firstAvailableIndex;
+
+    return `
+      <button
+        class="${isSelected ? "selected" : ""} ${isRented ? "rented" : ""}"
+        type="button"
+        ${isRented ? "disabled" : ""}
+        title="${isRented ? "Size này đang được thuê" : "Chọn size " + escapeHtml(item.size)}"
+      >
+        <span>${escapeHtml(item.size)}</span>
+        ${isRented ? '<small>Đang thuê</small>' : ""}
+      </button>
+    `;
+  }).join("");
 
   sizeOptions.addEventListener("click", (event) => {
     const button = event.target.closest("button");
-    if (!button) return;
+    if (!button || button.disabled) return;
 
     sizeOptions.querySelectorAll("button").forEach((item) => {
       item.classList.toggle("selected", item === button);
@@ -170,7 +188,7 @@ function renderSizes(product) {
 
 function getSelectedSize() {
   const selectedSizeBtn = document.querySelector("#product-size-options button.selected");
-  return selectedSizeBtn?.textContent?.trim() || "";
+  return selectedSizeBtn?.querySelector("span")?.textContent?.trim() || "";
 }
 
 function buildRentNowUrl(product) {
@@ -323,11 +341,11 @@ function showToast(message) {
 
 function addToCart(product) {
   const selectedSizeBtn = document.querySelector("#product-size-options button.selected");
-  if (!selectedSizeBtn) {
-    showToast("Vui lòng chọn kích cỡ trang phục!");
+  if (!selectedSizeBtn || selectedSizeBtn.disabled) {
+    showToast("Vui lòng chọn kích cỡ còn trống!");
     return;
   }
-  const size = selectedSizeBtn.textContent;
+  const size = selectedSizeBtn.querySelector("span")?.textContent?.trim();
 
   let cart = [];
   try {
@@ -339,7 +357,8 @@ function addToCart(product) {
   const existingIndex = cart.findIndex(item => item._id === product._id && item.size === size);
 
   if (existingIndex > -1) {
-    cart[existingIndex].quantity = (cart[existingIndex].quantity || 1) + 1;
+    showToast(`${product.name} (Size ${size}) đã có trong giỏ hàng!`);
+    return;
   } else {
     cart.push({
       _id: product._id,
