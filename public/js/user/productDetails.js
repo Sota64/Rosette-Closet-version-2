@@ -268,7 +268,21 @@ function bindRentNowLink(product) {
       return;
     }
 
-    window.location.href = newRentNowLink.href;
+  });
+}
+
+function bindSimilarRentNowAuthGuard() {
+  document.addEventListener("click", async (event) => {
+    const link = event.target.closest(".rent-now-link");
+    if (!link) return;
+
+    event.preventDefault();
+    if (!(await isUserAuthenticated())) {
+      redirectToLogin(link.href);
+      return;
+    }
+
+    window.location.href = link.href;
   });
 }
 
@@ -324,12 +338,21 @@ function renderSimilarProducts(products = []) {
 
   grid.innerHTML = products.map((product) => `
     <article class="similar-card">
-      <a class="similar-image" href="${getProductDetailUrl(product._id)}">
-        <img src="${escapeHtml(getProductImage(product))}" alt="${escapeHtml(product.name)}" />
-        <span>Xem nhanh</span>
-      </a>
-      <h3>${escapeHtml(product.name)}</h3>
-      <p>${formatCurrency(product.rentalPrice)}</p>
+      <div class="similar-image">
+        <a href="${getProductDetailUrl(product._id)}">
+          <img src="${escapeHtml(getProductImage(product))}" alt="${escapeHtml(product.name)}" />
+        </a>
+      </div>
+      <div class="similar-info">
+        <p>${escapeHtml(getCategoryName(product))}</p>
+        <h3><a href="${getProductDetailUrl(product._id)}">${escapeHtml(product.name)}</a></h3>
+        <div class="similar-bottom">
+          <span>${formatCurrency(product.rentalPrice)}</span>
+          <a class="rent-now-link" href="/views/user/rentNow.html?id=${encodeURIComponent(product._id)}">
+            <button type="button">Thuê ngay</button>
+          </a>
+        </div>
+      </div>
     </article>
   `).join("");
 }
@@ -546,5 +569,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     loadLayout("footer-placeholder", "/views/layouts/footer.html")
   ]);
 
+  bindSimilarRentNowAuthGuard();
   loadProductDetail();
 });

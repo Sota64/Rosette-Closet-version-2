@@ -6,7 +6,8 @@ const fallbackCategoryImages = [
   "/public/images/img2.png",
   "/public/images/img3.png",
   "/public/images/img4.png",
-  "/public/images/img5.png"
+  "/public/images/img5.png",
+  "/public/images/img6.png"
 ];
 
 const getFirstImage = (product, fallback = "/public/images/img1.png") => {
@@ -17,7 +18,7 @@ const getHomepageData = async (req, res) => {
   try {
     const categories = await Category.find()
       .sort({ createdAt: -1 })
-      .limit(4)
+      .limit(5)
       .lean();
 
     const categoryIds = categories.map((category) => category._id);
