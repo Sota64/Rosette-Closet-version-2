@@ -273,7 +273,7 @@ html.dark #main-sidebar {
     border-bottom: 1px solid #d0c5af; /* outline-variant */
     box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     align-items: center;
     padding: 1rem 32px;
 }
