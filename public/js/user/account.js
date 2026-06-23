@@ -57,11 +57,66 @@ const ACCOUNT_FALLBACK_ADDRESS_DATA = [
 
 let accountAddressData = [];
 
+function showToast(message, type = "success") {
+  let container = document.getElementById("toast-container");
+  if (!container) {
+    container = document.createElement("div");
+    container.id = "toast-container";
+    container.style.cssText = `
+      position: fixed;
+      top: 24px;
+      right: 24px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    `;
+    document.body.appendChild(container);
+  }
+
+  const toast = document.createElement("div");
+  const accent = type === "error" ? "#ba1a1a" : "#1b806a";
+  toast.style.cssText = `
+    min-width: 260px;
+    max-width: 360px;
+    border-left: 4px solid ${accent};
+    border-radius: 8px;
+    background: rgba(31, 27, 19, 0.95);
+    color: #ffffff;
+    padding: 14px 18px;
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+    transform: translateY(-16px);
+    opacity: 0;
+    transition: all 0.25s ease;
+  `;
+  toast.textContent = message;
+  container.appendChild(toast);
+
+  requestAnimationFrame(() => {
+    toast.style.transform = "translateY(0)";
+    toast.style.opacity = "1";
+  });
+
+  setTimeout(() => {
+    toast.style.transform = "translateY(-16px)";
+    toast.style.opacity = "0";
+    setTimeout(() => toast.remove(), 250);
+  }, 3000);
+}
+
 function setAccountMessage(message, isError = false) {
   const element = document.getElementById("account-message");
-  if (!element) return;
-  element.textContent = message;
-  element.style.color = isError ? "#9f1d1d" : "#735c00";
+  if (element) {
+    element.textContent = "";
+    element.hidden = true;
+  }
+
+  if (message) {
+    showToast(message, isError ? "error" : "success");
+  }
 }
 
 function normalizeAddressName(value = "") {

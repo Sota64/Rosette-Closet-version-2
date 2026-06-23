@@ -50,6 +50,55 @@ function saveCart(cart) {
   document.dispatchEvent(new CustomEvent("rosette:cart-updated"));
 }
 
+function showToast(message, type = "error") {
+  let container = document.getElementById("toast-container");
+  if (!container) {
+    container = document.createElement("div");
+    container.id = "toast-container";
+    container.style.cssText = `
+      position: fixed;
+      top: 24px;
+      right: 24px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    `;
+    document.body.appendChild(container);
+  }
+
+  const toast = document.createElement("div");
+  toast.style.cssText = `
+    min-width: 260px;
+    max-width: 360px;
+    border-left: 4px solid ${type === "error" ? "#ba1a1a" : "#735c00"};
+    border-radius: 8px;
+    background: rgba(31, 27, 19, 0.95);
+    color: #ffffff;
+    padding: 14px 18px;
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+    transform: translateY(-16px);
+    opacity: 0;
+    transition: all 0.25s ease;
+  `;
+  toast.textContent = message;
+  container.appendChild(toast);
+
+  requestAnimationFrame(() => {
+    toast.style.transform = "translateY(0)";
+    toast.style.opacity = "1";
+  });
+
+  setTimeout(() => {
+    toast.style.transform = "translateY(-16px)";
+    toast.style.opacity = "0";
+    setTimeout(() => toast.remove(), 250);
+  }, 3000);
+}
+
 function updateCartTotals() {
   const rentalTotal = cartItemsState.reduce((sum, item) => sum + Number(item.rentalPrice || 0), 0);
   const depositTotal = cartItemsState.reduce((sum, item) => sum + Number(item.deposit || 0), 0);
@@ -154,7 +203,7 @@ function renderCart() {
 function handleCheckout() {
   const cart = getCart();
   if (!cart || cart.length === 0) {
-    alert("Giỏ hàng của bạn đang trống!");
+    showToast("Giỏ hàng của bạn đang trống!");
     return;
   }
   // Redirect to the checkout page with cart mode indicator

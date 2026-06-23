@@ -313,7 +313,7 @@ function showToast(message) {
     toastContainer.id = "toast-container";
     toastContainer.style.cssText = `
       position: fixed;
-      bottom: 24px;
+      top: 24px;
       right: 24px;
       z-index: 9999;
       display: flex;
@@ -337,7 +337,7 @@ function showToast(message) {
     display: flex;
     align-items: center;
     gap: 12px;
-    transform: translateY(20px);
+    transform: translateY(-20px);
     opacity: 0;
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   `;

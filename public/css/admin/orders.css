@@ -333,13 +333,17 @@ a {
 .canvas-container {
     padding: 32px;
     max-width: 1440px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
 }
 
 .page-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-    margin-bottom: 32px;
+    margin-bottom: 8px;
 }
 
 .page-title {
@@ -386,7 +390,6 @@ a {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 24px;
-    margin-bottom: 40px;
 }
 
 .kpi-card {
@@ -836,7 +839,6 @@ a {
 
 /* Decorative Section */
 .trend-section {
-    margin-top: 48px;
     display: grid;
     grid-template-columns: 2fr 1fr;
     gap: 32px;
