@@ -6,6 +6,8 @@ const {
   getOrderById,
   updateOrder,
   updateOrderStatus,
+  cancelMyOrder,
+  reviewCompletedOrderItem,
   deleteOrder,
   getOrderReports
 } = require("../controllers/rentalOrderController");
@@ -19,6 +21,8 @@ router.get("/", requireAdmin, getOrders);
 router.get("/reports/stats", requireAdmin, getOrderReports);
 router.get("/my", authenticate, getMyOrders);
 router.get("/:id", authenticate, getOrderById);
+router.put("/:id/cancel", authenticate, cancelMyOrder);
+router.post("/:id/reviews", authenticate, reviewCompletedOrderItem);
 router.put("/:id", requireAdmin, updateOrder);
 router.put("/:id/status", requireAdmin, updateOrderStatus);
 router.delete("/:id", requireAdmin, deleteOrder);

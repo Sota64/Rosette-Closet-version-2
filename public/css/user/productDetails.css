@@ -654,6 +654,102 @@ img {
   color: var(--primary);
 }
 
+.reviews-panel {
+  margin-top: 48px;
+  padding: 28px;
+  border: 1px solid rgba(208, 197, 175, 0.28);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.62);
+}
+
+.reviews-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.reviews-header h3 {
+  margin-bottom: 8px;
+  color: var(--primary);
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.reviews-header p,
+.reviews-empty {
+  color: var(--on-surface-variant);
+  line-height: 1.6;
+}
+
+.reviews-average {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.reviews-list {
+  display: grid;
+  gap: 14px;
+}
+
+.review-item {
+  padding: 18px;
+  border: 1px solid rgba(115, 92, 0, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.review-item-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 10px;
+}
+
+.review-item-header strong,
+.review-item-header span {
+  display: block;
+}
+
+.review-item-header strong {
+  color: var(--text-primary);
+  font-size: 15px;
+}
+
+.review-item-header span {
+  margin-top: 3px;
+  color: var(--on-surface-variant);
+  font-size: 12px;
+}
+
+.review-stars {
+  display: inline-flex;
+  gap: 2px;
+  color: rgba(115, 92, 0, 0.24);
+  font-size: 18px;
+  line-height: 1;
+}
+
+.review-stars .filled {
+  color: #c99700;
+}
+
+.review-item p {
+  color: var(--on-background);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
 .similar-section {
   margin-top: 128px;
 }
@@ -836,6 +932,17 @@ img {
   .section-header {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .reviews-header,
+  .review-item-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .reviews-average {
+    width: 56px;
+    height: 56px;
   }
 }
 

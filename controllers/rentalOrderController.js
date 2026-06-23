@@ -1,6 +1,7 @@
 const RentalOrder = require("../models/RentalOrder");
 const Product = require("../models/Product");
 const Payment = require("../models/Payment");
+const Review = require("../models/Review");
 const mongoose = require("mongoose");
 const { sendSuccess, sendError } = require("../middleware/response");
 
@@ -253,6 +254,27 @@ const getOrderById = async (req, res) => {
 
     const payment = await Payment.findOne({ rentalOrder: order._id });
     const orderObj = order.toObject();
+    const productIds = orderObj.items
+      .map((item) => item.product?._id || item.product)
+      .filter(Boolean);
+    const reviews = isOwner && productIds.length
+      ? await Review.find({
+          user: req.user._id,
+          product: { $in: productIds }
+        })
+      : [];
+    const reviewMap = reviews.reduce((result, review) => {
+      result[review.product.toString()] = review.toObject();
+      return result;
+    }, {});
+
+    orderObj.items = orderObj.items.map((item) => {
+      const productId = item.product?._id?.toString() || item.product?.toString();
+      return {
+        ...item,
+        review: productId ? reviewMap[productId] || null : null
+      };
+    });
     orderObj.payment = payment;
 
     return sendSuccess(res, "Lay chi tiet don thue thanh cong", orderObj);
@@ -365,6 +387,98 @@ const updateOrderStatus = async (req, res) => {
     }
 
     return sendSuccess(res, "Cap nhat trang thai don thue thanh cong", order);
+  } catch (error) {
+    return sendError(res, error.message, 400);
+  }
+};
+
+const cancelMyOrder = async (req, res) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return sendError(res, "ID don thue khong hop le", 400);
+    }
+
+    const order = await RentalOrder.findOne({
+      _id: req.params.id,
+      user: req.user._id
+    });
+
+    if (!order) {
+      return sendError(res, "Khong tim thay don thue", 404);
+    }
+
+    if (!["pending", "approved"].includes(order.status)) {
+      return sendError(res, "Chi co the huy don hang dang cho duyet hoac da duyet", 400);
+    }
+
+    order.status = "cancelled";
+    await order.save();
+    await order.populate("user", "fullName email phone address");
+    await order.populate("items.product", "name rentalPrice deposit status images code");
+
+    return sendSuccess(res, "Huy don hang thanh cong", order);
+  } catch (error) {
+    return sendError(res, error.message, 400);
+  }
+};
+
+const reviewCompletedOrderItem = async (req, res) => {
+  try {
+    const { product, rating, comment = "" } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return sendError(res, "ID don thue khong hop le", 400);
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(product)) {
+      return sendError(res, "ID san pham khong hop le", 400);
+    }
+
+    const normalizedRating = Number(rating);
+
+    if (!Number.isInteger(normalizedRating) || normalizedRating < 1 || normalizedRating > 5) {
+      return sendError(res, "Danh gia phai tu 1 den 5 sao", 400);
+    }
+
+    const order = await RentalOrder.findOne({
+      _id: req.params.id,
+      user: req.user._id
+    });
+
+    if (!order) {
+      return sendError(res, "Khong tim thay don thue", 404);
+    }
+
+    if (order.status !== "completed") {
+      return sendError(res, "Chi co the danh gia khi don hang da hoan thanh", 400);
+    }
+
+    const productInOrder = order.items.some((item) => item.product.toString() === product);
+
+    if (!productInOrder) {
+      return sendError(res, "San pham khong nam trong don hang nay", 400);
+    }
+
+    const review = await Review.findOneAndUpdate(
+      {
+        user: req.user._id,
+        product
+      },
+      {
+        user: req.user._id,
+        product,
+        rating: normalizedRating,
+        comment: String(comment).trim()
+      },
+      {
+        new: true,
+        upsert: true,
+        runValidators: true,
+        setDefaultsOnInsert: true
+      }
+    );
+
+    return sendSuccess(res, "Luu danh gia thanh cong", review);
   } catch (error) {
     return sendError(res, error.message, 400);
   }
@@ -483,6 +597,8 @@ module.exports = {
   getOrderById,
   updateOrder,
   updateOrderStatus,
+  cancelMyOrder,
+  reviewCompletedOrderItem,
   deleteOrder,
   getOrderReports
 };

@@ -340,7 +340,7 @@ const getProductDetail = async (req, res) => {
       return sendError(res, "Khong tim thay san pham", 404);
     }
 
-    const [similarProducts, reviewStats] = await Promise.all([
+    const [similarProducts, reviewStats, reviews] = await Promise.all([
       Product.find({
         _id: { $ne: product._id },
         category: product.category?._id || product.category,
@@ -362,7 +362,10 @@ const getProductDetail = async (req, res) => {
             totalReviews: { $sum: 1 }
           }
         }
-      ])
+      ]),
+      Review.find({ product: product._id })
+        .populate("user", "fullName")
+        .sort("-createdAt")
     ]);
 
     const stats = reviewStats[0] || {
@@ -378,7 +381,8 @@ const getProductDetail = async (req, res) => {
       reviewSummary: {
         averageRating: Number((stats.averageRating || 0).toFixed(1)),
         totalReviews: stats.totalReviews || 0
-      }
+      },
+      reviews
     });
   } catch (error) {
     return sendError(res, error.message);

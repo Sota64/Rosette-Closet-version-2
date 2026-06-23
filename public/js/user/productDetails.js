@@ -32,6 +32,11 @@ function formatCurrency(value = 0) {
   return Number(value || 0).toLocaleString("vi-VN") + "đ";
 }
 
+function formatDate(value) {
+  if (!value) return "";
+  return new Date(value).toLocaleDateString("vi-VN");
+}
+
 function getTodayInputValue() {
   const today = new Date();
   today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
@@ -306,6 +311,53 @@ function renderSimilarProducts(products = []) {
   `).join("");
 }
 
+function renderStars(rating = 0) {
+  const normalizedRating = Math.max(0, Math.min(5, Math.round(Number(rating || 0))));
+  return Array.from({ length: 5 }, (_, index) => (
+    `<span class="${index < normalizedRating ? "filled" : ""}">★</span>`
+  )).join("");
+}
+
+function renderProductReviews(reviews = [], summary = {}) {
+  const list = document.getElementById("product-reviews-list");
+  const summaryText = document.getElementById("product-review-summary");
+  const average = document.getElementById("product-review-average");
+
+  if (!list || !summaryText || !average) return;
+
+  const totalReviews = Number(summary.totalReviews || reviews.length || 0);
+  const averageRating = Number(summary.averageRating || 0).toFixed(1);
+
+  summaryText.textContent = totalReviews
+    ? `${totalReviews} đánh giá từ khách hàng đã thuê sản phẩm này.`
+    : "Chưa có đánh giá nào.";
+  average.textContent = averageRating;
+
+  if (!reviews.length) {
+    list.innerHTML = '<p class="reviews-empty">Sản phẩm này chưa có đánh giá.</p>';
+    return;
+  }
+
+  list.innerHTML = reviews.map((review) => {
+    const reviewer = review.user?.fullName || "Khách hàng";
+    const date = review.createdAt ? formatDate(review.createdAt) : "";
+    return `
+      <article class="review-item">
+        <div class="review-item-header">
+          <div>
+            <strong>${escapeHtml(reviewer)}</strong>
+            <span>${escapeHtml(date)}</span>
+          </div>
+          <div class="review-stars" aria-label="${Number(review.rating || 0)} sao">
+            ${renderStars(review.rating)}
+          </div>
+        </div>
+        <p>${escapeHtml(review.comment || "Khách hàng chưa để lại nhận xét.")}</p>
+      </article>
+    `;
+  }).join("");
+}
+
 function showToast(message) {
   let toastContainer = document.getElementById("toast-container");
   if (!toastContainer) {
@@ -442,6 +494,7 @@ function renderProductDetail(data) {
   updateRentNowLink(product);
   bindRentDatePicker(product);
   renderSimilarProducts(data.similarProducts || []);
+  renderProductReviews(data.reviews || [], reviewSummary);
 
   document.getElementById("product-detail-message").hidden = true;
   document.getElementById("product-detail-content").hidden = false;

@@ -98,9 +98,6 @@ function renderProducts(products = []) {
         <a href="${getProductDetailUrl(product)}">
           <img src="${escapeHtml(getProductImage(product))}" alt="${escapeHtml(product.name)}" />
         </a>
-        <button type="button" aria-label="Thêm ${escapeHtml(product.name)} vào yêu thích">
-          <span class="material-symbols-outlined">favorite</span>
-        </button>
       </div>
       <div class="product-info">
         <p>${escapeHtml(getCategoryName(product))}</p>

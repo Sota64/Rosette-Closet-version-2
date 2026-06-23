@@ -9,6 +9,7 @@ const userRoutes = require("./routes/userRoutes");
 const rentalOrderRoutes = require("./routes/rentalOrderRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const homepageRoutes = require("./routes/homepageRoutes");
+const chatbotRoutes = require("./routes/chatbotRoutes");
 const cookieParser = require("./middleware/cookieParser");
 
 dotenv.config();
@@ -34,6 +35,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/orders", rentalOrderRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/homepage", homepageRoutes);
+app.use("/api/chatbot", chatbotRoutes);
 
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "views", "user", "homepage.html"));
