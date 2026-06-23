@@ -81,7 +81,9 @@ function buildProductFormData(form) {
     productFormData.append("color", formData.get("color")?.trim() || "");
     productFormData.append("rentalPrice", formData.get("rentalPrice") || 0);
     productFormData.append("deposit", formData.get("deposit") || 0);
-    productFormData.append("status", formData.get("status") || "available");
+    if (formData.has("status")) {
+        productFormData.append("status", formData.get("status") || "available");
+    }
 
     form.querySelectorAll('input[name="sizes"]:checked').forEach((checkbox) => {
         productFormData.append("sizes", checkbox.value);
@@ -512,7 +514,6 @@ async function getProduct(id) {
 async function openDetailModal(id) {
     try {
         const product = await getProduct(id);
-        const status = getStatusMeta(product.status);
 
         document.getElementById("detail-product-img").src = getProductImage(product);
         document.getElementById("detail-product-name").textContent = product.name;
@@ -522,7 +523,6 @@ async function openDetailModal(id) {
         document.getElementById("detail-product-sizes").textContent = product.sizes?.join(", ") || "Trống";
         document.getElementById("detail-product-price").textContent = formatCurrency(product.rentalPrice);
         document.getElementById("detail-product-deposit").textContent = formatCurrency(product.deposit);
-        document.getElementById("detail-product-status").textContent = status.label;
         document.getElementById("detail-product-description").textContent = product.description;
 
         openModal("modal-product-detail");
@@ -543,7 +543,6 @@ async function openEditModal(id) {
         document.getElementById("edit-product-color").value = product.color;
         document.getElementById("edit-product-price").value = product.rentalPrice;
         document.getElementById("edit-product-deposit").value = product.deposit;
-        document.getElementById("edit-product-status").value = product.status;
         document.getElementById("edit-product-image").value = "";
         setImagePreview("edit-product-image-preview", getProductImage(product));
 
