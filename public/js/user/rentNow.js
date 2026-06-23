@@ -612,24 +612,9 @@ async function submitRentalOrder(event) {
       throw new Error(profileResult.message || "Không thể cập nhật thông tin nhận hàng.");
     }
 
-    const response = await fetch("/api/orders", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      credentials: "include",
-      body: JSON.stringify(buildOrderPayload())
-    });
-    const data = await parseApiResponse(response, "Không thể tạo đơn thuê");
-    const order = data.order || data;
+    const orderPayload = buildOrderPayload();
     const paymentMethod = document.querySelector('input[name="payment"]:checked')?.value || "vnpay";
-
-    // Clear cart if successfully checked out from cart
     const params = new URLSearchParams(window.location.search);
-    if (params.get("from") === "cart") {
-      localStorage.removeItem("rosette_cart");
-      document.dispatchEvent(new CustomEvent("rosette:cart-updated"));
-    }
 
     if (paymentMethod === "vnpay") {
       setFeedback("Đang chuyển sang cổng thanh toán VNPAY...", "success");
@@ -639,7 +624,10 @@ async function submitRentalOrder(event) {
           "Content-Type": "application/json"
         },
         credentials: "include",
-        body: JSON.stringify({ orderId: order._id })
+        body: JSON.stringify({
+          ...orderPayload,
+          orderSource: params.get("from") === "cart" ? "cart" : "direct"
+        })
       });
       const paymentData = await parseApiResponse(paymentResponse, "Không thể tạo thanh toán VNPAY");
 
@@ -649,6 +637,23 @@ async function submitRentalOrder(event) {
 
       window.location.href = paymentData.paymentUrl;
       return;
+    }
+
+    const response = await fetch("/api/orders", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      credentials: "include",
+      body: JSON.stringify(orderPayload)
+    });
+    const data = await parseApiResponse(response, "Không thể tạo đơn thuê");
+    const order = data.order || data;
+
+    // Clear cart if successfully checked out from cart
+    if (params.get("from") === "cart") {
+      localStorage.removeItem("rosette_cart");
+      document.dispatchEvent(new CustomEvent("rosette:cart-updated"));
     }
 
     setFeedback("Đặt thuê thành công! Đang chuyển hướng...", "success");

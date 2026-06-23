@@ -94,6 +94,11 @@ async function loadSuccessDetails() {
   const params = new URLSearchParams(window.location.search);
   const orderId = params.get("orderId");
 
+  if (params.get("clearCart") === "1") {
+    localStorage.removeItem("rosette_cart");
+    document.dispatchEvent(new CustomEvent("rosette:cart-updated"));
+  }
+
   if (!orderId) {
     window.location.href = "/views/user/homepage.html";
     return;

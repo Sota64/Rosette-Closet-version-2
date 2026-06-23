@@ -503,12 +503,29 @@ async function loadOrders() {
   }
 }
 
+function showVNPayReturnMessage() {
+  const params = new URLSearchParams(window.location.search);
+  const vnpayStatus = params.get("vnpay");
+
+  if (!vnpayStatus) return;
+
+  const messages = {
+    failed: "Thanh toán VNPAY thất bại. Đơn hàng chưa được tạo.",
+    missing: "Không tìm thấy phiên thanh toán VNPAY. Đơn hàng chưa được tạo.",
+    error: params.get("message") || "Có lỗi khi xác nhận thanh toán VNPAY."
+  };
+
+  showToast(messages[vnpayStatus] || "Thanh toán VNPAY không thành công.", "error");
+  window.history.replaceState({}, document.title, window.location.pathname);
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
   await Promise.all([
     loadLayout("navbar-placeholder", "/views/layouts/navbar.html"),
     loadLayout("footer-placeholder", "/views/layouts/footer.html")
   ]);
 
+  showVNPayReturnMessage();
   loadOrders();
 
   // Close modal when clicking outside

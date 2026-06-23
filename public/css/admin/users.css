@@ -764,43 +764,56 @@ a {
 
 /* Pagination */
 .pagination {
-    padding: 24px;
+    padding: 16px 24px;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 16px;
     background-color: #f5f3f3;
     border-top: 1px solid #d0c5af;
 }
 
 .pagination-text {
     font-family: 'Be Vietnam Pro', sans-serif;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
+    letter-spacing: 0;
+    text-transform: none;
     color: #4d4635;
+    margin: 0;
+    line-height: 1.5;
 }
 
 .pagination-buttons {
     display: flex;
     align-items: center;
-    gap: 8px;
+    justify-content: flex-end;
+    gap: 6px;
+    flex-wrap: wrap;
 }
 
 .pagination-btn-nav {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
     border: 1px solid #d0c5af;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: background-color 0.2s, border-color 0.2s, color 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
+    background: #fffdf9;
+    color: #735c00;
+    flex: 0 0 36px;
 }
 
-.pagination-btn-nav:hover {
+.pagination-btn-nav:hover:not(:disabled) {
     background-color: #ffffff;
+}
+
+.pagination-btn-nav:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 .pagination-btn-nav span {
@@ -808,16 +821,20 @@ a {
 }
 
 .pagination-btn-num {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
+    min-width: 36px;
+    height: 36px;
+    padding: 0 10px;
+    border-radius: 6px;
     font-size: 12px;
-    font-weight: 500;
+    font-weight: 700;
     cursor: pointer;
     transition: all 0.2s;
+    border: 1px solid #d0c5af;
     display: flex;
     align-items: center;
     justify-content: center;
+    background: transparent;
+    color: #4d4635;
 }
 
 .pagination-btn-num:hover:not(.pagination-active) {
@@ -825,13 +842,17 @@ a {
 }
 
 .pagination-active {
-    background-color: #d4af37;
-    color: #241a00;
-    font-weight: 500;
+    background-color: #735c00;
+    color: #ffffff;
+    border-color: #735c00;
+    font-weight: 700;
 }
 
 .pagination-ellipsis {
-    color: #4d4635;
+    min-width: 24px;
+    text-align: center;
+    font-size: 12px;
+    color: #5f5e5e;
 }
 
 /* Decorative Banner */
