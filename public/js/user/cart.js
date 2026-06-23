@@ -30,6 +30,22 @@ function formatCurrency(value = 0) {
   return Number(value || 0).toLocaleString("vi-VN") + "đ";
 }
 
+async function isUserAuthenticated() {
+  try {
+    const response = await fetch("/api/auth/me", {
+      credentials: "include"
+    });
+    const result = await response.json();
+    return response.ok && result.success && Boolean(result.data?.user);
+  } catch (error) {
+    return false;
+  }
+}
+
+function redirectToLogin(returnUrl = window.location.href) {
+  window.location.href = `/views/login.html?redirect=${encodeURIComponent(returnUrl)}`;
+}
+
 function getProductDetailUrl(productId) {
   return `/views/user/productDetails.html?id=${encodeURIComponent(productId)}`;
 }
@@ -200,14 +216,21 @@ function renderCart() {
   updateCartTotals();
 }
 
-function handleCheckout() {
+async function handleCheckout() {
   const cart = getCart();
   if (!cart || cart.length === 0) {
     showToast("Giỏ hàng của bạn đang trống!");
     return;
   }
+
+  const rentNowUrl = "/views/user/rentNow.html?from=cart";
+  if (!(await isUserAuthenticated())) {
+    redirectToLogin(rentNowUrl);
+    return;
+  }
+
   // Redirect to the checkout page with cart mode indicator
-  window.location.href = "/views/user/rentNow.html?from=cart";
+  window.location.href = rentNowUrl;
 }
 
 document.addEventListener("DOMContentLoaded", async () => {

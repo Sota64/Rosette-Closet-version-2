@@ -41,6 +41,22 @@ function formatCurrency(value = 0) {
   return Number(value || 0).toLocaleString("vi-VN") + "đ";
 }
 
+async function isUserAuthenticated() {
+  try {
+    const response = await fetch("/api/auth/me", {
+      credentials: "include"
+    });
+    const result = await response.json();
+    return response.ok && result.success && Boolean(result.data?.user);
+  } catch (error) {
+    return false;
+  }
+}
+
+function redirectToLogin(returnUrl = window.location.href) {
+  window.location.href = `/views/login.html?redirect=${encodeURIComponent(returnUrl)}`;
+}
+
 function getProductImage(product) {
   return product.images?.[0] || "/public/images/img1.png";
 }
@@ -181,13 +197,28 @@ function renderProducts(products = []) {
         <h3><a href="${getProductDetailUrl(product)}">${escapeHtml(product.name)}</a></h3>
         <div class="product-bottom">
           <span>${formatCurrency(product.rentalPrice)}</span>
-          <a href="${getRentNowUrl(product)}">
+          <a class="rent-now-link" href="${getRentNowUrl(product)}">
             <button type="button">Thuê ngay</button>
           </a>
         </div>
       </div>
     </article>
   `).join("");
+}
+
+function bindRentNowAuthGuard() {
+  document.addEventListener("click", async (event) => {
+    const link = event.target.closest(".rent-now-link");
+    if (!link) return;
+
+    event.preventDefault();
+    if (!(await isUserAuthenticated())) {
+      redirectToLogin(link.href);
+      return;
+    }
+
+    window.location.href = link.href;
+  });
 }
 
 function renderPagination() {
@@ -284,5 +315,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     loadCollectionsCategories()
   ]);
   bindCollectionsControls();
+  bindRentNowAuthGuard();
   loadProducts();
 });

@@ -88,6 +88,22 @@ async function parseApiResponse(response, fallbackMessage) {
   return result.data;
 }
 
+async function isUserAuthenticated() {
+  try {
+    const response = await fetch("/api/auth/me", {
+      credentials: "include"
+    });
+    const result = await response.json();
+    return response.ok && result.success && Boolean(result.data?.user);
+  } catch (error) {
+    return false;
+  }
+}
+
+function redirectToLogin(returnUrl = window.location.href) {
+  window.location.href = `/views/login.html?redirect=${encodeURIComponent(returnUrl)}`;
+}
+
 async function resolveProductId() {
   const params = new URLSearchParams(window.location.search);
   const productId = params.get("id");
@@ -238,7 +254,7 @@ function bindRentNowLink(product) {
 
   const newRentNowLink = rentNowLink.cloneNode(true);
   rentNowLink.parentNode.replaceChild(newRentNowLink, rentNowLink);
-  newRentNowLink.addEventListener("click", (event) => {
+  newRentNowLink.addEventListener("click", async (event) => {
     if (!canRentProduct(product)) {
       event.preventDefault();
       showToast("Sản phẩm đang được thuê.");
@@ -246,6 +262,13 @@ function bindRentNowLink(product) {
     }
 
     newRentNowLink.href = buildRentNowUrl(product);
+    event.preventDefault();
+    if (!(await isUserAuthenticated())) {
+      redirectToLogin(newRentNowLink.href);
+      return;
+    }
+
+    window.location.href = newRentNowLink.href;
   });
 }
 

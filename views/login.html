@@ -166,7 +166,8 @@
         }
 
         const role = result.data.user.role;
-        window.location.href = role === "admin" ? "/views/admin/dashboard.html" : "/views/user/homepage.html";
+        const redirectUrl = new URLSearchParams(window.location.search).get("redirect");
+        window.location.href = redirectUrl || (role === "admin" ? "/views/admin/dashboard.html" : "/views/user/homepage.html");
       } catch (error) {
         showToast(error.message);
       } finally {

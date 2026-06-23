@@ -168,6 +168,10 @@ async function fetchCurrentUser() {
   return data.user;
 }
 
+function redirectToLogin(returnUrl = window.location.href) {
+  window.location.href = `/views/login.html?redirect=${encodeURIComponent(returnUrl)}`;
+}
+
 function setValue(id, value) {
   const input = document.getElementById(id);
   if (input) {
@@ -702,15 +706,7 @@ async function loadRentNowPage() {
       renderUser(user);
       if (message) message.hidden = true;
     } catch (authError) {
-      const button = document.getElementById("confirm-rental-button");
-      if (button) button.disabled = true;
-      if (message) {
-        message.innerHTML = `
-          ${escapeHtml(authError.message)}
-          <br>
-          <a href="/views/login.html">Đăng nhập để tiếp tục</a>
-        `;
-      }
+      redirectToLogin(window.location.href);
     }
   } catch (error) {
     if (message) {
